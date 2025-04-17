@@ -26,22 +26,23 @@ api.interceptors.request.use(
 export const login = async (email, password) => {
   try {
     const response = await api.post('login', { email, password });
-    localStorage.setItem('token', response.data.token);  // Guardar el token en localStorage
-    return response.data.token;
+    console.log('Login response:', response.data); 
+    return response.data; 
   } catch (error) {
     console.error('Login failed', error);
     throw error;
   }
 };
 
-export const getMe = async () => {
-  try {
-    const response = await api.get('me');
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch user data', error);
-    throw error;
-  }
+export const isAuthenticated = () => {
+  const token = localStorage.getItem('token');
+  const user = localStorage.getItem('user');
+  return !!(token && user);
+};
+
+export const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
 };
 
 export default api;

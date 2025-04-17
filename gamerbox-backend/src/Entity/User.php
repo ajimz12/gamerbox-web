@@ -19,26 +19,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['profile'])]
+    #[Groups(['user:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
-    #[Groups(['profile'])]
+    #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['user:read'])]
     private ?string $email = null;
 
-    #[ORM\Column(length: 50, unique: true)]
-    #[Groups(['profile'])]
-    private ?string $username = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['profile'])]
-    private ?string $profilePicture = null;
-
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private array $roles = [];
 
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\Column(length: 180, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $username = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $profilePicture = null;
 
     /**
      * @var Collection<int, Review>
@@ -77,6 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userGames = new ArrayCollection();
         $this->follows = new ArrayCollection();
         $this->reviewComments = new ArrayCollection();
+        $this->roles = ['ROLE_USER']; // Set default role
     }
 
     public function getId(): ?int
@@ -307,7 +309,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     // Add these new getter and setter methods after the existing ones
     public function getUsername(): ?string
     {
-        return $this->email;
+        return $this->username ?? $this->email;
     }
 
     public function setUsername(string $username): static
