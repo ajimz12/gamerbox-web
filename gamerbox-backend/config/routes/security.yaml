@@ -6,4 +6,8 @@ api_login:
     path: /api/login
     methods: [POST]
 
+api_register:
+    path: /api/register
+    methods: [POST]
+
 

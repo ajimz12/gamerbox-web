@@ -4,25 +4,37 @@ import Home from '../pages/Home';
 import Dashboard from '../pages/Dashboard';
 import ErrorPage from '../pages/ErrorPage';
 import ProtectedRoute from '../components/ProtectedRoute';
+import RootLayout from '../layout/RootLayout';
+import Register from '../pages/Register';
 
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <Home />,
-        errorElement: <ErrorPage />
-    },
-    {
-        path: '/login',
-        element: <Login />,
-    },
-    {
-        path: '/dashboard',
-        element: (
-            <ProtectedRoute>
-                <Dashboard />
-            </ProtectedRoute>
-        ),
-    },
+        element: <RootLayout />,
+        errorElement: <ErrorPage />,
+        children: [
+            {
+                index: true,
+                element: <Home />
+            },
+            {
+                path: 'login',
+                element: <Login />
+            },
+            {
+                path: 'register',
+                element: <Register />
+            },
+            {
+                path: 'dashboard',
+                element: (
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
+                )
+            }
+        ]
+    }
 ]);
 
 export default router;
