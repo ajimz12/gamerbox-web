@@ -10,11 +10,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -98,6 +100,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public static function createFromPayload($username, array $payload): self
+    {
+        // This method is required by JWTUserInterface
+        $user = new self();
+        $user->setEmail($username); // Using email as the identifier
+        return $user;
+    }
+
     /**
      * A visual identifier that represents this user.
      *
@@ -105,7 +115,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
     /**
@@ -177,7 +187,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeReview(Review $review): static
     {
         if ($this->reviews->removeElement($review)) {
-            // set the owning side to null (unless already changed)
             if ($review->getAuthor() === $this) {
                 $review->setAuthor(null);
             }
@@ -207,7 +216,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeListEntity(ListEntity $listEntity): static
     {
         if ($this->listEntities->removeElement($listEntity)) {
-            // set the owning side to null (unless already changed)
             if ($listEntity->getCreator() === $this) {
                 $listEntity->setCreator(null);
             }
@@ -237,7 +245,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeUserGame(UserGame $userGame): static
     {
         if ($this->userGames->removeElement($userGame)) {
-            // set the owning side to null (unless already changed)
             if ($userGame->getUser() === $this) {
                 $userGame->setUser(null);
             }
@@ -267,7 +274,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeFollow(Follow $follow): static
     {
         if ($this->follows->removeElement($follow)) {
-            // set the owning side to null (unless already changed)
             if ($follow->getFollower() === $this) {
                 $follow->setFollower(null);
             }
@@ -297,7 +303,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeReviewComment(ReviewComment $reviewComment): static
     {
         if ($this->reviewComments->removeElement($reviewComment)) {
-            // set the owning side to null (unless already changed)
             if ($reviewComment->getAuthor() === $this) {
                 $reviewComment->setAuthor(null);
             }
@@ -306,7 +311,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // Add these new getter and setter methods after the existing ones
     public function getUsername(): ?string
     {
         return $this->username ?? $this->email;
@@ -326,6 +330,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProfilePicture(?string $profilePicture): static
     {
         $this->profilePicture = $profilePicture;
+
         return $this;
     }
 }

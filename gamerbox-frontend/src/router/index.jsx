@@ -4,8 +4,9 @@ import Home from '../pages/Home';
 import Dashboard from '../pages/Dashboard';
 import ErrorPage from '../pages/ErrorPage';
 import ProtectedRoute from '../components/ProtectedRoute';
-import RootLayout from '../layout/RootLayout';
 import Register from '../pages/Register';
+import EditProfile from '../pages/EditProfile';
+import RootLayout from '../layout/rootlayout';
 
 export const router = createBrowserRouter([
     {
@@ -30,6 +31,14 @@ export const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <Dashboard />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: 'profile/edit',
+                element: (
+                    <ProtectedRoute>
+                        <EditProfile />
                     </ProtectedRoute>
                 )
             }

@@ -2,69 +2,44 @@
 
 namespace App\Security;
 
-use App\Entity\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
+use App\Entity\User;
 
 class JWTAuthenticationSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
     private $jwtManager;
-    private $serializer;
-    private $eventDispatcher;
 
-    public function __construct(
-        JWTTokenManagerInterface $jwtManager,
-        SerializerInterface $serializer,
-        $eventDispatcher = null
-    ) {
+    public function __construct(JWTTokenManagerInterface $jwtManager)
+    {
         $this->jwtManager = $jwtManager;
-        $this->serializer = $serializer;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token): ?\Symfony\Component\HttpFoundation\Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
     {
         $user = $token->getUser();
-        $jwt = $this->jwtManager->create($user);
-
-        // Normalize user data with groups
-        $context = (new ObjectNormalizerContextBuilder())
-            ->withGroups(['user:read'])
-            ->toArray();
         
-        $userData = $this->serializer->serialize($user, 'json', $context);
-        $userData = json_decode($userData, true);
+        // Set custom payload data
+        $payload = [
+            'email' => $user->getUserIdentifier(),
+            'roles' => $user->getRoles(),
+        ];
         
-        // Debug log
-        error_log('Serialized user data: ' . print_r($userData, true));
+        $jwt = $this->jwtManager->createFromPayload($user, $payload);
 
         $data = [
-            'token' => $jwt,
-            'user' => $userData
+            'user' => [
+                'email' => $user->getUserIdentifier(),
+                'username' => $user instanceof User ? $user->getUsername() : null,
+            ]
         ];
 
-        $response = new JWTAuthenticationSuccessResponse($jwt);
-        $response->setData($data);
-
-        $event = new AuthenticationSuccessEvent(
-            $data,
-            $user,
-            $response
-        );
-
-        if (null !== $this->eventDispatcher) {
-            $this->eventDispatcher->dispatch($event, 'lexik_jwt_authentication.on_authentication_success');
-        }
-
-        return $event->getResponse();
+        return new JWTAuthenticationSuccessResponse($jwt, $data);
     }
 }
