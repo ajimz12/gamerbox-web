@@ -78,4 +78,26 @@ class UserController extends AbstractController
             return new JsonResponse(['error' => 'Error updating profile'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    #[Route('/api/profile/{id}', name: 'api_get_profile', methods: ['GET'])]
+    public function getProfile(
+        int $id,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $user = $entityManager->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse([
+            'user' => [
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'profilePicture' => $user->getProfilePicture()
+                    ? '/uploads/profile_pictures/' . $user->getProfilePicture()
+                    : null
+            ]
+        ]);
+    }
 }

@@ -32,7 +32,7 @@ export const login = async (email, password) => {
     console.log("Login response:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Login failed", error);
+    console.error("Inicio de sesion fallido", error);
     throw error;
   }
 };
@@ -58,7 +58,7 @@ export const register = async (userData) => {
   });
 
   if (!response.ok) {
-    throw new Error("Registration failed");
+    throw new Error("Registro fallido");
   }
 
   return response.json();
@@ -80,7 +80,28 @@ export const updateProfile = async ({ username, profilePicture }) => {
 
     return response.data.user;
   } catch (error) {
-    console.error("Profile update failed", error);
+    console.error("Error al actualizar perfil", error);
+    throw error;
+  }
+};
+
+export const getUserProfile = async (userId) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al obtener datos del usuario');
+    }
+
+    const data = await response.json();
+    return data.user;
+  } catch (error) {
+    console.error("Error al obtener datos del usuario", error);
     throw error;
   }
 };
