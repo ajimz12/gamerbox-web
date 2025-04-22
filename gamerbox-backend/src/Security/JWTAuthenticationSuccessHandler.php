@@ -25,7 +25,6 @@ class JWTAuthenticationSuccessHandler implements AuthenticationSuccessHandlerInt
     {
         $user = $token->getUser();
         
-        // Set custom payload data
         $payload = [
             'email' => $user->getUserIdentifier(),
             'roles' => $user->getRoles(),
@@ -37,6 +36,9 @@ class JWTAuthenticationSuccessHandler implements AuthenticationSuccessHandlerInt
             'user' => [
                 'email' => $user->getUserIdentifier(),
                 'username' => $user instanceof User ? $user->getUsername() : null,
+                'profilePicture' => $user instanceof User && $user->getProfilePicture() 
+                    ? '/uploads/profile_pictures/' . $user->getProfilePicture() 
+                    : null
             ]
         ];
 
