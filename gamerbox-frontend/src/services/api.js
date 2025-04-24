@@ -1,36 +1,22 @@
-import axios from "axios";
-
 const API_URL = "http://localhost:8000/api/";
-
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-// Interceptar solicitudes para añadir el JWT a los headers
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-      if (config.data instanceof FormData) {
-        delete config.headers["Content-Type"];
-      }
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 export const login = async (email, password) => {
   try {
-    const response = await api.post("login", { email, password });
-    console.log("Login response:", response.data);
-    return response.data;
+    const response = await fetch(`${API_URL}login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Inicio de sesión fallido');
+    }
+
+    const data = await response.json();
+    console.log("Login response:", data);
+    return data;
   } catch (error) {
     console.error("Inicio de sesion fallido", error);
     throw error;
@@ -64,30 +50,58 @@ export const register = async (userData) => {
   return response.json();
 };
 
-export const updateProfile = async ({ username, profilePicture }) => {
+export const updateProfile = async ({ username, profilePicture, location, instagram_profile, twitter_profile, description }) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
   const formData = new FormData();
   formData.append("username", username);
   if (profilePicture) {
     formData.append("profilePicture", profilePicture);
   }
+  if (location) {
+    formData.append("location", location);
+  }
+  if (instagram_profile) {
+    formData.append("instagram_profile", instagram_profile);
+  }
+  if (twitter_profile) {
+    formData.append("twitter_profile", twitter_profile);
+  }
+  if (description) {
+    formData.append("description", description);
+  }
 
   try {
-    const response = await api.post("profile/update", formData);
+    const response = await fetch(`${API_URL}profile/update`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
 
+    if (!response.ok) {
+      throw new Error('Error al actualizar perfil');
+    }
+
+    const data = await response.json();
     const currentUser = JSON.parse(localStorage.getItem("user"));
-    const updatedUser = { ...currentUser, ...response.data.user };
+    const updatedUser = { ...currentUser, ...data.user };
     localStorage.setItem("user", JSON.stringify(updatedUser));
 
-    return response.data.user;
+    return data.user;
   } catch (error) {
     console.error("Error al actualizar perfil", error);
     throw error;
   }
 };
 
-export const getUserProfile = async (userId) => {
+export const getUserProfile = async (username) => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${userId}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${username}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -104,6 +118,69 @@ export const getUserProfile = async (userId) => {
     console.error("Error al obtener datos del usuario", error);
     throw error;
   }
+};
+
+export const getAllUsers = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al obtener usuarios');
+    }
+
+    const data = await response.json();
+    return data.users;
+  } catch (error) {
+    console.error("Error al obtener usuarios", error);
+    throw error;
+  }
+};
+
+export const followUser = async (userId) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/follow/${userId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al seguir/dejar de seguir al usuario');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en la acción de seguir", error);
+    throw error;
+  }
+};
+
+const api = {
+  login,
+  isAuthenticated,
+  logout,
+  register,
+  updateProfile,
+  getUserProfile,
+  getAllUsers
 };
 
 export default api;

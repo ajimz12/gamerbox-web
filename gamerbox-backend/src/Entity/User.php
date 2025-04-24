@@ -73,8 +73,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     #[ORM\OneToMany(targetEntity: ReviewComment::class, mappedBy: 'author')]
     private Collection $reviewComments;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $location = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $instagram_profile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $twitter_profile = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['user:read'])]
+    private ?string $description = null;
+
+    #[ORM\OneToMany(mappedBy: 'followed', targetEntity: Follow::class)]
+    private Collection $followers;
+
+    #[ORM\OneToMany(mappedBy: 'follower', targetEntity: Follow::class)]
+    private Collection $following;
+
     public function __construct()
     {
+        $this->followers = new ArrayCollection();
+        $this->following = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->listEntities = new ArrayCollection();
         $this->userGames = new ArrayCollection();
@@ -330,6 +354,88 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     public function setProfilePicture(?string $profilePicture): static
     {
         $this->profilePicture = $profilePicture;
+
+        return $this;
+    }
+
+    // Getters y setters para los nuevos campos
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?string $location): static
+    {
+        $this->location = $location;
+        return $this;
+    }
+
+    public function getInstagramProfile(): ?string
+    {
+        return $this->instagram_profile;
+    }
+
+    public function setInstagramProfile(?string $instagram_profile): static
+    {
+        $this->instagram_profile = $instagram_profile;
+        return $this;
+    }
+
+    public function getTwitterProfile(): ?string
+    {
+        return $this->twitter_profile;
+    }
+
+    public function setTwitterProfile(?string $twitter_profile): static
+    {
+        $this->twitter_profile = $twitter_profile;
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Follow>
+     */
+    public function getFollowers(): Collection
+    {
+        return $this->followers;
+    }
+
+    /**
+     * @return Collection<int, Follow>
+     */
+    public function getFollowing(): Collection
+    {
+        return $this->following;
+    }
+
+    public function addFollower(Follow $follow): static
+    {
+        if (!$this->followers->contains($follow)) {
+            $this->followers->add($follow);
+            $follow->setFollowed($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFollower(Follow $follow): static
+    {
+        if ($this->followers->removeElement($follow)) {
+            if ($follow->getFollowed() === $this) {
+                $follow->setFollowed(null);
+            }
+        }
 
         return $this;
     }

@@ -8,6 +8,7 @@ import Register from "../pages/Register";
 import EditProfile from "../pages/EditProfile";
 import RootLayout from "../layout/rootlayout";
 import UserProfile from "../pages/UserProfile";
+import Users from "../pages/Users";
 
 export const router = createBrowserRouter([
   {
@@ -44,8 +45,12 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "user/:id",
+        path: "user/:username",
         element: <UserProfile />,
+      },
+      {
+        path: "users",
+        element: <Users />,
       },
     ],
   },

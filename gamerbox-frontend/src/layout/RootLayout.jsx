@@ -32,6 +32,12 @@ const RootLayout = () => {
                             {isAuth ? (
                                 <>
                                     <Link 
+                                        to="/users"
+                                        className="px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+                                    >
+                                        Usuarios
+                                    </Link>
+                                    <Link 
                                         to="/dashboard" 
                                         className="flex items-center space-x-3 bg-violet-700 hover:bg-violet-800 px-4 py-2 rounded-md transition-colors"
                                     >
@@ -134,3 +140,4 @@ style.textContent = `
 document.head.appendChild(style);
 
 export default RootLayout;
+

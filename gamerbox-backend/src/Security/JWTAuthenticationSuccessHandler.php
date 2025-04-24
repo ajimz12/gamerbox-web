@@ -38,7 +38,13 @@ class JWTAuthenticationSuccessHandler implements AuthenticationSuccessHandlerInt
                 'username' => $user instanceof User ? $user->getUsername() : null,
                 'profilePicture' => $user instanceof User && $user->getProfilePicture() 
                     ? '/uploads/profile_pictures/' . $user->getProfilePicture() 
-                    : null
+                    : null,
+                'location' => $user instanceof User ? $user->getLocation() : null,
+                'instagram_profile' => $user instanceof User ? $user->getInstagramProfile() : null,
+                'twitter_profile' => $user instanceof User ? $user->getTwitterProfile() : null,
+                'description' => $user instanceof User ? $user->getDescription() : null,
+                'followers_count' => $user instanceof User ? count($user->getFollowers()) : 0,
+                'reviews' => $user instanceof User ? $user->getReviews()->toArray() : []
             ]
         ];
 
