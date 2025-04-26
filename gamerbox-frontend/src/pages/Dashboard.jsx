@@ -50,16 +50,25 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
-            <div className="flex space-x-8 mt-10">
-              <div className="text-center">
+            <div className="flex space-x-8 mt-4">
+              <Link to={`/user/${user.username}/followers`} className="text-center hover:text-violet-700">
                 <div className="flex items-center justify-center space-x-2">
                   <FaUserFriends className="text-violet-500 text-xl" />
                   <span className="block text-2xl font-bold text-violet-600">
-                    {user?.followers_count || 0}
+                    {user?.followers?.length || 0}
                   </span>
                 </div>
                 <span className="text-gray-600">Seguidores</span>
-              </div>
+              </Link>
+              <Link to={`/user/${user.username}/following`} className="text-center hover:text-violet-700">
+                <div className="flex items-center justify-center space-x-2">
+                  <FaUserFriends className="text-violet-500 text-xl" />
+                  <span className="block text-2xl font-bold text-violet-600">
+                    {user?.following?.length || 0}
+                  </span>
+                </div>
+                <span className="text-gray-600">Siguiendo</span>
+              </Link>
               <div className="text-center">
                 <div className="flex items-center justify-center space-x-2">
                   <FaGamepad className="text-violet-500 text-xl" />

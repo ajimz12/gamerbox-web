@@ -98,7 +98,8 @@ class UserController extends AbstractController
                     'description' => $user->getDescription(),
                     'instagram_profile' => $user->getInstagramProfile(),
                     'twitter_profile' => $user->getTwitterProfile(),
-                    'followers_count' => count($user->getFollowers()),
+                    'followers' => $user->getFollowers()->toArray(),
+                    'following' => $user->getFollowing()->toArray(),
                     'reviews' => $user->getReviews()->toArray()
                 ]
             ]);
@@ -113,9 +114,41 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager
     ): JsonResponse {
         $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
 
         if (!$user) {
             return new JsonResponse(['error' => 'Usuario no encontrado'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Obtener los seguidores
+        $followers = [];
+        $isFollowing = false;
+        foreach ($user->getFollowers() as $follow) {
+            $follower = $follow->getFollower();
+            if ($currentUser && $follower->getId() === $currentUser->getId()) {
+                $isFollowing = true;
+            }
+            $followers[] = [
+                'id' => $follower->getId(),
+                'username' => $follower->getUsername(),
+                'profilePicture' => $follower->getProfilePicture()
+                    ? '/uploads/profile_pictures/' . $follower->getProfilePicture()
+                    : null
+            ];
+        }
+
+        // Obtener los usuarios seguidos
+        $following = [];
+        foreach ($user->getFollowing() as $follow) {
+            $followed = $follow->getFollowed();
+            $following[] = [
+                'id' => $followed->getId(),
+                'username' => $followed->getUsername(),
+                'profilePicture' => $followed->getProfilePicture()
+                    ? '/uploads/profile_pictures/' . $followed->getProfilePicture()
+                    : null
+            ];
         }
 
         return new JsonResponse([
@@ -130,8 +163,10 @@ class UserController extends AbstractController
                 'description' => $user->getDescription(),
                 'instagram_profile' => $user->getInstagramProfile(),
                 'twitter_profile' => $user->getTwitterProfile(),
-                'followers_count' => count($user->getFollowers()),
-                'reviews' => $user->getReviews()->toArray()
+                'followers' => $followers,
+                'following' => $following,
+                'reviews' => $user->getReviews()->toArray(),
+                'isFollowing' => $isFollowing
             ]
         ]);
     }
@@ -200,7 +235,9 @@ class UserController extends AbstractController
 
         return new JsonResponse([
             'success' => true,
-            'isFollowing' => $isNowFollowing
+            'isFollowing' => $isNowFollowing,
+            'followersCount' => count($userToFollow->getFollowers()),
+            'followingCount' => count($currentUser->getFollowing())
         ]);
     }
 }

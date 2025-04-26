@@ -13,7 +13,7 @@ const Users = () => {
         const usersData = await getAllUsers();
         setUsers(usersData);
       } catch (error) {
-        setError('Error al cargar los usuarios. Por favor, inténtalo de nuevo más tarde.');
+        setError('Error al cargar los usuarios. Por favor, inténtalo de nuevo más tarde: ', error);
       } finally {
         setIsLoading(false);
       }

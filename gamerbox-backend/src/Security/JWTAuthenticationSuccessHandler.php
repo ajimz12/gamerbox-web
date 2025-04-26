@@ -33,7 +33,9 @@ class JWTAuthenticationSuccessHandler implements AuthenticationSuccessHandlerInt
         $jwt = $this->jwtManager->createFromPayload($user, $payload);
 
         $data = [
+            'token' => $jwt,
             'user' => [
+                'id' => $user instanceof User ? $user->getId() : null,
                 'email' => $user->getUserIdentifier(),
                 'username' => $user instanceof User ? $user->getUsername() : null,
                 'profilePicture' => $user instanceof User && $user->getProfilePicture() 
@@ -43,7 +45,10 @@ class JWTAuthenticationSuccessHandler implements AuthenticationSuccessHandlerInt
                 'instagram_profile' => $user instanceof User ? $user->getInstagramProfile() : null,
                 'twitter_profile' => $user instanceof User ? $user->getTwitterProfile() : null,
                 'description' => $user instanceof User ? $user->getDescription() : null,
-                'followers_count' => $user instanceof User ? count($user->getFollowers()) : 0,
+                // 'followers_count' => $user instanceof User ? count($user->getFollowers()) : 0,
+                // 'following_count' => $user instanceof User ? count($user->getFollowing()) : 0,
+                "followers" => $user instanceof User? $user->getFollowers()->toArray() : [],
+                "following" => $user instanceof User? $user->getFollowing()->toArray() : [],
                 'reviews' => $user instanceof User ? $user->getReviews()->toArray() : []
             ]
         ];

@@ -15,7 +15,8 @@ export const login = async (email, password) => {
     }
 
     const data = await response.json();
-    console.log("Login response:", data);
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
     return data;
   } catch (error) {
     console.error("Inicio de sesion fallido", error);
@@ -154,7 +155,7 @@ export const followUser = async (userId) => {
       throw new Error('No authentication token found');
     }
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/follow/${userId}`, {
+    const response = await fetch(`${API_URL}follow/${userId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -163,10 +164,12 @@ export const followUser = async (userId) => {
     });
 
     if (!response.ok) {
-      throw new Error('Error al seguir/dejar de seguir al usuario');
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Error al seguir/dejar de seguir al usuario');
     }
 
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error("Error en la acción de seguir", error);
     throw error;

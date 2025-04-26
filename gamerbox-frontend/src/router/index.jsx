@@ -9,6 +9,8 @@ import EditProfile from "../pages/EditProfile";
 import RootLayout from "../layout/rootlayout";
 import UserProfile from "../pages/UserProfile";
 import Users from "../pages/Users";
+import Followers from "../pages/Followers";
+import Following from "../pages/Following";
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +53,14 @@ export const router = createBrowserRouter([
       {
         path: "users",
         element: <Users />,
+      },
+      {
+        path: "user/:username/followers",
+        element: <Followers />,
+      },
+      {
+        path: "user/:username/following",
+        element: <Following />,
       },
     ],
   },
