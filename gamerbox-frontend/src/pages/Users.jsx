@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { getAllUsers } from '../services/api';
-import UserCard from '../components/UserCard';
+import { useState, useEffect } from "react";
+import { getAllUsers } from "../services/api";
+import UserCard from "../components/UserCard";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -13,7 +14,10 @@ const Users = () => {
         const usersData = await getAllUsers();
         setUsers(usersData);
       } catch (error) {
-        setError('Error al cargar los usuarios. Por favor, inténtalo de nuevo más tarde: ', error);
+        setError(
+          "Error al cargar los usuarios. Por favor, inténtalo de nuevo más tarde: ",
+          error
+        );
       } finally {
         setIsLoading(false);
       }
@@ -23,11 +27,7 @@ const Users = () => {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (error) {

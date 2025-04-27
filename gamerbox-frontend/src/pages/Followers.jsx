@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { getUserProfile } from "../services/api";
 import UserCard from "../components/UserCard";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Followers = () => {
   const { username } = useParams();
@@ -10,7 +11,7 @@ const Followers = () => {
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const fetchFollowers = async () => {
+  const fetchFollowers = useCallback(async () => {
     try {
       setIsLoading(true);
       setError("");
@@ -26,24 +27,20 @@ const Followers = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [username]);
 
   useEffect(() => {
     if (username) {
       fetchFollowers();
     }
-  }, [username, refreshKey]);
+  }, [username, refreshKey, fetchFollowers]);
 
   const handleFollowUpdate = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (error) {
@@ -67,8 +64,8 @@ const Followers = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {followers.map((follower) => (
-              <UserCard 
-                key={follower.id} 
+              <UserCard
+                key={follower.id}
                 user={follower}
                 onFollowUpdate={handleFollowUpdate}
               />

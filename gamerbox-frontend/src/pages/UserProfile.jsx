@@ -10,6 +10,9 @@ import {
   FaUserFriends,
   FaGamepad,
 } from "react-icons/fa";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const UserProfile = () => {
   const { username } = useParams();
@@ -27,12 +30,12 @@ const UserProfile = () => {
       setUser(userData);
       if (currentUser && userData.followers) {
         const isCurrentUserFollowing = userData.followers.some(
-          follower => follower.id === parseInt(currentUser.id)
+          (follower) => follower.id === parseInt(currentUser.id)
         );
         setIsFollowing(isCurrentUserFollowing);
       }
     } catch (error) {
-      setError(error.message || 'Error al cargar el perfil del usuario');
+      setError(error.message || "Error al cargar el perfil del usuario");
     } finally {
       setIsLoading(false);
     }
@@ -41,13 +44,10 @@ const UserProfile = () => {
   useEffect(() => {
     fetchUserProfile();
   }, [fetchUserProfile]);
-  
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
-      </div>
+      <LoadingSpinner />
     );
   }
 
@@ -75,15 +75,21 @@ const UserProfile = () => {
         ...prevUser,
         followers: result.isFollowing
           ? [...(prevUser.followers || []), currentUser]
-          : (prevUser.followers || []).filter(f => f.id !== currentUser.id)
+          : (prevUser.followers || []).filter((f) => f.id !== currentUser.id),
       }));
+      if (result.isFollowing) {
+        toast.success(`Ahora sigues a ${user.username}`);
+      } else {
+        toast.info(`Has dejado de seguir a ${user.username}`);
+      }
     } catch (error) {
-      setError(error.message || 'Error al seguir/dejar de seguir al usuario');
+      setError(error.message || "Error al seguir/dejar de seguir al usuario");
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <ToastContainer />
       {/* Banner de perfil */}
       <div className="h-64 bg-gradient-to-r from-indigo-800 via-violet-700 to-purple-800 relative">
         <div className="absolute bottom-0 left-0 w-full">
@@ -120,7 +126,10 @@ const UserProfile = () => {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <div className="flex space-x-8 mt-10">
-              <Link to={`/user/${user.username}/followers`} className="text-center hover:text-violet-700">
+              <Link
+                to={`/user/${user.username}/followers`}
+                className="text-center hover:text-violet-700"
+              >
                 <div className="flex items-center justify-center space-x-2">
                   <FaUserFriends className="text-violet-500 text-xl" />
                   <span className="block text-2xl font-bold text-violet-600">
@@ -129,7 +138,10 @@ const UserProfile = () => {
                 </div>
                 <span className="text-gray-600">Seguidores</span>
               </Link>
-              <Link to={`/user/${user.username}/following`} className="text-center hover:text-violet-700">
+              <Link
+                to={`/user/${user.username}/following`}
+                className="text-center hover:text-violet-700"
+              >
                 <div className="flex items-center justify-center space-x-2">
                   <FaUserFriends className="text-violet-500 text-xl" />
                   <span className="block text-2xl font-bold text-violet-600">
@@ -220,7 +232,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-      
+
       <ConfirmationModal
         isOpen={showUnfollowModal}
         onClose={() => setShowUnfollowModal(false)}

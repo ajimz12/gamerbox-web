@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { getUserProfile } from '../services/api';
 import UserCard from '../components/UserCard';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const Following = () => {
   const { username } = useParams();
@@ -10,7 +11,7 @@ const Following = () => {
   const [error, setError] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const fetchFollowing = async () => {
+  const fetchFollowing = useCallback(async () => {
     try {
       setIsLoading(true);
       setError('');
@@ -24,13 +25,13 @@ const Following = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [username]);
 
   useEffect(() => {
     if (username) {
       fetchFollowing();
     }
-  }, [username, refreshKey]);
+  }, [username, refreshKey, fetchFollowing]);
 
   const handleFollowUpdate = () => {
     setRefreshKey(prev => prev + 1);
@@ -38,9 +39,7 @@ const Following = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
-      </div>
+      <LoadingSpinner />
     );
   }
 

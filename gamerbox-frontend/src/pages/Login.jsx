@@ -27,7 +27,7 @@ const Login = () => {
             authLogin(data);
             navigate('/dashboard');
         } catch (error) {
-            setError('El correo o la contraseña son incorrectos');
+            setError('El correo o la contraseña son incorrectos: ', error);
         } finally {
             setIsLoading(false);
         }
