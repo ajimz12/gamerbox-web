@@ -47,12 +47,12 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "user/:username",
-        element: <UserProfile />,
+          path: "user/:username",
+          element: <UserProfile />,
       },
       {
-        path: "users",
-        element: <Users />,
+          path: "users",
+          element: <Users />,
       },
       {
         path: "user/:username/followers",

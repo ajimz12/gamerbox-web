@@ -123,16 +123,10 @@ export const getUserProfile = async (username) => {
 
 export const getAllUsers = async () => {
   try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
-
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
       }
     });
 

@@ -10,7 +10,7 @@ const ErrorPage = () => {
         </div>
         <h1 className="text-6xl font-bold text-rose-400 mb-4">¡Oops!</h1>
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-          Lo sentimos, algo salió mal
+          Parece que la princesa está en otro castillo
         </h2>
 
         <p className="text-gray-500 mb-6">

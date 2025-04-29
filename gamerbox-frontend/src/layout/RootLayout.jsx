@@ -5,11 +5,13 @@ import { useState } from "react";
 import { IoExitOutline } from "react-icons/io5";
 import { IoMenu, IoClose } from "react-icons/io5";
 import ConfirmationModal from "../components/ConfirmationModal";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const RootLayout = () => {
   const { isAuth, user, logout } = useAuth();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -47,33 +49,44 @@ const RootLayout = () => {
               )}
             </button>
 
-            {/* Menú de navegación para pantallas medianas y grandes */}
+            {/* Menú de navegación  */}
             <div className="hidden md:flex items-center space-x-4">
+              <Link
+                to="/users"
+                className="px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+              >
+                Usuarios
+              </Link>
               {isAuth ? (
                 <>
-                  <Link
-                    to="/users"
-                    className="px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
-                  >
-                    Usuarios
-                  </Link>
                   <Link
                     to="/dashboard"
                     className="flex items-center space-x-3 bg-violet-700 hover:bg-violet-800 px-4 py-2 rounded-md transition-colors"
                   >
                     <span className="font-medium">{user?.username}</span>
-                    <img
-                      src={
-                        user?.profilePicture
-                          ? `${import.meta.env.VITE_API_URL}${user.profilePicture}`
-                          : "/profile_pictures/pfp.png"
-                      }
-                      alt="Profile"
-                      className="w-8 h-8 rounded-full object-cover border-2 border-violet-500"
-                      onError={(e) => {
-                        e.target.src = "/profile_pictures/pfp.png";
-                      }}
-                    />
+                    <div className="relative w-8 h-8">
+                      {imageLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <LoadingSpinner size="small" />
+                        </div>
+                      )}
+                      <img
+                        src={
+                          user?.profilePicture
+                            ? `${import.meta.env.VITE_API_URL}${user.profilePicture}`
+                            : "/profile_pictures/pfp.png"
+                        }
+                        alt="Profile"
+                        className={`w-8 h-8 rounded-full object-cover border-2 border-violet-500 ${
+                          imageLoading ? 'opacity-0' : 'opacity-100'
+                        }`}
+                        onError={(e) => {
+                          e.target.src = "/profile_pictures/pfp.png";
+                          setImageLoading(false);
+                        }}
+                        onLoad={() => setImageLoading(false)}
+                      />
+                    </div>
                   </Link>
                   <button
                     onClick={handleLogout}
@@ -100,15 +113,15 @@ const RootLayout = () => {
               isMenuOpen ? "block" : "hidden"
             } md:hidden py-2 space-y-2`}
           >
+            <Link
+              to="/users"
+              className="block px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Usuarios
+            </Link>
             {isAuth ? (
               <>
-                <Link
-                  to="/users"
-                  className="block px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Usuarios
-                </Link>
                 <Link
                   to="/dashboard"
                   className="block px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
@@ -195,21 +208,5 @@ const RootLayout = () => {
     </div>
   );
 };
-
-// Move the animation style to global CSS or a styles file
-const style = document.createElement("style");
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-`;
-document.head.appendChild(style);
 
 export default RootLayout;
