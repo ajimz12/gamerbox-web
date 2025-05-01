@@ -11,6 +11,7 @@ import UserProfile from "../pages/UserProfile";
 import Users from "../pages/Users";
 import Followers from "../pages/Followers";
 import Following from "../pages/Following";
+import Games from "../pages/Games";
 
 export const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ export const router = createBrowserRouter([
         path: "user/:username/following",
         element: <Following />,
       },
+      {
+        path: "games",
+        element: <Games />,
+      }
     ],
   },
 ]);

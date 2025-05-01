@@ -10,7 +10,7 @@ const PopularGames = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/games`);
+        const response = await fetch(`${API_URL}/api/games?page_size=10&ordering=-metacritic`);
         const data = await response.json();
         setGames(data.results);
       } catch (error) {
