@@ -14,9 +14,9 @@ const Dashboard = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-[#121212]">
       {/* Banner de perfil */}
-      <div className="h-64 bg-gradient-to-r from-indigo-800 via-violet-700 to-purple-800 relative">
+      <div className="h-64 bg-gradient-to-r from-[#3D5AFE] via-[#5C6BC0] to-[#3D5AFE] relative">
         <div className="absolute bottom-0 left-0 w-full">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
             <div className="flex items-end space-x-6">
@@ -27,15 +27,15 @@ const Dashboard = () => {
                     : "/profile_pictures/pfp.png"
                 }
                 alt={`${user.username}'s profile`}
-                className="w-32 h-32 rounded-full border-4 border-white shadow-xl object-cover transform -translate-y-4"
+                className="w-32 h-32 rounded-full border-4 border-[#3D5AFE] shadow-xl object-cover transform -translate-y-4"
                 onError={(e) => {
                   e.target.src = "/profile_pictures/pfp.png";
                 }}
               />
-              <div className="pb-4 text-white">
+              <div className="pb-4 text-[#E0E0E0]">
                 <h1 className="text-4xl font-bold">{user?.username}</h1>
                 {user?.location && (
-                  <div className="flex items-center mt-2 text-gray-200">
+                  <div className="flex items-center mt-2 text-[#A0A0A0]">
                     <FaMapMarkerAlt className="mr-2" />
                     <span>{user.location}</span>
                   </div>
@@ -48,62 +48,61 @@ const Dashboard = () => {
 
       {/* Contenido principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-6 border border-[#2C2C2C]">
           <div className="flex justify-between items-center mb-6">
             <div className="flex space-x-8 mt-4">
-              <Link to={`/user/${user.username}/followers`} className="text-center hover:text-violet-700">
+              <Link to={`/user/${user.username}/followers`} className="text-center hover:text-[#5C6BC0]">
                 <div className="flex items-center justify-center space-x-2">
-                  <FaUserFriends className="text-violet-500 text-xl" />
-                  <span className="block text-2xl font-bold text-violet-600">
+                  <FaUserFriends className="text-[#3D5AFE] text-xl" />
+                  <span className="block text-2xl font-bold text-[#3D5AFE]">
                     {user?.followers?.length || 0}
                   </span>
                 </div>
-                <span className="text-gray-600">Seguidores</span>
+                <span className="text-[#A0A0A0]">Seguidores</span>
               </Link>
-              <Link to={`/user/${user.username}/following`} className="text-center hover:text-violet-700">
+              <Link to={`/user/${user.username}/following`} className="text-center hover:text-[#5C6BC0]">
                 <div className="flex items-center justify-center space-x-2">
-                  <FaUserFriends className="text-violet-500 text-xl" />
-                  <span className="block text-2xl font-bold text-violet-600">
+                  <FaUserFriends className="text-[#3D5AFE] text-xl" />
+                  <span className="block text-2xl font-bold text-[#3D5AFE]">
                     {user?.following?.length || 0}
                   </span>
                 </div>
-                <span className="text-gray-600">Siguiendo</span>
+                <span className="text-[#A0A0A0]">Siguiendo</span>
               </Link>
               <div className="text-center">
                 <div className="flex items-center justify-center space-x-2">
-                  <FaGamepad className="text-violet-500 text-xl" />
-                  <span className="block text-2xl font-bold text-violet-600">
+                  <FaGamepad className="text-[#3D5AFE] text-xl" />
+                  <span className="block text-2xl font-bold text-[#3D5AFE]">
                     {user?.reviews?.length || 0}
                   </span>
                 </div>
-                <span className="text-gray-600">Juegos</span>
+                <span className="text-[#A0A0A0]">Juegos</span>
               </div>
             </div>
             <Link
               to="/profile/edit"
-              className="px-6 py-2 bg-violet-600 text-white rounded-full hover:bg-violet-700 transition-colors"
+              className="px-6 py-2 bg-[#3D5AFE] text-[#E0E0E0] rounded-full hover:bg-[#5C6BC0] transition-colors"
             >
               Editar Perfil
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Columna de información */}
             <div className="space-y-6">
               {user?.description && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-[#E0E0E0] mb-2">
                     Sobre mí
                   </h3>
-                  <p className="text-gray-600 whitespace-pre-wrap">
+                  <p className="text-[#A0A0A0] whitespace-pre-wrap">
                     {user.description}
                   </p>
                 </div>
               )}
 
               <div className="space-y-3">
-                <div className="flex items-center text-gray-600">
-                  <FaEnvelope className="mr-2 text-violet-500" />
+                <div className="flex items-center text-[#A0A0A0]">
+                  <FaEnvelope className="mr-2 text-[#3D5AFE]" />
                   <span>{user?.email}</span>
                 </div>
                 {user?.instagram_profile && (
@@ -111,7 +110,7 @@ const Dashboard = () => {
                     href={`https://instagram.com/${user.instagram_profile.replace("@", "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center text-gray-600 hover:text-violet-500 transition-colors"
+                    className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"
                   >
                     <FaInstagram className="mr-2" />
                     <span>{user.instagram_profile.replace("@", "")}</span>
@@ -122,7 +121,7 @@ const Dashboard = () => {
                     href={`https://twitter.com/${user.twitter_profile.replace("@", "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center text-gray-600 hover:text-violet-500 transition-colors"
+                    className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"
                   >
                     <FaTwitter className="mr-2" />
                     <span>{user.twitter_profile.replace("@", "")}</span>
@@ -131,12 +130,11 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Columna de actividad reciente */}
             <div className="md:col-span-2">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-[#E0E0E0] mb-4">
                 Actividad Reciente
               </h3>
-              <div className="bg-gray-50 rounded-lg p-4 text-center text-gray-600">
+              <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
                 No hay actividad reciente para mostrar
               </div>
             </div>

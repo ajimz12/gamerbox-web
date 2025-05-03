@@ -55,16 +55,16 @@ const EditProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Editar Perfil</h2>
+    <div className="min-h-screen bg-[#121212] py-8">
+      <div className="max-w-2xl mx-auto bg-[#1E1E1E] p-8 rounded-lg shadow border border-[#2C2C2C]">
+        <h2 className="text-2xl font-bold text-[#E0E0E0] mb-6">Editar Perfil</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Foto de perfil */}
           <div>
             <div className="flex items-center space-x-6">
               <div className="shrink-0">
                 <img
-                  className="h-16 w-16 object-cover rounded-full"
+                  className="h-16 w-16 object-cover rounded-full border-2 border-[#3D5AFE]"
                   src={previewUrl}
                   alt="Profile preview"
                   onError={(e) => {
@@ -78,21 +78,21 @@ const EditProfile = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="block w-full text-sm text-slate-500
+                  className="block w-full text-sm text-[#A0A0A0]
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-full file:border-0
                     file:text-sm file:font-semibold
-                    file:bg-violet-50 file:text-violet-700
-                    hover:file:bg-violet-100
+                    file:bg-[#3D5AFE] file:text-[#E0E0E0]
+                    hover:file:bg-[#5C6BC0]
                     cursor-pointer"
                 />
               </label>
             </div>
           </div>
 
-          {/* Nombre de usuario */}
+          {/* Campos de formulario */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="username" className="block text-sm font-medium text-[#E0E0E0] mb-2">
               Nombre de Usuario
             </label>
             <input
@@ -100,14 +100,14 @@ const EditProfile = () => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 
-                focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+              className="appearance-none block w-full px-3 py-2 border border-[#2C2C2C] rounded-md shadow-sm 
+                placeholder-[#A0A0A0] bg-[#1E1E1E] text-[#E0E0E0]
+                focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE]"
             />
           </div>
 
-          {/* Ubicación */}
           <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="location" className="block text-sm font-medium text-[#E0E0E0] mb-2">
               Ubicación
             </label>
             <input
@@ -116,52 +116,53 @@ const EditProfile = () => {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="Ej: Madrid, España"
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 
-                focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+              className="appearance-none block w-full px-3 py-2 border border-[#2C2C2C] rounded-md shadow-sm 
+                placeholder-[#A0A0A0] bg-[#1E1E1E] text-[#E0E0E0]
+                focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE]"
             />
           </div>
 
-          {/* Redes sociales */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="instagram" className="block text-sm font-medium text-[#E0E0E0] mb-2">
                 Usuario de Instagram
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">@</span>
+                <span className="absolute left-3 top-2 text-[#A0A0A0]">@</span>
                 <input
                   type="text"
                   id="instagram"
                   value={instagramProfile}
                   onChange={(e) => setInstagramProfile(e.target.value.replace('@', ''))}
                   placeholder="usuario"
-                  className="appearance-none block w-full pl-8 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 
-                    focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+                  className="appearance-none block w-full pl-8 px-3 py-2 border border-[#2C2C2C] rounded-md shadow-sm 
+                    placeholder-[#A0A0A0] bg-[#1E1E1E] text-[#E0E0E0]
+                    focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE]"
                 />
               </div>
             </div>
             <div>
-              <label htmlFor="twitter" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="twitter" className="block text-sm font-medium text-[#E0E0E0] mb-2">
                 Usuario de Twitter
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">@</span>
+                <span className="absolute left-3 top-2 text-[#A0A0A0]">@</span>
                 <input
                   type="text"
                   id="twitter"
                   value={twitterProfile}
                   onChange={(e) => setTwitterProfile(e.target.value.replace('@', ''))}
                   placeholder="usuario"
-                  className="appearance-none block w-full pl-8 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 
-                    focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+                  className="appearance-none block w-full pl-8 px-3 py-2 border border-[#2C2C2C] rounded-md shadow-sm 
+                    placeholder-[#A0A0A0] bg-[#1E1E1E] text-[#E0E0E0]
+                    focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE]"
                 />
               </div>
             </div>
           </div>
 
-          {/* Descripción */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="description" className="block text-sm font-medium text-[#E0E0E0] mb-2">
               Sobre mí
             </label>
             <textarea
@@ -170,8 +171,9 @@ const EditProfile = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Cuéntanos sobre ti..."
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 
-                focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+              className="appearance-none block w-full px-3 py-2 border border-[#2C2C2C] rounded-md shadow-sm 
+                placeholder-[#A0A0A0] bg-[#1E1E1E] text-[#E0E0E0]
+                focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE]"
             />
           </div>
 
@@ -185,14 +187,14 @@ const EditProfile = () => {
             <button
               type="button"
               onClick={() => navigate('/dashboard')}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md cursor-pointer"
+              className="px-4 py-2 text-sm font-medium text-[#E0E0E0] bg-[#2C2C2C] hover:bg-[#1E1E1E] rounded-md cursor-pointer"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-md cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-[#E0E0E0] bg-[#3D5AFE] hover:bg-[#5C6BC0] rounded-md cursor-pointer disabled:opacity-50"
             >
               {isLoading ? 'Guardando...' : 'Guardar Cambios'}
             </button>

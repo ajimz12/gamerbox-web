@@ -95,17 +95,17 @@ const Games = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#121212]">
         <div className="text-red-500">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[#121212] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          <h1 className="text-3xl font-bold text-[#E0E0E0] mb-6">
             Explorar Juegos
           </h1>
           <SearchBar onSearch={handleSearch} placeholder="Buscar juegos..." />
@@ -123,7 +123,7 @@ const Games = () => {
           <div className="mt-8 flex justify-center">
             <button
               onClick={loadMore}
-              className="bg-violet-600 text-white px-6 py-2 rounded-md hover:bg-violet-700 transition-colors"
+              className="bg-[#3D5AFE] text-[#E0E0E0] px-6 py-2 rounded-md hover:bg-[#5C6BC0] transition-colors"
             >
               Cargar más juegos
             </button>

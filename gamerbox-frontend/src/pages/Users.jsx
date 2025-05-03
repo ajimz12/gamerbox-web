@@ -42,16 +42,16 @@ const Users = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#121212]">
         <div className="text-red-500">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[#121212] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Usuarios</h1>
+        <h1 className="text-3xl font-bold text-[#E0E0E0] mb-8">Usuarios</h1>
         <div className="mb-8 flex justify-center">
           <SearchBar onSearch={handleSearch} placeholder="Buscar usuarios..." />
         </div>

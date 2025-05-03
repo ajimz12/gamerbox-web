@@ -53,10 +53,10 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
+    <div className="min-h-screen flex items-center justify-center bg-[#121212]">
+      <div className="max-w-md w-full space-y-8 p-8 bg-[#1E1E1E] rounded-lg shadow border border-[#2C2C2C]">
         <div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="text-center text-3xl font-extrabold text-[#E0E0E0]">
             Crear Cuenta
           </h2>
         </div>
@@ -71,7 +71,7 @@ const Register = () => {
                 name="username"
                 type="text"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#1E1E1E] focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE] focus:z-10 sm:text-sm"
                 placeholder="Nombre de Usuario"
                 value={formData.username}
                 onChange={handleChange}
@@ -86,7 +86,7 @@ const Register = () => {
                 name="email"
                 type="email"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#1E1E1E] focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE] focus:z-10 sm:text-sm"
                 placeholder="Correo Electrónico"
                 value={formData.email}
                 onChange={handleChange}
@@ -101,7 +101,7 @@ const Register = () => {
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#1E1E1E] focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE] focus:z-10 sm:text-sm"
                 placeholder="Contraseña"
                 value={formData.password}
                 onChange={handleChange}
@@ -116,7 +116,7 @@ const Register = () => {
                 name="confirmPassword"
                 type="password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#1E1E1E] focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE] focus:z-10 sm:text-sm"
                 placeholder="Confirmar Contraseña"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -132,7 +132,7 @@ const Register = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 disabled:opacity-50"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-[#E0E0E0] bg-[#3D5AFE] hover:bg-[#5C6BC0] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3D5AFE] disabled:opacity-50"
             >
               {isLoading ? (
                 <>
@@ -144,10 +144,10 @@ const Register = () => {
             </button>
           </div>
           <div className="text-sm text-center">
-            <span className="text-gray-600">¿Ya tienes una cuenta? </span>
+            <span className="text-[#A0A0A0]">¿Ya tienes una cuenta? </span>
             <Link
               to="/login"
-              className="font-medium text-violet-600 hover:text-violet-500"
+              className="font-medium text-[#3D5AFE] hover:text-[#5C6BC0]"
             >
               Inicia Sesión
             </Link>

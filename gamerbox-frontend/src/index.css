@@ -1,3 +1,18 @@
 @import "tailwindcss";
 
-
+@layer base {
+  :root {
+    --color-background: #121212;
+    --color-background-secondary: #1E1E1E;
+    --color-text-primary: #E0E0E0;
+    --color-text-secondary: #A0A0A0;
+    --color-accent: #3D5AFE;
+    --color-border: #2C2C2C;
+    --color-hover: #5C6BC0;
+  }
+  
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+  }
+}

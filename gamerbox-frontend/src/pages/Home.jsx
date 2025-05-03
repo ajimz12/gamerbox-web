@@ -1,59 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PopularGames from "../components/PopularGames";
 
 const Home = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
-  const [backgroundImage, setBackgroundImage] = useState(null);
-  const [games, setGames] = useState([]);
-
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const response = await fetch(`${API_URL}/api/games	`);
-        const data = await response.json();
-        setGames(data.results);
-        if (data.results.length > 0) {
-          const randomGame =
-            data.results[Math.floor(Math.random() * data.results.length)];
-          setBackgroundImage(randomGame.background_image);
-        }
-      } catch (error) {
-        console.error("Error fetching games:", error);
-      }
-    };
-
-    fetchGames();
-  }, []);
-
-  useEffect(() => {
-    if (games.length > 0) {
-      const interval = setInterval(() => {
-        const randomGame = games[Math.floor(Math.random() * games.length)];
-        setBackgroundImage(randomGame.background_image);
-      }, 10000);
-
-      return () => clearInterval(interval);
-    }
-  }, [games]);
-
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center bg-[#121212]">
       {/* Banner */}
       <div
         className="w-full flex items-center justify-center relative overflow-hidden"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent), url(${backgroundImage})`,
+          backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 18, 0.3), rgba(18, 18, 18, 0.6) 70%, rgba(18, 18, 18, 1)), url(/header.png)`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           minHeight: "400px",
-          transition: "background-image 1s ease-in-out",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-50" />
-        <div className="z-10 flex flex-col items-center gap-4 text-white text-2xl md:text-4xl font-bold">
-          <h1>Registra lo que has jugado</h1>
-          <h1>Descubre los que aún te esperan</h1>
-          <h1>Comparte lo mejor con tu comunidad</h1>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-transparent to-[#121212] opacity-20" />
+        <div className="z-10 flex flex-col items-center gap-4 text-[#E0E0E0] text-2xl md:text-4xl font-bold">
+          <h1>Juega.</h1>
+          <h1>Descubre.</h1>
+          <h1>Comparte.</h1>
         </div>
       </div>
 

@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "./LoadingSpinner";
 import ConfirmationModal from "./ConfirmationModal";
 
+import React from "react";
+
 const Navbar = () => {
   const { isAuth, user, logout } = useAuth();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -30,7 +32,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-violet-600 text-white shadow-lg">
+      <nav className="bg-[#1E1E1E] text-[#E0E0E0] shadow-lg border-b border-[#2C2C2C]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <Link to="/" className="flex items-center space-x-2 cursor-pointer">
@@ -39,7 +41,7 @@ const Navbar = () => {
 
             <button
               onClick={toggleMenu}
-              className="md:hidden p-2 rounded-md hover:bg-violet-700 transition-colors"
+              className="md:hidden p-2 rounded-md hover:bg-[#5C6BC0] transition-colors"
             >
               {isMenuOpen ? (
                 <IoClose className="h-6 w-6" />
@@ -51,13 +53,13 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 to="/users"
-                className="px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+                className="px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
               >
                 Usuarios
               </Link>
               <Link
                 to="/games"
-                className="px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+                className="px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
               >
                 Juegos
               </Link>
@@ -65,7 +67,7 @@ const Navbar = () => {
                 <>
                   <Link
                     to="/dashboard"
-                    className="flex items-center space-x-3 bg-violet-700 hover:bg-violet-800 px-4 py-2 rounded-md transition-colors"
+                    className="flex items-center space-x-3 bg-[#3D5AFE] hover:bg-[#5C6BC0] px-4 py-2 rounded-md transition-colors"
                   >
                     <span className="font-medium">{user?.username}</span>
                     <div className="relative w-8 h-8">
@@ -103,7 +105,7 @@ const Navbar = () => {
               ) : (
                 <Link
                   to="/login"
-                  className="px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+                  className="px-4 py-2 bg-[#3D5AFE] hover:bg-[#5C6BC0] rounded-md transition-colors"
                 >
                   Iniciar Sesión
                 </Link>
@@ -118,14 +120,14 @@ const Navbar = () => {
           >
             <Link
               to="/users"
-              className="block px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+              className="block px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Usuarios
             </Link>
             <Link
               to="/games"
-              className="block px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+              className="block px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Juegos
@@ -134,7 +136,7 @@ const Navbar = () => {
               <>
                 <Link
                   to="/dashboard"
-                  className="block px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+                  className="block px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <div className="flex items-center space-x-3">
@@ -158,7 +160,7 @@ const Navbar = () => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="w-full text-left px-4 py-2 hover:bg-violet-700 rounded-md transition-colors flex items-center space-x-2"
+                  className="w-full text-left px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors flex items-center space-x-2"
                 >
                   <IoExitOutline className="w-6 h-6" />
                   <span>Cerrar Sesión</span>
@@ -167,7 +169,7 @@ const Navbar = () => {
             ) : (
               <Link
                 to="/login"
-                className="block px-4 py-2 hover:bg-violet-700 rounded-md transition-colors"
+                className="block px-4 py-2 bg-[#3D5AFE] hover:bg-[#5C6BC0] rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Iniciar Sesión
