@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import { getUserProfile } from "../services/api";
 import {
   FaMapMarkerAlt,
   FaInstagram,
@@ -11,7 +12,25 @@ import {
 } from "react-icons/fa";
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, login: updateAuthUser } = useAuth();
+  const [userData, setUserData] = useState(user);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const updatedUserData = await getUserProfile(user.username);
+        setUserData(updatedUserData);
+        updateAuthUser({
+          user: updatedUserData,
+          token: localStorage.getItem('token')
+        });
+      } catch (error) {
+        console.error("Error al actualizar datos del usuario:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [user.username, updateAuthUser]);
 
   return (
     <div className="min-h-screen bg-[#121212]">

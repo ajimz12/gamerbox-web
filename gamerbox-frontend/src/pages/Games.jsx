@@ -3,9 +3,9 @@ import GameCard from "../components/GameCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import SearchBar from "../components/SearchBar";
 import { debounce } from "lodash";
+import { fetchGames, searchGames } from "../services/rawgService";
 
 const Games = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,13 +21,10 @@ const Games = () => {
   }, [games]);
 
   useEffect(() => {
-    const fetchGames = async () => {
+    const loadGames = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(
-          `${API_URL}/api/games?page=${page}&page_size=200`
-        );
-        const data = await response.json();
+        const data = await fetchGames(page);
 
         if (page === 1) {
           setGames(data.results);
@@ -48,9 +45,9 @@ const Games = () => {
     };
 
     if (!searchTerm) {
-      fetchGames();
+      loadGames();
     }
-  }, [page, API_URL, searchTerm]);
+  }, [page, searchTerm]);
 
   const debouncedSearch = useCallback(
     debounce(async (term) => {
@@ -62,8 +59,7 @@ const Games = () => {
 
       try {
         setIsLoading(true);
-        const response = await fetch(`${API_URL}/api/games?search=${term}`);
-        const data = await response.json();
+        const data = await searchGames(term);
         setFilteredGames(data.results);
         setHasMore(false);
       } catch (error) {
@@ -73,7 +69,7 @@ const Games = () => {
         setIsLoading(false);
       }
     }, 400),
-    [API_URL]
+    []
   );
 
   useEffect(() => {
@@ -123,7 +119,7 @@ const Games = () => {
           <div className="mt-8 flex justify-center">
             <button
               onClick={loadMore}
-              className="bg-[#3D5AFE] text-[#E0E0E0] px-6 py-2 rounded-md hover:bg-[#5C6BC0] transition-colors"
+              className="bg-[#3D5AFE] text-[#E0E0E0] px-6 py-2 cursor-pointer rounded-md hover:bg-[#5C6BC0] transition-colors"
             >
               Cargar más juegos
             </button>

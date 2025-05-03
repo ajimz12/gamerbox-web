@@ -3,22 +3,23 @@ import { IoGameController } from "react-icons/io5";
 
 const ErrorPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#121212]">
-      <div className="text-center bg-[#1E1E1E] p-8 rounded-lg shadow-lg max-w-md border border-[#2C2C2C]">
-        <div className="flex justify-center mb-4">
-          <IoGameController className="text-[#3D5AFE] text-7xl animate-bounce" />
+    <div className="min-h-screen flex items-center justify-center bg-[#121212] px-4">
+      <div className="flex flex-col items-center text-center bg-[#1E1E1E] p-10 rounded-2xl shadow-2xl border border-[#2C2C2C] max-w-lg w-full space-y-6">
+        <img
+          src="/img/errorpage.png"
+          alt="Error 404"
+          className="w-100 h-72 object-contain"
+        />
+        <div>
+          <h1 className="text-5xl font-bold text-[#3D5AFE] mb-8">¡Oops!</h1>
+          <h2 className="text-xl text-[#A0A0A0]">
+            La página que buscas no existe o no está disponible en este momento.
+          </h2>
         </div>
-        <h1 className="text-6xl font-bold text-[#3D5AFE] mb-4">¡Oops!</h1>
-        <h2 className="text-2xl font-semibold text-[#E0E0E0] mb-4">
-          Parece que la princesa está en otro castillo
-        </h2>
 
-        <p className="text-[#A0A0A0] mb-6">
-          La página que buscas no existe o no está disponible en este momento
-        </p>
         <Link
           to="/"
-          className="inline-block bg-[#3D5AFE] text-[#E0E0E0] px-6 py-2 rounded-full hover:bg-[#5C6BC0] transition-colors"
+          className="bg-[#3D5AFE] text-[#E0E0E0] px-6 py-2 rounded-full hover:bg-[#5C6BC0] transition-colors font-medium"
         >
           Volver al inicio
         </Link>

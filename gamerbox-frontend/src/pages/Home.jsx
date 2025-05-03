@@ -8,7 +8,7 @@ const Home = () => {
       <div
         className="w-full flex items-center justify-center relative overflow-hidden"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 18, 0.3), rgba(18, 18, 18, 0.6) 70%, rgba(18, 18, 18, 1)), url(/header.png)`,
+          backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 18, 0.3), rgba(18, 18, 18, 0.6) 70%, rgba(18, 18, 18, 1)), url(/img/header.png)`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           minHeight: "400px",
