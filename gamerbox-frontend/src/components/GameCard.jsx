@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../assets/GameCard.css";
 
 const genreTranslations = {
@@ -23,8 +24,14 @@ const translateGenre = (genre) => {
 };
 
 const GameCard = ({ game }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/games/${game.id}`);
+  };
+
   return (
-    <div className="game-card cursor-pointer">
+    <div className="game-card cursor-pointer" onClick={handleClick}>
       <div className="image-container">
         <img
           src={game.background_image}

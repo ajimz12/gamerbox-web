@@ -12,6 +12,7 @@ import Users from "../pages/Users";
 import Followers from "../pages/Followers";
 import Following from "../pages/Following";
 import Games from "../pages/Games";
+import GameDetails from "../pages/GameDetails";
 
 export const router = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ export const router = createBrowserRouter([
       {
         path: "games",
         element: <Games />,
+      },
+      {
+        path: "games/:id",
+        element: <GameDetails />,
       }
     ],
   },

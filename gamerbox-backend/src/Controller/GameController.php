@@ -43,4 +43,30 @@ class GameController extends AbstractController
         $data = $response->toArray();
         return $this->json($data);
     }
+
+    #[Route('/api/games/{id}', name: 'api_game_details')]
+    public function getGameDetails(string $id): JsonResponse
+    {
+        $response = $this->client->request('GET', "https://api.rawg.io/api/games/{$id}", [
+            'query' => [
+                'key' => $this->rawgApiKey,
+            ],
+        ]);
+
+        $data = $response->toArray();
+        return $this->json($data);
+    }
+
+    #[Route('/api/games/{id}/screenshots', name: 'api_game_screenshots')]
+    public function getGameScreenshots(string $id): JsonResponse
+    {
+        $response = $this->client->request('GET', "https://api.rawg.io/api/games/{$id}/screenshots", [
+            'query' => [
+                'key' => $this->rawgApiKey,
+            ],
+        ]);
+
+        $data = $response->toArray();
+        return $this->json($data);
+    }
 }

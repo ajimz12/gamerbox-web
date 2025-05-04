@@ -18,3 +18,15 @@ export const fetchPopularGames = async (pageSize = 10) => {
   );
   return response.json();
 };
+
+export const fetchGameDetails = async (gameId) => {
+  const response = await fetch(`${API_URL}/api/games/${gameId}`);
+  return response.json();
+};
+
+export const fetchGameScreenshots = async (id) => {
+  const response = await fetch(`${API_URL}/api/games/${id}/screenshots`);
+  if (!response.ok) throw new Error("Failed to fetch screenshots");
+  const data = await response.json();
+  return data.results;
+};
