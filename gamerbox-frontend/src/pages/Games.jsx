@@ -13,6 +13,19 @@ const Games = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("");
+
+  const genres = [
+    { id: "", name: "Todos los géneros" },
+    { id: "4", name: "Acción" },
+    { id: "3", name: "Aventura" },
+    { id: "5", name: "RPG" },
+    { id: "2", name: "Shooter" },
+    { id: "10", name: "Estrategia" },
+    { id: "7", name: "Puzzle" },
+    { id: "1", name: "Carreras" },
+    { id: "15", name: "Deportes" }
+  ];
 
   const gamesRef = useRef([]);
 
@@ -24,7 +37,7 @@ const Games = () => {
     const loadGames = async () => {
       try {
         setIsLoading(true);
-        const data = await fetchGames(page);
+        const data = await fetchGames(page, 200, selectedGenre);
 
         if (page === 1) {
           setGames(data.results);
@@ -47,7 +60,7 @@ const Games = () => {
     if (!searchTerm) {
       loadGames();
     }
-  }, [page, searchTerm]);
+  }, [page, searchTerm, selectedGenre]);
 
   const debouncedSearch = useCallback(
     debounce(async (term) => {
@@ -60,7 +73,12 @@ const Games = () => {
       try {
         setIsLoading(true);
         const data = await searchGames(term);
-        setFilteredGames(data.results);
+        const results = selectedGenre
+          ? data.results.filter(game => 
+              game.genres.some(genre => genre.id === parseInt(selectedGenre))
+            )
+          : data.results;
+        setFilteredGames(results);
         setHasMore(false);
       } catch (error) {
         console.error("Error searching games:", error);
@@ -69,8 +87,38 @@ const Games = () => {
         setIsLoading(false);
       }
     }, 400),
-    []
+    [selectedGenre] 
   );
+
+  useEffect(() => {
+    const loadGames = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchGames(page, 200, selectedGenre);
+
+        if (page === 1) {
+          setGames(data.results);
+          setFilteredGames(data.results);
+        } else {
+          const newGames = [...gamesRef.current, ...data.results];
+          setGames(newGames);
+          setFilteredGames(newGames);
+        }
+
+        setHasMore(data.next !== null);
+      } catch (error) {
+        setError("Error al cargar los juegos");
+        console.error("Error fetching games:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (!searchTerm) {
+      setPage(1);
+      loadGames();
+    }
+  }, [page, searchTerm, selectedGenre]);
 
   useEffect(() => {
     return () => {
@@ -104,7 +152,23 @@ const Games = () => {
           <h1 className="text-3xl font-bold text-[#E0E0E0] mb-6">
             Explorar Juegos
           </h1>
-          <SearchBar onSearch={handleSearch} placeholder="Buscar juegos..." />
+          <div className="flex flex-col md:flex-row gap-4 w-full max-w-4xl">
+            <SearchBar onSearch={handleSearch} placeholder="Buscar juegos..." />
+            <select
+              value={selectedGenre}
+              onChange={(e) => {
+                setSelectedGenre(e.target.value);
+                setPage(1);
+              }}
+              className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-colors"
+            >
+              {genres.map((genre) => (
+                <option key={genre.id} value={genre.id}>
+                  {genre.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

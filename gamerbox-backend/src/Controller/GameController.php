@@ -25,6 +25,7 @@ class GameController extends AbstractController
         $page = $request->query->get('page', 1);
         $pageSize = $request->query->get('page_size', 20);
         $search = $request->query->get('search');
+        $genres = $request->query->get('genres');
 
         $query = [
             'key' => $this->rawgApiKey,
@@ -34,6 +35,10 @@ class GameController extends AbstractController
 
         if ($search) {
             $query['search'] = $search;
+        }
+
+        if ($genres) {
+            $query['genres'] = $genres;
         }
 
         $response = $this->client->request('GET', 'https://api.rawg.io/api/games', [

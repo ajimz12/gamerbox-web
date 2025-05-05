@@ -1,9 +1,13 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const fetchGames = async (page = 1, pageSize = 200) => {
-  const response = await fetch(
-    `${API_URL}/api/games?page=${page}&page_size=${pageSize}`
-  );
+export const fetchGames = async (page = 1, pageSize = 200, genres = null) => {
+  const url = new URL(`${API_URL}/api/games`);
+  url.searchParams.append('page', page);
+  url.searchParams.append('page_size', pageSize);
+  if (genres) {
+    url.searchParams.append('genres', genres);
+  }
+  const response = await fetch(url);
   return response.json();
 };
 
