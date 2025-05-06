@@ -1,12 +1,24 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const fetchGames = async (page = 1, pageSize = 200, genres = null) => {
+export const fetchGames = async (page = 1, pageSize = 20, genres = null, platforms = null, year = null) => {
   const url = new URL(`${API_URL}/api/games`);
   url.searchParams.append('page', page);
   url.searchParams.append('page_size', pageSize);
+  
   if (genres) {
     url.searchParams.append('genres', genres);
   }
+  
+  if (platforms) {
+    url.searchParams.append('parent_platforms', platforms);
+  }
+  
+  if (year) {
+    const startDate = `${year}-01-01`;
+    const endDate = `${year}-12-31`;
+    url.searchParams.append('dates', `${startDate},${endDate}`);
+  }
+  
   const response = await fetch(url);
   return response.json();
 };
@@ -33,4 +45,16 @@ export const fetchGameScreenshots = async (id) => {
   if (!response.ok) throw new Error("Failed to fetch screenshots");
   const data = await response.json();
   return data.results;
+};
+
+export const fetchGenres = async () => {
+  const url = new URL(`${API_URL}/api/genres`);
+  const response = await fetch(url);
+  return response.json();
+};
+
+export const fetchPlatforms = async () => {
+  const url = new URL(`${API_URL}/api/platforms`);
+  const response = await fetch(url);
+  return response.json();
 };

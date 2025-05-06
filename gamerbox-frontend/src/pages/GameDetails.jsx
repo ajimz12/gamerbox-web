@@ -5,25 +5,28 @@ import {
   fetchGameScreenshots,
 } from "../services/rawgService";
 import LoadingSpinner from "../components/LoadingSpinner";
-// Importamos los iconos necesarios de react-icons
 import {
   FaCalendarAlt,
   FaGamepad,
-  FaCode,
-  FaStar,
   FaImage,
 } from "react-icons/fa";
 import { BiJoystick } from "react-icons/bi";
 import { MdDescription, MdRateReview } from "react-icons/md";
+import ReviewForm from "../components/ReviewForm";
+import ReviewList from "../components/ReviewList";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const GameDetails = () => {
   const { id } = useParams();
+  const { isAuth } = useAuth(); 
   const [game, setGame] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [screenshots, setScreenshots] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     const loadGameDetails = async () => {
@@ -45,6 +48,29 @@ const GameDetails = () => {
 
     loadGameDetails();
   }, [id]);
+
+  useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/games/${id}/reviews`
+        );
+        if (!response.ok) {
+          throw new Error("Error al cargar las reseñas");
+        }
+        const data = await response.json();
+        setReviews(data);
+      } catch (error) {
+        console.error("Error cargando reseñas:", error);
+      }
+    };
+
+    loadReviews();
+  }, [id]);
+
+  const handleReviewSubmitted = (newReview) => {
+    setReviews([newReview, ...reviews]);
+  };
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -196,67 +222,32 @@ const GameDetails = () => {
                 Reseñas
               </h2>
 
-              <div className="bg-[#252525] rounded-lg p-6 mb-6 hover:bg-[#2A2A2A] transition-colors duration-200">
-                <h3 className="text-lg font-semibold text-[#E0E0E0] mb-4 flex items-center">
-                  <FaStar className="mr-2 text-[#3D5AFE]" />
-                  Escribe tu reseña
-                </h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-[#A0A0A0] mb-2 font-medium">
-                      Puntuación
-                    </label>
-                    <div className="flex space-x-2">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          className="text-2xl text-[#3D5AFE] hover:text-[#536DFE] transition-colors duration-200 cursor-not-allowed"
-                        >
-                          ★
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-[#A0A0A0] mb-2 font-medium">
-                      Tu opinión
-                    </label>
-                    <textarea
-                      className="w-full bg-[#1E1E1E] text-[#E0E0E0] rounded-lg p-4 border border-[#3D5AFE] focus:ring-2 focus:ring-[#536DFE] transition-all duration-200 cursor-not-allowed"
-                      rows="4"
-                      placeholder="Comparte tu experiencia con este juego..."
-                      disabled
-                    ></textarea>
-                  </div>
-                  <button
-                    className="bg-[#3D5AFE] text-[#E0E0E0] px-6 py-3 rounded-lg font-medium opacity-50 cursor-not-allowed hover:bg-[#536DFE] transition-colors duration-200 flex items-center justify-center"
-                    disabled
-                  >
-                    <FaStar className="mr-2" />
-                    Publicar reseña
-                  </button>
-                </div>
-              </div>
-
-              {/* Lista de reseñas */}
-              <div className="space-y-6">
-                <div className="bg-[#252525] rounded-lg p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-10 h-10 bg-[#3D5AFE] rounded-full flex items-center justify-center">
-                        <span className="text-[#E0E0E0] font-bold">U</span>
-                      </div>
-                      <span className="text-[#E0E0E0] font-medium">
-                        Usuario
-                      </span>
-                    </div>
-                    <div className="flex text-[#3D5AFE]">★★★★★</div>
-                  </div>
+              {isAuth ? (
+                <ReviewForm
+                  gameId={id}
+                  onReviewSubmitted={handleReviewSubmitted}
+                />
+              ) : (
+                <div className="bg-[#252525] p-6 rounded-lg mb-6 text-center">
                   <p className="text-[#A0A0A0]">
-                    Esta es una reseña de ejemplo.
+                    <Link
+                      to="/login"
+                      className="text-[#3D5AFE] hover:text-[#5C6BC0]"
+                    >
+                      Inicia sesión
+                    </Link>{" "}
+                    para escribir una reseña
                   </p>
                 </div>
-              </div>
+              )}
+
+              {reviews.length > 0 ? (
+                <ReviewList reviews={reviews} />
+              ) : (
+                <div className="text-center text-[#A0A0A0]">
+                  No hay reseñas todavía. ¡Sé el primero en escribir una!
+                </div>
+              )}
             </div>
           </div>
         </div>

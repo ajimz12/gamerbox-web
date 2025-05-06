@@ -1,19 +1,18 @@
 import { Link } from "react-router-dom";
+import { GiEyepatch } from "react-icons/gi";
 
 const ErrorPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#121212] px-4">
       <div className="flex flex-col items-center text-center bg-[#1E1E1E] p-10 rounded-2xl shadow-2xl border border-[#2C2C2C] max-w-lg w-full space-y-6">
-        <img
-          src="/img/errorpage.png"
-          alt="Error 404"
-          className="w-100 h-72 object-contain"
-        />
-        <div>
-          <h1 className="text-5xl font-bold text-[#3D5AFE] mb-8">¡Oops!</h1>
-          <h2 className="text-xl text-[#A0A0A0]">
+        <div className="flex flex-col items-center">
+          <GiEyepatch className="text-5xl text-[#3D5AFE] mb-4" />
+          <h1 className="text-4xl font-bold text-[#3D5AFE]  italic mb-8">
+            Snake? Snaaaake!
+          </h1>
+          <h1 className="text-xl text-[#A0A0A0]">
             La página que buscas no existe o no está disponible en este momento.
-          </h2>
+          </h1>
         </div>
 
         <Link

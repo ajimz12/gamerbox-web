@@ -170,6 +170,46 @@ export const followUser = async (userId) => {
   }
 };
 
+export const createReview = async (gameId, rating, text) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${API_URL}reviews`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ gameId, rating, text })
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al crear la reseña');
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error al crear la reseña", error);
+    throw error;
+  }
+};
+
+export const getGameReviews = async (gameId) => {
+  try {
+    const response = await fetch(`${API_URL}games/${gameId}/reviews`);
+    if (!response.ok) {
+      throw new Error('Error al obtener las reseñas');
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error al obtener las reseñas", error);
+    throw error;
+  }
+};
+
 const api = {
   login,
   isAuthenticated,

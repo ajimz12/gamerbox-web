@@ -26,6 +26,8 @@ class GameController extends AbstractController
         $pageSize = $request->query->get('page_size', 20);
         $search = $request->query->get('search');
         $genres = $request->query->get('genres');
+        $platforms = $request->query->get('parent_platforms');
+        $dates = $request->query->get('dates');
 
         $query = [
             'key' => $this->rawgApiKey,
@@ -39,6 +41,14 @@ class GameController extends AbstractController
 
         if ($genres) {
             $query['genres'] = $genres;
+        }
+
+        if ($platforms) {
+            $query['parent_platforms'] = $platforms;
+        }
+
+        if ($dates) {
+            $query['dates'] = $dates;
         }
 
         $response = $this->client->request('GET', 'https://api.rawg.io/api/games', [
@@ -66,6 +76,32 @@ class GameController extends AbstractController
     public function getGameScreenshots(string $id): JsonResponse
     {
         $response = $this->client->request('GET', "https://api.rawg.io/api/games/{$id}/screenshots", [
+            'query' => [
+                'key' => $this->rawgApiKey,
+            ],
+        ]);
+
+        $data = $response->toArray();
+        return $this->json($data);
+    }
+
+    #[Route('/api/genres', name: 'api_genres')]
+    public function getGenres(): JsonResponse
+    {
+        $response = $this->client->request('GET', 'https://api.rawg.io/api/genres', [
+            'query' => [
+                'key' => $this->rawgApiKey,
+            ],
+        ]);
+
+        $data = $response->toArray();
+        return $this->json($data);
+    }
+
+    #[Route('/api/platforms', name: 'api_platforms')]
+    public function getPlatforms(): JsonResponse
+    {
+        $response = $this->client->request('GET', 'https://api.rawg.io/api/platforms/lists/parents', [
             'query' => [
                 'key' => $this->rawgApiKey,
             ],

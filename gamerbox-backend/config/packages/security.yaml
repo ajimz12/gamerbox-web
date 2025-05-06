@@ -39,6 +39,11 @@ security:
         - { path: ^/api/profile, roles: PUBLIC_ACCESS }
         - { path: ^/api/users, roles: PUBLIC_ACCESS }
         - { path: ^/api/games, roles: PUBLIC_ACCESS }
+        - { path: ^/api/genres, roles: PUBLIC_ACCESS }
+        - { path: ^/api/platforms, roles: PUBLIC_ACCESS }
+        - { path: ^/api/games/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/users/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/reviews, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
