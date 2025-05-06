@@ -5,10 +5,6 @@ import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
 const ReviewItem = ({ review }) => {
-  console.log(
-    `${import.meta.env.VITE_API_URL}/uploads/${review.author.profilePicture}`
-  );
-
   return (
     <div className="bg-[#252525] p-6 rounded-lg">
       <div className="flex items-center justify-between mb-4">
@@ -17,7 +13,7 @@ const ReviewItem = ({ review }) => {
           className="flex items-center space-x-3 hover:text-[#3D5AFE]"
         >
           <img
-            src={`${import.meta.env.VITE_API_URL}/uploads/${
+            src={`${import.meta.env.VITE_API_URL}/uploads/profile_pictures/${
               review.author.profilePicture
             }`}
             alt={review.author.username}
@@ -26,7 +22,6 @@ const ReviewItem = ({ review }) => {
               e.target.src = "/profile_pictures/pfp.png";
             }}
           />
-
           <span className="font-medium text-[#E0E0E0]">
             {review.author.username}
           </span>
@@ -41,6 +36,12 @@ const ReviewItem = ({ review }) => {
           ))}
         </div>
       </div>
+
+      <Link to={`/games/${review.gameId}`} className="block mb-4">
+        <h3 className="text-lg font-semibold text-[#3D5AFE] hover:text-[#5C6BC0] transition-colors">
+          {review.gameName}
+        </h3>
+      </Link>
 
       <p className="text-[#A0A0A0] mb-4">{review.text}</p>
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import { getUserProfile } from "../services/api";
+import ReviewList from "../components/ReviewList";
+import { getUserProfile, getUserReviews } from "../services/api";
 import {
   FaMapMarkerAlt,
   FaInstagram,
@@ -10,10 +11,13 @@ import {
   FaUserFriends,
   FaGamepad,
 } from "react-icons/fa";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Dashboard = () => {
   const { user, login: updateAuthUser } = useAuth();
   const [userData, setUserData] = useState(user);
+  const [reviews, setReviews] = useState([]);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -22,10 +26,15 @@ const Dashboard = () => {
         setUserData(updatedUserData);
         updateAuthUser({
           user: updatedUserData,
-          token: localStorage.getItem('token')
+          token: localStorage.getItem("token"),
         });
+
+        const userReviews = await getUserReviews(user.username);
+        setReviews(userReviews);
       } catch (error) {
         console.error("Error al actualizar datos del usuario:", error);
+      } finally {
+        setIsLoadingReviews(false);
       }
     };
 
@@ -70,7 +79,10 @@ const Dashboard = () => {
         <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-6 border border-[#2C2C2C]">
           <div className="flex justify-between items-center mb-6">
             <div className="flex space-x-8 mt-4">
-              <Link to={`/user/${user.username}/followers`} className="text-center hover:text-[#5C6BC0]">
+              <Link
+                to={`/user/${user.username}/followers`}
+                className="text-center hover:text-[#5C6BC0]"
+              >
                 <div className="flex items-center justify-center space-x-2">
                   <FaUserFriends className="text-[#3D5AFE] text-xl" />
                   <span className="block text-2xl font-bold text-[#3D5AFE]">
@@ -79,7 +91,10 @@ const Dashboard = () => {
                 </div>
                 <span className="text-[#A0A0A0]">Seguidores</span>
               </Link>
-              <Link to={`/user/${user.username}/following`} className="text-center hover:text-[#5C6BC0]">
+              <Link
+                to={`/user/${user.username}/following`}
+                className="text-center hover:text-[#5C6BC0]"
+              >
                 <div className="flex items-center justify-center space-x-2">
                   <FaUserFriends className="text-[#3D5AFE] text-xl" />
                   <span className="block text-2xl font-bold text-[#3D5AFE]">
@@ -126,7 +141,10 @@ const Dashboard = () => {
                 </div>
                 {user?.instagram_profile && (
                   <a
-                    href={`https://instagram.com/${user.instagram_profile.replace("@", "")}`}
+                    href={`https://instagram.com/${user.instagram_profile.replace(
+                      "@",
+                      ""
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"
@@ -137,7 +155,10 @@ const Dashboard = () => {
                 )}
                 {user?.twitter_profile && (
                   <a
-                    href={`https://twitter.com/${user.twitter_profile.replace("@", "")}`}
+                    href={`https://twitter.com/${user.twitter_profile.replace(
+                      "@",
+                      ""
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"
@@ -151,11 +172,17 @@ const Dashboard = () => {
 
             <div className="md:col-span-2">
               <h3 className="text-lg font-semibold text-[#E0E0E0] mb-4">
-                Actividad Reciente
+                Mi Actividad Reciente
               </h3>
-              <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
-                No hay actividad reciente para mostrar
-              </div>
+              {isLoadingReviews ? (
+                <LoadingSpinner />
+              ) : reviews.length > 0 ? (
+                <ReviewList reviews={reviews} />
+              ) : (
+                <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
+                  No has publicado ninguna reseña aún
+                </div>
+              )}
             </div>
           </div>
         </div>

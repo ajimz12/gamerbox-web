@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getUserProfile, followUser } from "../services/api";
+import { getUserProfile, followUser, getUserReviews } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import ConfirmationModal from "../components/ConfirmationModal";
 import {
@@ -13,6 +13,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from "../components/LoadingSpinner";
+import ReviewList from "../components/ReviewList";
 
 const UserProfile = () => {
   const { username } = useParams();
@@ -44,6 +45,24 @@ const UserProfile = () => {
   useEffect(() => {
     fetchUserProfile();
   }, [fetchUserProfile]);
+
+  const [reviews, setReviews] = useState([]);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
+
+  const fetchUserReviews = useCallback(async () => {
+    try {
+      const reviewsData = await getUserReviews(username);
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error("Error al cargar las reseñas:", error);
+    } finally {
+      setIsLoadingReviews(false);
+    }
+  }, [username]);
+
+  useEffect(() => {
+    fetchUserReviews();
+  }, [fetchUserReviews]);
 
   if (isLoading) {
     return (
@@ -214,11 +233,17 @@ const UserProfile = () => {
 
             <div className="md:col-span-2">
               <h3 className="text-lg font-semibold text-[#E0E0E0] mb-4">
-                Actividad Reciente
+                Actividad reciente 
               </h3>
-              <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
-                No hay actividad reciente para mostrar
-              </div>
+              {isLoadingReviews ? (
+                <LoadingSpinner />
+              ) : reviews.length > 0 ? (
+                <ReviewList reviews={reviews} />
+              ) : (
+                <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
+                  No hay reseñas para mostrar
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -7,19 +7,25 @@ use App\Entity\Review;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ReviewController extends AbstractController
 {
     #[Route('/api/reviews', name: 'api_create_review', methods: ['POST'])]
-    public function createReview(Request $request, EntityManagerInterface $entityManager): JsonResponse
-    {
+    public function createReview(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        HttpClientInterface $httpClient,
+        #[Autowire('%env(RAWG_API_KEY)%')] string $rawgApiKey
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        
+
         if (!$user) {
             return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
         }
@@ -32,13 +38,32 @@ class ReviewController extends AbstractController
 
         // Buscar la referencia del juego
         $gameReference = $entityManager->getRepository(GameReference::class)->findOneBy(['rawgId' => $data['gameId']]);
-        
+
         // Si no existe, crear una nueva referencia
         if (!$gameReference) {
             $gameReference = new GameReference();
             $gameReference->setRawgId($data['gameId']);
-            $gameReference->setSlug('temp-slug'); // Required field
-            $gameReference->setName('temp-name'); // Required field
+
+            // Llamada a la API de RAWG
+            try {
+                $response = $httpClient->request('GET', 'https://api.rawg.io/api/games/' . $data['gameId'], [
+                    'query' => [
+                        'key' => $rawgApiKey,
+                    ]
+                ]);
+
+                if ($response->getStatusCode() === 200) {
+                    $gameData = $response->toArray();
+                    $gameReference->setName($gameData['name'] ?? 'Nombre desconocido');
+                    $gameReference->setSlug($gameData['slug'] ?? 'slug-desconocido');
+                } else {
+                    $gameReference->setName('Nombre desconocido');
+                    $gameReference->setSlug('slug-desconocido');
+                }
+            } catch (\Throwable $e) {
+                return new JsonResponse(['error' => 'Error al consultar la API de RAWG'], Response::HTTP_BAD_GATEWAY);
+            }
+
             $entityManager->persist($gameReference);
         }
 
@@ -70,7 +95,7 @@ class ReviewController extends AbstractController
     public function getGameReviews(string $gameId, EntityManagerInterface $entityManager): JsonResponse
     {
         $gameReference = $entityManager->getRepository(GameReference::class)->findOneBy(['rawgId' => $gameId]);
-        
+
         if (!$gameReference) {
             return new JsonResponse([], Response::HTTP_OK);
         }
@@ -83,7 +108,9 @@ class ReviewController extends AbstractController
         $reviewsData = array_map(function (Review $review) {
             return [
                 'id' => $review->getId(),
-                'gameId' => $review->getGame()->getId(),
+                'gameId' => $review->getGame()->getRawgId(),
+                'gameName' => $review->getGame()->getName(),
+                'gameSlug' => $review->getGame()->getSlug(),
                 'rating' => $review->getRating(),
                 'text' => $review->getText(),
                 'createdAt' => $review->getCreatedAt()->format('c'),
@@ -103,7 +130,7 @@ class ReviewController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        
+
         if (!$user) {
             return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
         }
@@ -122,7 +149,7 @@ class ReviewController extends AbstractController
     public function getUserReviews(string $username, EntityManagerInterface $entityManager): JsonResponse
     {
         $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
-        
+
         if (!$user) {
             return new JsonResponse(['error' => 'Usuario no encontrado'], Response::HTTP_NOT_FOUND);
         }
@@ -135,7 +162,9 @@ class ReviewController extends AbstractController
         $reviewsData = array_map(function (Review $review) {
             return [
                 'id' => $review->getId(),
-                'gameId' => $review->getGame()->getId(),
+                'gameId' => $review->getGame()->getRawgId(),
+                'gameName' => $review->getGame()->getName(),
+                'gameSlug' => $review->getGame()->getSlug(),
                 'rating' => $review->getRating(),
                 'text' => $review->getText(),
                 'createdAt' => $review->getCreatedAt()->format('c'),

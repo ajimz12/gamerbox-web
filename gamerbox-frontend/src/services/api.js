@@ -210,6 +210,26 @@ export const getGameReviews = async (gameId) => {
   }
 };
 
+export const getUserReviews = async (username) => {
+  try {
+    const response = await fetch(`${API_URL}users/${username}/reviews`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al obtener las reseñas del usuario');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al obtener las reseñas del usuario", error);
+    throw error;
+  }
+};
+
 const api = {
   login,
   isAuthenticated,
