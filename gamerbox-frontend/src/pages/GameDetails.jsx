@@ -19,7 +19,7 @@ import { useAuth } from "../context/AuthContext";
 
 const GameDetails = () => {
   const { id } = useParams();
-  const { isAuth } = useAuth(); 
+  const { isAuth, user: currentUser } = useAuth(); 
   const [game, setGame] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -70,6 +70,16 @@ const GameDetails = () => {
 
   const handleReviewSubmitted = (newReview) => {
     setReviews([newReview, ...reviews]);
+  };
+
+  const handleReviewUpdated = (updatedReview) => {
+    setReviews(reviews.map(review => 
+      review.id === updatedReview.id ? updatedReview : review
+    ));
+  };
+
+  const handleReviewDeleted = (reviewId) => {
+    setReviews(reviews.filter(review => review.id !== reviewId));
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -223,10 +233,14 @@ const GameDetails = () => {
               </h2>
 
               {isAuth ? (
-                <ReviewForm
-                  gameId={id}
-                  onReviewSubmitted={handleReviewSubmitted}
-                />
+                reviews.some(review => review.author.id === currentUser?.id) ? (
+                  null
+                ) : (
+                  <ReviewForm
+                    gameId={id}
+                    onReviewSubmitted={handleReviewSubmitted}
+                  />
+                )
               ) : (
                 <div className="bg-[#252525] p-6 rounded-lg mb-6 text-center">
                   <p className="text-[#A0A0A0]">
@@ -242,7 +256,12 @@ const GameDetails = () => {
               )}
 
               {reviews.length > 0 ? (
-                <ReviewList reviews={reviews} />
+                <ReviewList 
+                  reviews={reviews} 
+                  setReviews={setReviews}
+                  onReviewUpdated={handleReviewUpdated}
+                  onReviewDeleted={handleReviewDeleted}
+                />
               ) : (
                 <div className="text-center text-[#A0A0A0]">
                   No hay reseñas todavía. ¡Sé el primero en escribir una!

@@ -1,8 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaStar } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
 
-const ReviewForm = ({ gameId, onReviewSubmitted }) => {
+const ReviewForm = ({ gameId, onReviewSubmitted, reviews }) => {
+  const { user } = useAuth();
+  const [userHasReview, setUserHasReview] = useState(false);
+
+  useEffect(() => {
+    if (user && reviews) {
+      const hasReview = reviews.some(review => review.author.id === user.id);
+      setUserHasReview(hasReview);
+    }
+  }, [user, reviews]);
+
+  if (userHasReview) {
+    return null;
+  }
   const [rating, setRating] = useState(0);
   const [text, setText] = useState('');
   const [hover, setHover] = useState(0);
@@ -64,7 +78,7 @@ const ReviewForm = ({ gameId, onReviewSubmitted }) => {
               />
               <FaStar
                 className="w-8 h-8 mr-1"
-                color={ratingValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
+                color={ratingValue <= (hover || rating) ? "#3D5AFE" : "#e4e5e9"}
                 onMouseEnter={() => setHover(ratingValue)}
                 onMouseLeave={() => setHover(0)}
               />

@@ -27,10 +27,12 @@ export const AuthProvider = ({ children }) => {
         setIsAuth(true);
     };
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         setUser(null);
         setIsAuth(false);
+        // Forzar la limpieza del estado
+        localStorage.clear();
     };
 
     return (

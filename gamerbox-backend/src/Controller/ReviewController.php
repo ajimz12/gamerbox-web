@@ -39,6 +39,21 @@ class ReviewController extends AbstractController
         // Buscar la referencia del juego
         $gameReference = $entityManager->getRepository(GameReference::class)->findOneBy(['rawgId' => $data['gameId']]);
 
+        // Verificar si el usuario ya tiene una reseña para este juego
+        if ($gameReference) {
+            $existingReview = $entityManager->getRepository(Review::class)->findOneBy([
+                'author' => $user,
+                'game' => $gameReference
+            ]);
+
+            if ($existingReview) {
+                return new JsonResponse(
+                    ['error' => 'Ya has publicado una reseña para este juego'],
+                    Response::HTTP_CONFLICT
+                );
+            }
+        }
+
         // Si no existe, crear una nueva referencia
         if (!$gameReference) {
             $gameReference = new GameReference();
@@ -143,6 +158,47 @@ class ReviewController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/api/reviews/{id}', name: 'api_update_review', methods: ['PUT'])]
+    public function updateReview(Review $review, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($review->getAuthor() !== $user) {
+            return new JsonResponse(['error' => 'No tienes permiso para editar esta reseña'], Response::HTTP_FORBIDDEN);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        if (isset($data['rating'])) {
+            $review->setRating($data['rating']);
+        }
+        if (isset($data['text'])) {
+            $review->setText($data['text']);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'id' => $review->getId(),
+            'gameId' => $review->getGame()->getRawgId(),
+            'gameName' => $review->getGame()->getName(),
+            'gameSlug' => $review->getGame()->getSlug(),
+            'rating' => $review->getRating(),
+            'text' => $review->getText(),
+            'createdAt' => $review->getCreatedAt()->format('c'),
+            'author' => [
+                'id' => $review->getAuthor()->getId(),
+                'username' => $review->getAuthor()->getUsername(),
+                'profilePicture' => $review->getAuthor()->getProfilePicture()
+            ]
+        ]);
     }
 
     #[Route('/api/users/{username}/reviews', name: 'api_get_user_reviews', methods: ['GET'])]

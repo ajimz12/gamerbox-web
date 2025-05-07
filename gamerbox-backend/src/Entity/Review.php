@@ -8,6 +8,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
+#[ORM\UniqueConstraint(
+    name: "unique_user_game_review",
+    columns: ["author_id", "game_id"]
+)]
 class Review
 {
     #[ORM\Id]

@@ -3,20 +3,20 @@ const API_URL = "http://localhost:8000/api/";
 export const login = async (email, password) => {
   try {
     const response = await fetch(`${API_URL}login`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
     });
 
     if (!response.ok) {
-      throw new Error('Inicio de sesión fallido');
+      throw new Error("Inicio de sesión fallido");
     }
 
     const data = await response.json();
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
     return data;
   } catch (error) {
     console.error("Inicio de sesion fallido", error);
@@ -30,9 +30,19 @@ export const isAuthenticated = () => {
   return !!(token && user);
 };
 
-export const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+export const logout = async () => {
+  try {
+    localStorage.clear();
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    window.location.href = "/";
+
+    return true;
+  } catch (error) {
+    console.error("Error durante el logout:", error);
+    throw error;
+  }
 };
 
 export const register = async (userData) => {
@@ -51,10 +61,17 @@ export const register = async (userData) => {
   return response.json();
 };
 
-export const updateProfile = async ({ username, profilePicture, location, instagram_profile, twitter_profile, description }) => {
-  const token = localStorage.getItem('token');
+export const updateProfile = async ({
+  username,
+  profilePicture,
+  location,
+  instagram_profile,
+  twitter_profile,
+  description,
+}) => {
+  const token = localStorage.getItem("token");
   if (!token) {
-    throw new Error('No authentication token found');
+    throw new Error("No authentication token found");
   }
 
   const formData = new FormData();
@@ -77,15 +94,15 @@ export const updateProfile = async ({ username, profilePicture, location, instag
 
   try {
     const response = await fetch(`${API_URL}profile/update`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: formData
+      body: formData,
     });
 
     if (!response.ok) {
-      throw new Error('Error al actualizar perfil');
+      throw new Error("Error al actualizar perfil");
     }
 
     const data = await response.json();
@@ -102,15 +119,18 @@ export const updateProfile = async ({ username, profilePicture, location, instag
 
 export const getUserProfile = async (username) => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${username}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/profile/${username}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
 
     if (!response.ok) {
-      throw new Error('Error al obtener datos del usuario');
+      throw new Error("Error al obtener datos del usuario");
     }
 
     const data = await response.json();
@@ -124,14 +144,14 @@ export const getUserProfile = async (username) => {
 export const getAllUsers = async () => {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
-      throw new Error('Error al obtener usuarios');
+      throw new Error("Error al obtener usuarios");
     }
 
     const data = await response.json();
@@ -144,22 +164,24 @@ export const getAllUsers = async () => {
 
 export const followUser = async (userId) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error('No authentication token found');
+      throw new Error("No authentication token found");
     }
 
     const response = await fetch(`${API_URL}follow/${userId}`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || 'Error al seguir/dejar de seguir al usuario');
+      throw new Error(
+        errorData.error || "Error al seguir/dejar de seguir al usuario"
+      );
     }
 
     const data = await response.json();
@@ -172,22 +194,22 @@ export const followUser = async (userId) => {
 
 export const createReview = async (gameId, rating, text) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error('No authentication token found');
+      throw new Error("No authentication token found");
     }
 
     const response = await fetch(`${API_URL}reviews`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ gameId, rating, text })
+      body: JSON.stringify({ gameId, rating, text }),
     });
 
     if (!response.ok) {
-      throw new Error('Error al crear la reseña');
+      throw new Error("Error al crear la reseña");
     }
 
     return response.json();
@@ -201,7 +223,7 @@ export const getGameReviews = async (gameId) => {
   try {
     const response = await fetch(`${API_URL}games/${gameId}/reviews`);
     if (!response.ok) {
-      throw new Error('Error al obtener las reseñas');
+      throw new Error("Error al obtener las reseñas");
     }
     return response.json();
   } catch (error) {
@@ -213,14 +235,14 @@ export const getGameReviews = async (gameId) => {
 export const getUserReviews = async (username) => {
   try {
     const response = await fetch(`${API_URL}users/${username}/reviews`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
-      throw new Error('Error al obtener las reseñas del usuario');
+      throw new Error("Error al obtener las reseñas del usuario");
     }
 
     return await response.json();
@@ -237,7 +259,7 @@ const api = {
   register,
   updateProfile,
   getUserProfile,
-  getAllUsers
+  getAllUsers,
 };
 
 export default api;
