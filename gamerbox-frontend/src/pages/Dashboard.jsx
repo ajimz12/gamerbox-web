@@ -253,28 +253,38 @@ const Dashboard = () => {
                   <div className="space-y-2">
                     <span className="text-[#A0A0A0]">Calificaciones</span>
                     <div className="flex items-end justify-between h-40 gap-1 mt-4 px-4">
-                      <div className="text-[#A0A0A0] text-sm self-center">★</div>
+                      <div className="text-[#A0A0A0] text-sm self-center">
+                        ★
+                      </div>
                       {[1, 2, 3, 4, 5].map((rating) => {
                         const count = reviews.filter(
                           (review) => Math.round(review.rating) === rating
                         ).length;
-                        const percentage = reviews.length > 0 
-                          ? (count / reviews.length) * 100 
-                          : 0;
-                        
+                        const percentage =
+                          reviews.length > 0
+                            ? (count / reviews.length) * 100
+                            : 0;
+
                         return (
-                          <div key={rating} className="flex flex-col items-center gap-2 w-12">
+                          <div
+                            key={rating}
+                            className="flex flex-col items-center gap-2 w-12"
+                          >
                             <div className="w-full h-32 relative bg-[#1E1E1E] rounded">
                               <div
                                 className="absolute bottom-0 w-full bg-[#3D5AFE] transition-all duration-300 rounded-t"
                                 style={{ height: `${percentage}%` }}
                               />
                             </div>
-                            <span className="text-[#A0A0A0] text-xs">{count}</span>
+                            <span className="text-[#A0A0A0] text-xs">
+                              {count}
+                            </span>
                           </div>
                         );
                       })}
-                      <div className="text-[#A0A0A0] text-sm self-center">★★★★★</div>
+                      <div className="text-[#A0A0A0] text-sm self-center">
+                        ★★★★★
+                      </div>
                     </div>
                   </div>
                 </div>

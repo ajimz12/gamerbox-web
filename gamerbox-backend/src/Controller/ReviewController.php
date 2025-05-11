@@ -88,6 +88,11 @@ class ReviewController extends AbstractController
         $review->setText($data['text'] ?? '');
         $review->setAuthor($user);
         $review->setCreatedAt(new \DateTimeImmutable());
+        $review->setPlayedBefore($data['playedBefore'] ?? false);
+        
+        if (isset($data['playedAt'])) {
+            $review->setPlayedAt(new \DateTimeImmutable($data['playedAt']));
+        }
 
         $entityManager->persist($review);
         $entityManager->flush();
@@ -98,6 +103,8 @@ class ReviewController extends AbstractController
             'rating' => $review->getRating(),
             'text' => $review->getText(),
             'createdAt' => $review->getCreatedAt()->format('c'),
+            'playedBefore' => $review->isPlayedBefore(),
+            'playedAt' => $review->getPlayedAt()?->format('c'),
             'author' => [
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
@@ -129,6 +136,8 @@ class ReviewController extends AbstractController
                 'rating' => $review->getRating(),
                 'text' => $review->getText(),
                 'createdAt' => $review->getCreatedAt()->format('c'),
+                'playedBefore' => $review->isPlayedBefore(),
+                'playedAt' => $review->getPlayedAt()?->format('c'),
                 'author' => [
                     'id' => $review->getAuthor()->getId(),
                     'username' => $review->getAuthor()->getUsername(),
@@ -224,6 +233,8 @@ class ReviewController extends AbstractController
                 'rating' => $review->getRating(),
                 'text' => $review->getText(),
                 'createdAt' => $review->getCreatedAt()->format('c'),
+                'playedBefore' => $review->isPlayedBefore(),
+                'playedAt' => $review->getPlayedAt()?->format('c'),
                 'author' => [
                     'id' => $review->getAuthor()->getId(),
                     'username' => $review->getAuthor()->getUsername(),

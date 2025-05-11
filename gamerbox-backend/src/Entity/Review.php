@@ -34,6 +34,12 @@ class Review
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
+    private bool $playedBefore = false;
+
+    #[ORM\Column(type: "datetime_immutable", nullable: true)]
+    private ?\DateTimeImmutable $playedAt = null;
+
     /**
      * @var Collection<int, ReviewComment>
      */
@@ -107,6 +113,28 @@ class Review
     {
         $this->createdAt = $createdAt;
 
+        return $this;
+    }
+
+    public function isPlayedBefore(): bool
+    {
+        return $this->playedBefore;
+    }
+
+    public function setPlayedBefore(bool $playedBefore): static
+    {
+        $this->playedBefore = $playedBefore;
+        return $this;
+    }
+
+    public function getPlayedAt(): ?\DateTimeImmutable
+    {
+        return $this->playedAt;
+    }
+
+    public function setPlayedAt(?\DateTimeImmutable $playedAt): static
+    {
+        $this->playedAt = $playedAt;
         return $this;
     }
 

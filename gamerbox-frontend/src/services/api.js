@@ -192,7 +192,7 @@ export const followUser = async (userId) => {
   }
 };
 
-export const createReview = async (gameId, rating, text) => {
+export const createReview = async (gameId, rating, text, playedBefore, playedAt) => {
   try {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -205,7 +205,13 @@ export const createReview = async (gameId, rating, text) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ gameId, rating, text }),
+      body: JSON.stringify({ 
+        gameId, 
+        rating, 
+        text,
+        playedBefore,
+        playedAt 
+      }),
     });
 
     if (!response.ok) {

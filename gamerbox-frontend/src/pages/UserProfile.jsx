@@ -11,8 +11,8 @@ import {
   FaGamepad,
   FaEnvelope,
 } from "react-icons/fa";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ReviewList from "../components/ReviewList";
 
@@ -75,9 +75,7 @@ const UserProfile = () => {
   }, [fetchUserReviews]);
 
   if (isLoading) {
-    return (
-      <LoadingSpinner />
-    );
+    return <LoadingSpinner />;
   }
 
   if (error) {
@@ -119,15 +117,30 @@ const UserProfile = () => {
   return (
     <div className="min-h-screen mb-10 bg-[#121212]">
       <ToastContainer />
+      {showUnfollowModal && (
+        <ConfirmationModal
+          isOpen={showUnfollowModal}
+          onClose={() => setShowUnfollowModal(false)}
+          onConfirm={async () => {
+            await processFollow();
+            setShowUnfollowModal(false);
+          }}
+          title={`¿Dejar de seguir a ${user.username}?`}
+          confirmText="Dejar de seguir"
+          cancelText="Cancelar"
+          confirmButtonClass="bg-red-500 hover:bg-red-600"
+        />
+      )}
       {/* Banner de perfil */}
       <div className="h-64 bg-gradient-to-r from-[#3D5AFE] via-[#5C6BC0] to-[#3D5AFE] relative">
         <div className="absolute bottom-0 left-0 w-full">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
             <div className="flex items-end space-x-6">
               <img
-                src={user?.profilePicture
-                  ? `${import.meta.env.VITE_API_URL}${user.profilePicture}`
-                  : "/profile_pictures/pfp.png"
+                src={
+                  user?.profilePicture
+                    ? `${import.meta.env.VITE_API_URL}${user.profilePicture}`
+                    : "/profile_pictures/pfp.png"
                 }
                 alt={`${user?.username}'s profile`}
                 className="w-32 h-32 rounded-full border-4 border-[#3D5AFE] shadow-xl object-cover transform -translate-y-4"
@@ -218,7 +231,10 @@ const UserProfile = () => {
               <div className="space-y-3">
                 {user?.instagram_profile && (
                   <a
-                    href={`https://instagram.com/${user.instagram_profile.replace("@", "")}`}
+                    href={`https://instagram.com/${user.instagram_profile.replace(
+                      "@",
+                      ""
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"
@@ -229,7 +245,10 @@ const UserProfile = () => {
                 )}
                 {user?.twitter_profile && (
                   <a
-                    href={`https://twitter.com/${user.twitter_profile.replace("@", "")}`}
+                    href={`https://twitter.com/${user.twitter_profile.replace(
+                      "@",
+                      ""
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"
@@ -246,12 +265,6 @@ const UserProfile = () => {
                 <h3 className="text-lg font-semibold text-[#E0E0E0]">
                   Últimas reseñas
                 </h3>
-                <Link
-                  to={`/user/${user.username}/reviews`}
-                  className="text-[#3D5AFE] hover:text-[#5C6BC0] text-sm"
-                >
-                  Ver todas
-                </Link>
               </div>
               {isLoadingReviews ? (
                 <LoadingSpinner />
@@ -319,28 +332,38 @@ const UserProfile = () => {
                   <div className="space-y-2">
                     <span className="text-[#A0A0A0]">Calificaciones</span>
                     <div className="flex items-end justify-between h-40 gap-1 mt-4 px-4">
-                      <div className="text-[#A0A0A0] text-sm self-center">★</div>
+                      <div className="text-[#A0A0A0] text-sm self-center">
+                        ★
+                      </div>
                       {[1, 2, 3, 4, 5].map((rating) => {
                         const count = reviews.filter(
                           (review) => Math.round(review.rating) === rating
                         ).length;
-                        const percentage = reviews.length > 0 
-                          ? (count / reviews.length) * 100 
-                          : 0;
-                        
+                        const percentage =
+                          reviews.length > 0
+                            ? (count / reviews.length) * 100
+                            : 0;
+
                         return (
-                          <div key={rating} className="flex flex-col items-center gap-2 w-12">
+                          <div
+                            key={rating}
+                            className="flex flex-col items-center gap-2 w-12"
+                          >
                             <div className="w-full h-32 relative bg-[#1E1E1E] rounded">
                               <div
                                 className="absolute bottom-0 w-full bg-[#3D5AFE] transition-all duration-300 rounded-t"
                                 style={{ height: `${percentage}%` }}
                               />
                             </div>
-                            <span className="text-[#A0A0A0] text-xs">{count}</span>
+                            <span className="text-[#A0A0A0] text-xs">
+                              {count}
+                            </span>
                           </div>
                         );
                       })}
-                      <div className="text-[#A0A0A0] text-sm self-center">★★★★★</div>
+                      <div className="text-[#A0A0A0] text-sm self-center">
+                        ★★★★★
+                      </div>
                     </div>
                   </div>
                 </div>

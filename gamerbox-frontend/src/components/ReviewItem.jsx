@@ -186,6 +186,26 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
             ))}
           </div>
           <p className="text-[#A0A0A0] mb-4">{review.text}</p>
+          <div className="text-sm text-[#808080] mb-4">
+            {review.playedAt ? (
+              <>
+                {review.playedBefore ? (
+                  <span className="text-[#3D5AFE] font-medium">Rejugado</span>
+                ) : (
+                  <span className="text-[#3D5AFE] font-medium">Jugado</span>
+                )}{" "}
+                el {new Date(review.playedAt).toLocaleDateString('es-ES', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })}
+              </>
+            ) : (
+              <span className="text-[#3D5AFE] font-medium">
+                {review.playedBefore ? 'Rejugado anteriormente' : 'Jugado anteriormente'}
+              </span>
+            )}
+          </div>
         </>
       )}
 

@@ -27,6 +27,7 @@ const GameDetails = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [screenshots, setScreenshots] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   useEffect(() => {
     const loadGameDetails = async () => {
@@ -227,19 +228,68 @@ const GameDetails = () => {
             </div>
 
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-[#E0E0E0] mb-4 flex items-center">
-                <MdRateReview className="mr-2 text-[#3D5AFE]" />
-                Reseñas
+              <h2 className="text-xl font-semibold text-[#E0E0E0] mb-4 flex items-center justify-between">
+                <div className="flex items-center">
+                  <MdRateReview className="mr-2 text-[#3D5AFE]" />
+                  Reseñas
+                </div>
+                {isAuth && !reviews.some(review => review.author.id === currentUser?.id) && (
+                  <button
+                    onClick={() => setShowReviewModal(true)}
+                    className="bg-[#3D5AFE] hover:bg-[#536DFE] text-white cursor-pointer px-4 py-2 rounded-lg flex items-center"
+                  >
+                    <MdRateReview className="mr-2" />
+                    Nueva Reseña
+                  </button>
+                )}
               </h2>
 
               {isAuth ? (
-                reviews.some(review => review.author.id === currentUser?.id) ? (
-                  null
-                ) : (
-                  <ReviewForm
-                    gameId={id}
-                    onReviewSubmitted={handleReviewSubmitted}
-                  />
+                showReviewModal && (
+                  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="bg-[#1E1E1E] rounded-lg p-6 w-full max-w-4xl mx-4">
+                      <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-xl font-semibold text-[#E0E0E0]">
+                          He jugado...
+                        </h3>
+                        <button
+                          onClick={() => setShowReviewModal(false)}
+                          className="text-[#A0A0A0] hover:text-white cursor-pointer"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      
+                      <div className="flex gap-8">
+                        <div className="flex-shrink-0">
+                          <img
+                            src={game.background_image}
+                            alt={game.name}
+                            className="w-40 h-56 object-cover rounded-lg shadow-lg"
+                          />
+                        </div>
+
+                        <div className="flex-grow">
+                          <div className="mb-4">
+                            <h4 className="text-xl font-medium text-[#E0E0E0]">
+                              {game.name}
+                            </h4>
+                            <p className="text-[#A0A0A0] text-base mt-1">
+                              {new Date(game.released).getFullYear()}
+                            </p>
+                          </div>
+
+                          <ReviewForm
+                            gameId={id}
+                            onReviewSubmitted={(newReview) => {
+                              handleReviewSubmitted(newReview);
+                              setShowReviewModal(false);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )
               ) : (
                 <div className="bg-[#252525] p-6 rounded-lg mb-6 text-center">
