@@ -55,7 +55,7 @@ const Navbar = () => {
                 to="/users"
                 className="px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
               >
-                Usuarios
+                Miembros
               </Link>
               <Link
                 to="/games"

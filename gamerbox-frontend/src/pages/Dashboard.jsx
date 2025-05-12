@@ -251,11 +251,7 @@ const Dashboard = () => {
 
                 <div className="bg-[#2C2C2C] p-4 rounded-lg col-span-2">
                   <div className="space-y-2">
-                    <span className="text-[#A0A0A0]">Calificaciones</span>
-                    <div className="flex items-end justify-between h-40 gap-1 mt-4 px-4">
-                      <div className="text-[#A0A0A0] text-sm self-center">
-                        ★
-                      </div>
+                    <div className="flex items-end justify-between h-40 gap-0.5 mt-10 px-4">
                       {[1, 2, 3, 4, 5].map((rating) => {
                         const count = reviews.filter(
                           (review) => Math.round(review.rating) === rating
@@ -268,13 +264,23 @@ const Dashboard = () => {
                         return (
                           <div
                             key={rating}
-                            className="flex flex-col items-center gap-2 w-12"
+                            className="flex flex-col items-center gap-2 w-10"
                           >
-                            <div className="w-full h-32 relative bg-[#1E1E1E] rounded">
+                            <div className="w-full h-32 relative">
                               <div
-                                className="absolute bottom-0 w-full bg-[#3D5AFE] transition-all duration-300 rounded-t"
-                                style={{ height: `${percentage}%` }}
+                                className={`absolute bottom-0 w-full transition-all duration-300 rounded-t ${
+                                  count > 0
+                                    ? "bg-[#3D5AFE]"
+                                    : "bg-[#3D5AFE] bg-opacity-10"
+                                }`}
+                                style={{
+                                  height: count > 0 ? `${percentage}%` : "10%",
+                                }}
                               />
+                            </div>
+
+                            <div className="text-[#A0A0A0] text-xs">
+                              {"★".repeat(rating)}
                             </div>
                             <span className="text-[#A0A0A0] text-xs">
                               {count}
@@ -282,9 +288,6 @@ const Dashboard = () => {
                           </div>
                         );
                       })}
-                      <div className="text-[#A0A0A0] text-sm self-center">
-                        ★★★★★
-                      </div>
                     </div>
                   </div>
                 </div>

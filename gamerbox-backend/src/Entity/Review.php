@@ -46,9 +46,17 @@ class Review
     #[ORM\OneToMany(targetEntity: ReviewComment::class, mappedBy: 'review')]
     private Collection $reviewComments;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\JoinTable(name: 'review_likes')]
+    private Collection $likes;
+
     public function __construct()
     {
         $this->reviewComments = new ArrayCollection();
+        $this->likes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -166,5 +174,34 @@ class Review
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLike(User $user): static
+    {
+        if (!$this->likes->contains($user)) {
+            $this->likes->add($user);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(User $user): static
+    {
+        $this->likes->removeElement($user);
+
+        return $this;
+    }
+
+    public function hasLiked(User $user): bool
+    {
+        return $this->likes->contains($user);
     }
 }

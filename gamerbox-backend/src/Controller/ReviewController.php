@@ -113,6 +113,55 @@ class ReviewController extends AbstractController
         ], Response::HTTP_CREATED);
     }
 
+    #[Route('/api/reviews/{id}/like', name: 'api_like_review', methods: ['POST'])]
+    public function likeReview(Review $review, EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($review->hasLiked($user)) {
+            $review->removeLike($user);
+        } else {
+            $review->addLike($user);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'likes' => $review->getLikes()->count(),
+            'hasLiked' => $review->hasLiked($user)
+        ]);
+    }
+
+    private function formatReviewData(Review $review): array
+    {
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        return [
+            'id' => $review->getId(),
+            'gameId' => $review->getGame()->getRawgId(),
+            'gameName' => $review->getGame()->getName(),
+            'gameSlug' => $review->getGame()->getSlug(),
+            'rating' => $review->getRating(),
+            'text' => $review->getText(),
+            'createdAt' => $review->getCreatedAt()->format('c'),
+            'playedBefore' => $review->isPlayedBefore(),
+            'playedAt' => $review->getPlayedAt()?->format('c'),
+            'likes' => $review->getLikes()->count(),
+            'hasLiked' => $currentUser ? $review->hasLiked($currentUser) : false,
+            'author' => [
+                'id' => $review->getAuthor()->getId(),
+                'username' => $review->getAuthor()->getUsername(),
+                'profilePicture' => $review->getAuthor()->getProfilePicture()
+            ]
+        ];
+    }
+
     #[Route('/api/games/{gameId}/reviews', name: 'api_get_game_reviews', methods: ['GET'])]
     public function getGameReviews(string $gameId, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -127,24 +176,26 @@ class ReviewController extends AbstractController
             ['createdAt' => 'DESC']
         );
 
-        $reviewsData = array_map(function (Review $review) {
-            return [
-                'id' => $review->getId(),
-                'gameId' => $review->getGame()->getRawgId(),
-                'gameName' => $review->getGame()->getName(),
-                'gameSlug' => $review->getGame()->getSlug(),
-                'rating' => $review->getRating(),
-                'text' => $review->getText(),
-                'createdAt' => $review->getCreatedAt()->format('c'),
-                'playedBefore' => $review->isPlayedBefore(),
-                'playedAt' => $review->getPlayedAt()?->format('c'),
-                'author' => [
-                    'id' => $review->getAuthor()->getId(),
-                    'username' => $review->getAuthor()->getUsername(),
-                    'profilePicture' => $review->getAuthor()->getProfilePicture()
-                ]
-            ];
-        }, $reviews);
+        $reviewsData = array_map([$this, 'formatReviewData'], $reviews);
+
+        return new JsonResponse($reviewsData);
+    }
+
+    #[Route('/api/users/{username}/reviews', name: 'api_get_user_reviews', methods: ['GET'])]
+    public function getUserReviews(string $username, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Usuario no encontrado'], Response::HTTP_NOT_FOUND);
+        }
+
+        $reviews = $entityManager->getRepository(Review::class)->findBy(
+            ['author' => $user],
+            ['createdAt' => 'DESC']
+        );
+
+        $reviewsData = array_map([$this, 'formatReviewData'], $reviews);
 
         return new JsonResponse($reviewsData);
     }
@@ -191,6 +242,12 @@ class ReviewController extends AbstractController
         if (isset($data['text'])) {
             $review->setText($data['text']);
         }
+        if (isset($data['playedBefore'])) {
+            $review->setPlayedBefore($data['playedBefore']);
+        }
+        if (isset($data['playedAt'])) {
+            $review->setPlayedAt(new \DateTimeImmutable($data['playedAt']));
+        }
 
         $entityManager->flush();
 
@@ -202,47 +259,13 @@ class ReviewController extends AbstractController
             'rating' => $review->getRating(),
             'text' => $review->getText(),
             'createdAt' => $review->getCreatedAt()->format('c'),
+            'playedBefore' => $review->isPlayedBefore(),
+            'playedAt' => $review->getPlayedAt()?->format('c'),
             'author' => [
                 'id' => $review->getAuthor()->getId(),
                 'username' => $review->getAuthor()->getUsername(),
                 'profilePicture' => $review->getAuthor()->getProfilePicture()
             ]
         ]);
-    }
-
-    #[Route('/api/users/{username}/reviews', name: 'api_get_user_reviews', methods: ['GET'])]
-    public function getUserReviews(string $username, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
-
-        if (!$user) {
-            return new JsonResponse(['error' => 'Usuario no encontrado'], Response::HTTP_NOT_FOUND);
-        }
-
-        $reviews = $entityManager->getRepository(Review::class)->findBy(
-            ['author' => $user],
-            ['createdAt' => 'DESC']
-        );
-
-        $reviewsData = array_map(function (Review $review) {
-            return [
-                'id' => $review->getId(),
-                'gameId' => $review->getGame()->getRawgId(),
-                'gameName' => $review->getGame()->getName(),
-                'gameSlug' => $review->getGame()->getSlug(),
-                'rating' => $review->getRating(),
-                'text' => $review->getText(),
-                'createdAt' => $review->getCreatedAt()->format('c'),
-                'playedBefore' => $review->isPlayedBefore(),
-                'playedAt' => $review->getPlayedAt()?->format('c'),
-                'author' => [
-                    'id' => $review->getAuthor()->getId(),
-                    'username' => $review->getAuthor()->getUsername(),
-                    'profilePicture' => $review->getAuthor()->getProfilePicture()
-                ]
-            ];
-        }, $reviews);
-
-        return new JsonResponse($reviewsData);
     }
 }

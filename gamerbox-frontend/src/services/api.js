@@ -258,6 +258,88 @@ export const getUserReviews = async (username) => {
   }
 };
 
+export const deleteReview = async (reviewId) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No se encontró el token de autenticación");
+    }
+
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews/${reviewId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al eliminar la reseña');
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar la reseña", error);
+    throw error;
+  }
+};
+
+export const updateReview = async (reviewId, { rating, text, playedBefore, playedAt }) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No se encontró el token de autenticación");
+    }
+
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews/${reviewId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        rating,
+        text,
+        playedBefore,
+        playedAt: playedAt || null,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al actualizar la reseña");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al actualizar la reseña", error);
+    throw error;
+  }
+};
+
+export const likeReview = async (reviewId) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No se encontró el token de autenticación");
+    }
+
+    const response = await fetch(`${API_URL}reviews/${reviewId}/like`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al dar like a la reseña");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al dar like a la reseña", error);
+    throw error;
+  }
+};
+
 const api = {
   login,
   isAuthenticated,
