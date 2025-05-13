@@ -1,8 +1,8 @@
-const API_URL = "http://localhost:8000/api/";
+const API_URL=import.meta.env.VITE_API_URL;
 
 export const login = async (email, password) => {
   try {
-    const response = await fetch(`${API_URL}login`, {
+    const response = await fetch(`${API_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export const logout = async () => {
 };
 
 export const register = async (userData) => {
-  const response = await fetch(`${API_URL}register`, {
+  const response = await fetch(`${API_URL}/api/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -93,7 +93,7 @@ export const updateProfile = async ({
   }
 
   try {
-    const response = await fetch(`${API_URL}profile/update`, {
+    const response = await fetch(`${API_URL}/api/profile/update`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -120,7 +120,7 @@ export const updateProfile = async ({
 export const getUserProfile = async (username) => {
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/profile/${username}`,
+      `${API_URL}/api/profile/${username}`,
       {
         method: "GET",
         headers: {
@@ -143,7 +143,7 @@ export const getUserProfile = async (username) => {
 
 export const getAllUsers = async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
+    const response = await fetch(`${API_URL}/api/users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -169,7 +169,7 @@ export const followUser = async (userId) => {
       throw new Error("No authentication token found");
     }
 
-    const response = await fetch(`${API_URL}follow/${userId}`, {
+    const response = await fetch(`${API_URL}/api/follow/${userId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -199,7 +199,7 @@ export const createReview = async (gameId, rating, text, playedBefore, playedAt)
       throw new Error("No authentication token found");
     }
 
-    const response = await fetch(`${API_URL}reviews`, {
+    const response = await fetch(`${API_URL}/api/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -227,7 +227,7 @@ export const createReview = async (gameId, rating, text, playedBefore, playedAt)
 
 export const getGameReviews = async (gameId) => {
   try {
-    const response = await fetch(`${API_URL}games/${gameId}/reviews`);
+    const response = await fetch(`${API_URL}/api/games/${gameId}/reviews`);
     if (!response.ok) {
       throw new Error("Error al obtener las reseñas");
     }
@@ -240,7 +240,7 @@ export const getGameReviews = async (gameId) => {
 
 export const getUserReviews = async (username) => {
   try {
-    const response = await fetch(`${API_URL}users/${username}/reviews`, {
+    const response = await fetch(`${API_URL}/api/users/${username}/reviews`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -265,7 +265,7 @@ export const deleteReview = async (reviewId) => {
       throw new Error("No se encontró el token de autenticación");
     }
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews/${reviewId}`, {
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -290,7 +290,7 @@ export const updateReview = async (reviewId, { rating, text, playedBefore, playe
       throw new Error("No se encontró el token de autenticación");
     }
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews/${reviewId}`, {
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -322,9 +322,10 @@ export const likeReview = async (reviewId) => {
       throw new Error("No se encontró el token de autenticación");
     }
 
-    const response = await fetch(`${API_URL}reviews/${reviewId}/like`, {
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}/like`, {
       method: "POST",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
@@ -336,6 +337,92 @@ export const likeReview = async (reviewId) => {
     return await response.json();
   } catch (error) {
     console.error("Error al dar like a la reseña", error);
+    throw error;
+  }
+};
+
+export const getReviewById = async (reviewId) => {
+  try {
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener la reseña");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error al obtener la reseña", error);
+    throw error;
+  }
+};
+
+export const getReviewComments = async (reviewId) => {
+  try {
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}/comments`);
+    if (!response.ok) {
+      throw new Error("Error al obtener los comentarios");
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error al obtener los comentarios", error);
+    throw error;
+  }
+};
+
+export const createComment = async (reviewId, text) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}/comments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al crear el comentario");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error al crear el comentario", error);
+    throw error;
+  }
+};
+
+export const deleteComment = async (commentId) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${API_URL}/api/comments/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al eliminar el comentario");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar el comentario", error);
     throw error;
   }
 };

@@ -89,7 +89,7 @@ class ReviewController extends AbstractController
         $review->setAuthor($user);
         $review->setCreatedAt(new \DateTimeImmutable());
         $review->setPlayedBefore($data['playedBefore'] ?? false);
-        
+
         if (isset($data['playedAt'])) {
             $review->setPlayedAt(new \DateTimeImmutable($data['playedAt']));
         }
@@ -139,8 +139,8 @@ class ReviewController extends AbstractController
 
     private function formatReviewData(Review $review): array
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
+        /** @var User $user */
+        $user = $this->getUser();
 
         return [
             'id' => $review->getId(),
@@ -153,7 +153,7 @@ class ReviewController extends AbstractController
             'playedBefore' => $review->isPlayedBefore(),
             'playedAt' => $review->getPlayedAt()?->format('c'),
             'likes' => $review->getLikes()->count(),
-            'hasLiked' => $currentUser ? $review->hasLiked($currentUser) : false,
+            'hasLiked' => $user !== null ? $review->hasLiked($user) : false,
             'author' => [
                 'id' => $review->getAuthor()->getId(),
                 'username' => $review->getAuthor()->getUsername(),
@@ -198,6 +198,12 @@ class ReviewController extends AbstractController
         $reviewsData = array_map([$this, 'formatReviewData'], $reviews);
 
         return new JsonResponse($reviewsData);
+    }
+
+    #[Route('/api/reviews/{id}', name: 'api_get_review', methods: ['GET'])]
+    public function getReview(Review $review): JsonResponse
+    {
+        return new JsonResponse($this->formatReviewData($review));
     }
 
     #[Route('/api/reviews/{id}', name: 'api_delete_review', methods: ['DELETE'])]
@@ -261,6 +267,8 @@ class ReviewController extends AbstractController
             'createdAt' => $review->getCreatedAt()->format('c'),
             'playedBefore' => $review->isPlayedBefore(),
             'playedAt' => $review->getPlayedAt()?->format('c'),
+            'likes' => $review->getLikes()->count(),
+            'hasLiked' => $user ? $review->hasLiked($user) : false,
             'author' => [
                 'id' => $review->getAuthor()->getId(),
                 'username' => $review->getAuthor()->getUsername(),
