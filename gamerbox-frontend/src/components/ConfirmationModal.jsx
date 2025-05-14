@@ -12,9 +12,19 @@ const ConfirmationModal = ({
   return (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
       <div
-        className="bg-white rounded-lg p-6 max-w-sm mx-4 shadow-xl animate-slide-in"
+        className="bg-white rounded-lg p-6 max-w-sm mx-4 shadow-xl"
         style={{
-          animation: "slideIn 0.3s ease-out",
+          animation: "slideInRight 0.3s ease-out",
+          '@keyframes slideInRight': {
+            '0%': {
+              transform: 'translateX(100%)',
+              opacity: '0'
+            },
+            '100%': {
+              transform: 'translateX(0)',
+              opacity: '1'
+            }
+          }
         }}
       >
         <h3 className="text-lg font-medium text-gray-900 mb-4">{title}</h3>

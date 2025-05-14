@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import ReviewList from "../components/ReviewList";
-import { getUserProfile, getUserReviews } from "../services/api";
+import { getUserProfile, getUserReviews, getUserGames } from "../services/api";
 import {
   FaMapMarkerAlt,
   FaInstagram,
@@ -10,6 +10,7 @@ import {
   FaEnvelope,
   FaUserFriends,
   FaGamepad,
+  FaStar,
 } from "react-icons/fa";
 import LoadingSpinner from "../components/LoadingSpinner";
 
@@ -20,6 +21,8 @@ const Dashboard = () => {
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
   const [activeTab, setActiveTab] = useState("info");
   const [currentPage, setCurrentPage] = useState(1);
+  const [userGames, setUserGames] = useState([]);
+  const [isLoadingGames, setIsLoadingGames] = useState(true);
   const reviewsPerPage = 5;
 
   const indexOfLastReview = currentPage * reviewsPerPage;
@@ -39,10 +42,16 @@ const Dashboard = () => {
 
         const userReviews = await getUserReviews(user.username);
         setReviews(userReviews);
+        
+        // Agregar la llamada para obtener los juegos del usuario
+        const games = await getUserGames(user.username);
+        console.log('Juegos obtenidos:', games); // Para depuración
+        setUserGames(games);
       } catch (error) {
         console.error("Error al actualizar datos del usuario:", error);
       } finally {
         setIsLoadingReviews(false);
+        setIsLoadingGames(false);
       }
     };
 
@@ -230,6 +239,18 @@ const Dashboard = () => {
               >
                 Todas las Reseñas
               </button>
+              <button
+                className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
+                  activeTab === "diary"
+                    ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
+                    : "text-[#A0A0A0] hover:text-[#E0E0E0]"
+                }`}
+                onClick={() => {
+                  setActiveTab("diary");
+                }}
+              >
+                Diario de Juegos
+              </button>
             </div>
           </div>
 
@@ -293,13 +314,9 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : null}
+          {activeTab === "reviews" && (
             <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-[#E0E0E0]">
-                  Todas las Reseñas
-                </h3>
-              </div>
               {isLoadingReviews ? (
                 <LoadingSpinner />
               ) : reviews.length > 0 ? (
@@ -314,10 +331,10 @@ const Dashboard = () => {
                         <button
                           key={index}
                           onClick={() => setCurrentPage(index + 1)}
-                          className={`px-3 py-1 rounded-md ${
+                          className={`px-4 py-2 rounded-md ${
                             currentPage === index + 1
                               ? "bg-[#3D5AFE] text-white"
-                              : "bg-[#2C2C2C] text-[#A0A0A0] hover:bg-[#3D5AFE] hover:text-white"
+                              : "bg-[#2C2C2C] text-[#A0A0A0] hover:bg-[#3D3D3D]"
                           }`}
                         >
                           {index + 1}
@@ -327,8 +344,44 @@ const Dashboard = () => {
                   )}
                 </>
               ) : (
+                <div className="text-center text-[#A0A0A0] py-8">
+                  No hay reseñas para mostrar
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "diary" && (
+            <div>
+              {isLoadingGames ? (
+                <LoadingSpinner />
+              ) : userGames.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {userGames.map((game) => (
+                    <div
+                      key={game.id}
+                      className="bg-[#252525] rounded-lg overflow-hidden"
+                    >
+                      <img
+                        src={game.backgroundImage}
+                        alt={game.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-4">
+                        <h4 className="text-[#E0E0E0] font-semibold mb-2">
+                          {game.name}
+                        </h4>
+                        <div className="flex items-center text-[#3D5AFE]">
+                          <FaStar className="mr-1" />
+                          <span>{game.rating.toFixed(1)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
                 <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
-                  No has publicado ninguna reseña aún
+                  No hay juegos en el diario aún
                 </div>
               )}
             </div>

@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getUserProfile, followUser, getUserReviews } from "../services/api";
+import {
+  getUserProfile,
+  followUser,
+  getUserReviews,
+  getUserGames,
+} from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import ConfirmationModal from "../components/ConfirmationModal";
 import {
@@ -9,6 +14,7 @@ import {
   FaTwitter,
   FaUserFriends,
   FaGamepad,
+  FaStar,
 } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -72,6 +78,26 @@ const UserProfile = () => {
   useEffect(() => {
     fetchUserReviews();
   }, [fetchUserReviews]);
+
+  const [userGames, setUserGames] = useState([]);
+  const [isLoadingGames, setIsLoadingGames] = useState(true);
+
+  const fetchUserGames = useCallback(async () => {
+    try {
+      setIsLoadingGames(true);
+      const games = await getUserGames(username);
+      console.log("Juegos del usuario:", games); // 👈 AÑADE ESTO
+      setUserGames(games);
+    } catch (error) {
+      console.error("Error al cargar el diario de juegos:", error);
+    } finally {
+      setIsLoadingGames(false);
+    }
+  }, [username]);
+
+  useEffect(() => {
+    fetchUserGames();
+  }, [fetchUserGames]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -307,6 +333,18 @@ const UserProfile = () => {
               >
                 Todas las Reseñas
               </button>
+              <button
+                className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
+                  activeTab === "diary"
+                    ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
+                    : "text-[#A0A0A0] hover:text-[#E0E0E0]"
+                }`}
+                onClick={() => {
+                  setActiveTab("diary");
+                }}
+              >
+                Diario de Juegos
+              </button>
             </div>
           </div>
 
@@ -329,7 +367,6 @@ const UserProfile = () => {
                 <div className="bg-[#2C2C2C] p-4 rounded-lg col-span-2">
                   <div className="space-y-2">
                     <div className="flex items-end justify-between h-40 gap-0.5 mt-10 px-4">
-                      
                       {[1, 2, 3, 4, 5].map((rating) => {
                         const count = reviews.filter(
                           (review) => Math.round(review.rating) === rating
@@ -347,10 +384,12 @@ const UserProfile = () => {
                             <div className="w-full h-32 relative">
                               <div
                                 className={`absolute bottom-0 w-full transition-all duration-300 rounded-t ${
-                                  count > 0 ? 'bg-[#3D5AFE]' : 'bg-[#3D5AFE] bg-opacity-10'
+                                  count > 0
+                                    ? "bg-[#3D5AFE]"
+                                    : "bg-[#3D5AFE] bg-opacity-10"
                                 }`}
-                                style={{ 
-                                  height: count > 0 ? `${percentage}%` : '10%'
+                                style={{
+                                  height: count > 0 ? `${percentage}%` : "10%",
                                 }}
                               />
                             </div>
@@ -364,19 +403,14 @@ const UserProfile = () => {
                           </div>
                         );
                       })}
-                     
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          ) : (
+          ) : null}
+          {activeTab === "reviews" && (
             <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-[#E0E0E0]">
-                  Todas las Reseñas
-                </h3>
-              </div>
               {isLoadingReviews ? (
                 <LoadingSpinner />
               ) : reviews.length > 0 ? (
@@ -391,10 +425,10 @@ const UserProfile = () => {
                         <button
                           key={index}
                           onClick={() => setCurrentPage(index + 1)}
-                          className={`px-3 py-1 rounded-md ${
+                          className={`px-4 py-2 rounded-md ${
                             currentPage === index + 1
                               ? "bg-[#3D5AFE] text-white"
-                              : "bg-[#2C2C2C] text-[#A0A0A0] hover:bg-[#3D5AFE] hover:text-white"
+                              : "bg-[#2C2C2C] text-[#A0A0A0] hover:bg-[#3D3D3D]"
                           }`}
                         >
                           {index + 1}
@@ -404,8 +438,44 @@ const UserProfile = () => {
                   )}
                 </>
               ) : (
+                <div className="text-center text-[#A0A0A0] py-8">
+                  No hay reseñas para mostrar
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "diary" && (
+            <div>
+              {isLoadingGames ? (
+                <LoadingSpinner />
+              ) : userGames.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {userGames.map((game) => (
+                    <div
+                      key={game.id}
+                      className="bg-[#252525] rounded-lg overflow-hidden"
+                    >
+                      <img
+                        src={game.backgroundImage}
+                        alt={game.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-4">
+                        <h4 className="text-[#E0E0E0] font-semibold mb-2">
+                          {game.name}
+                        </h4>
+                        <div className="flex items-center text-[#3D5AFE]">
+                          <FaStar className="mr-1" />
+                          <span>{game.rating.toFixed(1)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
                 <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
-                  No hay reseñas publicadas aún
+                  No hay juegos en el diario aún
                 </div>
               )}
             </div>

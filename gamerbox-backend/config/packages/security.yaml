@@ -41,13 +41,13 @@ security:
         - { path: ^/api/games, roles: PUBLIC_ACCESS }
         - { path: ^/api/genres, roles: PUBLIC_ACCESS }
         - { path: ^/api/platforms, roles: PUBLIC_ACCESS }
+        - { path: ^/api/comments, roles: PUBLIC_ACCESS }
         - { path: ^/api/games/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/users/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/reviews/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }
-        - { path: ^/api/reviews, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/reviews/.+/comments$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/reviews, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/reviews/.+/comments$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
-        - { path: ^/api/comments, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

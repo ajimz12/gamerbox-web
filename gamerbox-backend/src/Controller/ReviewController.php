@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\GameReference;
 use App\Entity\Review;
 use App\Entity\User;
+use App\Entity\UserGame;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -69,17 +70,23 @@ class ReviewController extends AbstractController
 
                 if ($response->getStatusCode() === 200) {
                     $gameData = $response->toArray();
+                    error_log('RAWG API Response: ' . json_encode($gameData));
+                    
                     $gameReference->setName($gameData['name'] ?? 'Nombre desconocido');
                     $gameReference->setSlug($gameData['slug'] ?? 'slug-desconocido');
-                } else {
+                    $gameReference->setBackgroundImage($gameData['background_image'] ?? null);
+                } 
+                else {
                     $gameReference->setName('Nombre desconocido');
                     $gameReference->setSlug('slug-desconocido');
+                    $gameReference->setBackgroundImage(null);
                 }
             } catch (\Throwable $e) {
                 return new JsonResponse(['error' => 'Error al consultar la API de RAWG'], Response::HTTP_BAD_GATEWAY);
             }
 
             $entityManager->persist($gameReference);
+            $entityManager->flush();
         }
 
         $review = new Review();
@@ -89,6 +96,18 @@ class ReviewController extends AbstractController
         $review->setAuthor($user);
         $review->setCreatedAt(new \DateTimeImmutable());
         $review->setPlayedBefore($data['playedBefore'] ?? false);
+
+        // Crear entrada en UserGame
+        $userGame = new UserGame();
+        $userGame->setUser($user);
+        $userGame->setGame($gameReference);
+        $userGame->setIsFavorite(false);
+        $userGame->setPlayedAt($review->getPlayedAt() ?? new \DateTimeImmutable());
+        $userGame->setStatus('played');
+
+        $entityManager->persist($review);
+        $entityManager->persist($userGame);
+        $entityManager->flush();
 
         if (isset($data['playedAt'])) {
             $review->setPlayedAt(new \DateTimeImmutable($data['playedAt']));

@@ -14,47 +14,25 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(review.text);
   const [editedRating, setEditedRating] = useState(review.rating);
-  const [editedPlayedBefore, setEditedPlayedBefore] = useState(
-    review.playedBefore
-  );
+  const [editedPlayedBefore, setEditedPlayedBefore] = useState(review.playedBefore);
   const [editedPlayedAt, setEditedPlayedAt] = useState(
-    review.playedAt
-      ? new Date(review.playedAt).toISOString().split("T")[0]
-      : new Date().toISOString().split("T")[0]
+    review.playedAt ? new Date(review.playedAt).toISOString().split("T")[0] : new Date().toISOString().split("T")[0]
   );
+  const [hover, setHover] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [likes, setLikes] = useState(review.likes);
   const [hasLiked, setHasLiked] = useState(review.hasLiked);
 
-  // Actualizar los estados cuando cambia la prop review
   useEffect(() => {
-    setEditedText(review.text);
-    setEditedRating(review.rating);
-    setEditedPlayedBefore(review.playedBefore);
-    setEditedPlayedAt(
-      review.playedAt
-        ? new Date(review.playedAt).toISOString().split("T")[0]
-        : new Date().toISOString().split("T")[0]
-    );
     setLikes(review.likes);
     setHasLiked(review.hasLiked);
-  }, [review]);
+  }, [review.likes, review.hasLiked]);
 
   const formatDate = (dateString) => {
     const months = [
-      "Ene",
-      "Feb",
-      "Mar",
-      "Abr",
-      "May",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dic",
+      "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+      "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
     ];
     const date = new Date(dateString);
     const day = date.getDate();
@@ -66,28 +44,28 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
   const handleDelete = async () => {
     try {
       await deleteReview(review.id);
-
-      toast.success("Reseña eliminada con éxito", {
+      
+      toast.success('Reseña eliminada con éxito', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        theme: "dark",
+        theme: "dark"
       });
-
+      
       setIsDeleteModalOpen(false);
       onReviewDeleted(review.id);
     } catch (error) {
-      toast.error("Error al eliminar la reseña", {
+      toast.error('Error al eliminar la reseña', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        theme: "dark",
+        theme: "dark"
       });
     }
   };
@@ -99,29 +77,29 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
         rating: editedRating,
         text: editedText,
         playedBefore: editedPlayedBefore,
-        playedAt: editedPlayedAt,
+        playedAt: editedPlayedAt
       });
-
+      
       setIsEditing(false);
       onReviewUpdated(updatedReview);
-      toast.success("Reseña actualizada con éxito", {
+      toast.success('Reseña actualizada con éxito', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        theme: "dark",
+        theme: "dark"
       });
     } catch (error) {
-      toast.error("Error al actualizar la reseña", {
+      toast.error('Error al actualizar la reseña', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        theme: "dark",
+        theme: "dark"
       });
     } finally {
       setIsSubmitting(false);
@@ -134,134 +112,215 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
       setLikes(response.likes);
       setHasLiked(response.hasLiked);
     } catch (error) {
-      toast.error("Debes iniciar sesión para dar like", {
+      toast.error('Error al dar like a la reseña', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        theme: "dark",
+        theme: "dark"
       });
     }
   };
 
   return (
-    <div className="block bg-[#252525] p-6 rounded-lg group hover:bg-[#2A2A2A] transition-all duration-200 hover:shadow-lg relative">
-      <div className="relative">
-        <div className="flex items-center justify-between mb-4">
-          <Link
-            to={`/user/${review.author.username}`}
-            className="flex items-center space-x-3 hover:text-[#3D5AFE] z-10"
-          >
-            <img
-              src={`${import.meta.env.VITE_API_URL}/uploads/profile_pictures/${
-                review.author.profilePicture
-              }`}
-              alt={review.author.username}
-              className="w-10 h-10 rounded-full object-cover"
-              onError={(e) => {
-                e.target.src = "/profile_pictures/pfp.png";
-              }}
-            />
-            <span className="font-medium text-[#E0E0E0]">
-              {review.author.username}
-            </span>
-          </Link>
+    <div className="bg-[#252525] p-6 rounded-lg">
+      <div className="flex items-center justify-between mb-4">
+        <Link
+          to={`/user/${review.author.username}`}
+          className="flex items-center space-x-3 hover:text-[#3D5AFE]"
+        >
+          <img
+            src={`${import.meta.env.VITE_API_URL}/uploads/profile_pictures/${review.author.profilePicture}`}
+            alt={review.author.username}
+            className="w-10 h-10 rounded-full object-cover"
+            onError={(e) => {
+              e.target.src = "/profile_pictures/pfp.png";
+            }}
+          />
+          <span className="font-medium text-[#E0E0E0]">
+            {review.author.username}
+          </span>
+        </Link>
+        
+        {user && user.id === review.author.id && (
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"
+            >
+              <FaEdit />
+            </button>
+            <button
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="p-2 text-[#E0E0E0] hover:text-red-500 cursor-pointer transition-colors"
+            >
+              <FaTrash />
+            </button>
+          </div>
+        )}
+      </div>
 
-          {user && user.id === review.author.id && (
-            <div className="flex items-center space-x-2 z-10">
+      <Link to={`/games/${review.gameId}`} className="block mb-4">
+        <h3 className="text-lg font-semibold text-[#3D5AFE] hover:text-[#5C6BC0] transition-colors">
+          {review.gameName}
+        </h3>
+      </Link>
+
+      {isEditing && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-[#1E1E1E] rounded-lg p-6 w-full max-w-4xl mx-4">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-[#E0E0E0]">
+                Editar reseña
+              </h3>
               <button
-                onClick={() => setIsEditing(!isEditing)}
-                className="p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"
+                onClick={() => setIsEditing(false)}
+                className="text-[#A0A0A0] hover:text-white cursor-pointer"
               >
-                <FaEdit />
-              </button>
-              <button
-                onClick={() => setIsDeleteModalOpen(true)}
-                className="p-2 text-[#E0E0E0] hover:text-red-500 cursor-pointer transition-colors"
-              >
-                <FaTrash />
+                ✕
               </button>
             </div>
-          )}
-        </div>
 
-        <Link
-          to={`/reviews/${review.id}`}
-          className="block mb-4 z-10"
-        >
-          <h3 className="text-lg font-semibold text-[#3D5AFE] hover:text-[#5C6BC0] transition-colors">
-            {review.gameName}
-          </h3>
-        </Link>
+            <div className="mb-6 grid grid-cols-2 gap-6">
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="editPlayedBefore"
+                  checked={editedPlayedBefore}
+                  onChange={(e) => setEditedPlayedBefore(e.target.checked)}
+                  className="w-5 h-5 rounded-md border-2 border-[#3D5AFE] bg-[#1E1E1E] text-[#3D5AFE] focus:ring-2 focus:ring-[#3D5AFE] focus:ring-offset-0 cursor-pointer transition-all duration-200"
+                />
+                <label
+                  htmlFor="editPlayedBefore"
+                  className="text-[#E0E0E0] text-lg cursor-pointer select-none"
+                >
+                  Lo había jugado antes
+                </label>
+              </div>
 
-        <div className="flex items-center mb-4">
-          {[...Array(5)].map((_, index) => (
-            <FaStar
-              key={index}
-              className="w-5 h-5"
-              color={index < review.rating ? "#3D5AFE" : "#e4e5e9"}
+              <div className="flex items-center space-x-2">
+                <span className="text-[#E0E0E0] text-lg">Jugado el</span>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      document.getElementById("editPlayedAtInput").showPicker()
+                    }
+                    className="bg-[#1E1E1E] text-white cursor-pointer text-sm px-4 py-2 rounded-md border border-[#3D3D3D] hover:border-[#3D5AFE] hover:bg-[#2A2A2A] transition-all"
+                  >
+                    {formatDate(editedPlayedAt)}
+                  </button>
+                  <input
+                    type="date"
+                    id="editPlayedAtInput"
+                    value={editedPlayedAt}
+                    onChange={(e) => setEditedPlayedAt(e.target.value)}
+                    className="absolute top-0 left-0 w-0 h-0 opacity-0 pointer-events-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <textarea
+              value={editedText}
+              onChange={(e) => setEditedText(e.target.value)}
+              className="w-full p-3 bg-[#1E1E1E] text-[#E0E0E0] border-2 border-[#3D3D3D] rounded-lg focus:outline-none focus:border-[#3D5AFE] min-h-[200px]"
             />
-          ))}
-        </div>
 
-        <p className="text-[#A0A0A0] mb-4">{review.text}</p>
-
-        <div className="text-sm text-[#808080] mb-4">
-          {review.playedAt ? (
-            <>
-              {review.playedBefore ? (
-                <span className="text-[#3D5AFE] font-medium">Rejugado</span>
-              ) : (
-                <span className="text-[#3D5AFE] font-medium">Jugado</span>
-              )}{" "}
-              el{" "}
-              {new Date(review.playedAt).toLocaleDateString("es-ES", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
+            <div className="flex mt-4 mb-6">
+              {[...Array(5)].map((_, index) => {
+                const ratingValue = index + 1;
+                return (
+                  <label key={index} className="cursor-pointer">
+                    <input
+                      type="radio"
+                      name="rating"
+                      className="hidden"
+                      value={ratingValue}
+                      onClick={() => setEditedRating(ratingValue)}
+                    />
+                    <FaStar
+                      className="w-8 h-8 mr-1"
+                      color={ratingValue <= (hover || editedRating) ? "#3D5AFE" : "#e4e5e9"}
+                      onMouseEnter={() => setHover(ratingValue)}
+                      onMouseLeave={() => setHover(0)}
+                    />
+                  </label>
+                );
               })}
-            </>
-          ) : (
-            <span className="text-[#3D5AFE] font-medium">
-              {review.playedBefore
-                ? "Rejugado anteriormente"
-                : "Jugado anteriormente"}
-            </span>
-          )}
-        </div>
+            </div>
 
-        <div className="flex items-center justify-between">
-          <button
-            onClick={handleLike}
-            className={`flex items-center cursor-pointer space-x-2 px-3 py-1 rounded-full transition-colors ${
-              hasLiked
-                ? "text-red-500 hover:text-red-600"
-                : "text-gray-400 hover:text-red-500"
-            }`}
-          >
-            <FaHeart
-              className={`${hasLiked ? "fill-current" : "stroke-current"}`}
-            />
-            <span>{likes}</span>
-          </button>
-
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-400">
-              {formatDistanceToNow(new Date(review.createdAt), {
-                addSuffix: true,
-                locale: es,
-              })}
-            </span>
-            <Link
-              to={`/reviews/${review.id}`}
-              className="text-[#3D5AFE] hover:text-[#536DFE] text-sm transition-colors"
-            >
-              Ver detalles
-            </Link>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="px-4 py-2 text-[#E0E0E0] bg-[#2C2C2C] rounded-lg hover:bg-[#1E1E1E] transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleUpdate}
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-[#3D5AFE] text-[#E0E0E0] rounded-lg hover:bg-[#5C6BC0] transition-colors disabled:opacity-50"
+              >
+                {isSubmitting ? 'Guardando...' : 'Guardar'}
+              </button>
+            </div>
           </div>
         </div>
+      )}
+
+      <div className="flex items-center mb-4">
+        {[...Array(5)].map((_, index) => (
+          <FaStar
+            key={index}
+            className="w-5 h-5"
+            color={index < review.rating ? "#3D5AFE" : "#e4e5e9"}
+          />
+        ))}
+      </div>
+      <p className="text-[#A0A0A0] mb-4">{review.text}</p>
+      <div className="text-sm text-[#808080] mb-4">
+        {review.playedAt ? (
+          <>
+            {review.playedBefore ? (
+              <span className="text-[#3D5AFE] font-medium">Rejugado</span>
+            ) : (
+              <span className="text-[#3D5AFE] font-medium">Jugado</span>
+            )}{" "}
+            el {new Date(review.playedAt).toLocaleDateString('es-ES', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            })}
+          </>
+        ) : (
+          <span className="text-[#3D5AFE] font-medium">
+            {review.playedBefore ? 'Rejugado anteriormente' : 'Jugado anteriormente'}
+          </span>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between">
+        <button
+          onClick={handleLike}
+          className={`flex items-center cursor-pointer space-x-2 px-3 py-1 rounded-full transition-colors ${
+            hasLiked
+              ? "text-red-500 hover:text-red-600"
+              : "text-gray-400 hover:text-red-500"
+          }`}
+        >
+          <FaHeart className={`${hasLiked ? "fill-current" : "stroke-current"}`} />
+          <span>{likes}</span>
+        </button>
+
+        <span className="text-sm text-gray-400">
+          {formatDistanceToNow(new Date(review.createdAt), {
+            addSuffix: true,
+            locale: es,
+          })}
+        </span>
       </div>
 
       <ConfirmationModal

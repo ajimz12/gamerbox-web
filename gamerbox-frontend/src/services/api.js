@@ -427,6 +427,27 @@ export const deleteComment = async (commentId) => {
   }
 };
 
+export const getUserGames = async (username) => {
+  try {
+    const response = await fetch(`${API_URL}/api/users/${username}/games`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener los juegos del usuario");
+    }
+
+    const data = await response.json();
+    return data.games;
+  } catch (error) {
+    console.error("Error al obtener los juegos del usuario", error);
+    throw error;
+  }
+};
+
 const api = {
   login,
   isAuthenticated,

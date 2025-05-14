@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { FaTrash } from "react-icons/fa";
-import { deleteComment } from "../services/api";
+import { deleteComment, getReviewComments, createComment } from "../services/api";
 
 const CommentSection = ({ reviewId }) => {
   const { user } = useAuth();
@@ -16,18 +16,11 @@ const CommentSection = ({ reviewId }) => {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/reviews/${reviewId}/comments`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const data = await response.json();
+      const data = await getReviewComments(reviewId);
       setComments(data);
     } catch (error) {
       console.error("Error al cargar los comentarios:", error);
+      toast.error("Error al cargar los comentarios");
     }
   };
 
@@ -44,23 +37,7 @@ const CommentSection = ({ reviewId }) => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/reviews/${reviewId}/comments`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ text: newComment }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Error al publicar el comentario");
-      }
-
-      const data = await response.json();
+      const data = await createComment(reviewId, newComment);
       setComments([...comments, data]);
       setNewComment("");
       toast.success("Comentario publicado con éxito");
@@ -83,7 +60,7 @@ const CommentSection = ({ reviewId }) => {
 
   return (
     <div>
-      {user && (
+      {user ? (
         <form onSubmit={handleSubmit} className="mb-6">
           <textarea
             value={newComment}
@@ -99,6 +76,10 @@ const CommentSection = ({ reviewId }) => {
             {isLoading ? "Publicando..." : "Publicar comentario"}
           </button>
         </form>
+      ) : (
+        <div className="mb-6 p-4 bg-[#1E1E1E] border-2 border-[#3D3D3D] rounded-lg text-center">
+          <p className="text-[#E0E0E0]">Debes <a href="/login" className="text-[#3D5AFE] hover:text-[#536DFE] transition-colors">iniciar sesión</a> para poder comentar</p>
+        </div>
       )}
 
       <div className="space-y-4">
