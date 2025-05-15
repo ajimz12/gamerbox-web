@@ -5,21 +5,19 @@ import {
   fetchGameScreenshots,
 } from "../services/rawgService";
 import LoadingSpinner from "../components/LoadingSpinner";
-import {
-  FaCalendarAlt,
-  FaGamepad,
-  FaImage,
-} from "react-icons/fa";
+import { FaCalendarAlt, FaGamepad, FaImage } from "react-icons/fa";
 import { BiJoystick } from "react-icons/bi";
 import { MdDescription, MdRateReview } from "react-icons/md";
 import ReviewForm from "../components/ReviewForm";
 import ReviewList from "../components/ReviewList";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { checkGameFavorite, toggleGameFavorite } from "../services/api";
 
 const GameDetails = () => {
   const { id } = useParams();
-  const { isAuth, user: currentUser } = useAuth(); 
+  const { isAuth, user: currentUser } = useAuth();
   const [game, setGame] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,6 +26,7 @@ const GameDetails = () => {
   const [screenshots, setScreenshots] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const loadGameDetails = async () => {
@@ -39,6 +38,17 @@ const GameDetails = () => {
         ]);
         setGame(gameData);
         setScreenshots(screenshotsData);
+
+        if (isAuth) {
+          try {
+            const data = await checkGameFavorite(id);
+            setIsFavorite(data.isFavorite);
+          } catch (error) {
+            console.error("Error al verificar favorito:", error);
+          }
+        }
+
+        await loadReviews();
       } catch (error) {
         setError("Error al cargar los detalles del juego");
         console.error("Error fetching game details:", error);
@@ -48,39 +58,62 @@ const GameDetails = () => {
     };
 
     loadGameDetails();
-  }, [id]);
+  }, [id, isAuth]);
 
-  useEffect(() => {
-    const loadReviews = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/games/${id}/reviews`
-        );
-        if (!response.ok) {
-          throw new Error("Error al cargar las reseñas");
+  const handleToggleFavorite = async () => {
+    if (!isAuth) {
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/games/${id}/favorite`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
         }
-        const data = await response.json();
-        setReviews(data);
-      } catch (error) {
-        console.error("Error cargando reseñas:", error);
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al actualizar favorito");
       }
-    };
 
-    loadReviews();
-  }, [id]);
-
-  const handleReviewSubmitted = (newReview) => {
-    setReviews([newReview, ...reviews]);
+      const data = await response.json();
+      setIsFavorite(data.isFavorite);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
-  const handleReviewUpdated = (updatedReview) => {
-    setReviews(reviews.map(review => 
-      review.id === updatedReview.id ? updatedReview : review
-    ));
+  const loadReviews = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/games/${id}/reviews`
+      );
+      if (!response.ok) {
+        throw new Error("Error al cargar las reseñas");
+      }
+      const data = await response.json();
+      setReviews(data);
+    } catch (error) {
+      console.error("Error cargando reseñas:", error);
+    }
   };
 
-  const handleReviewDeleted = (reviewId) => {
-    setReviews(reviews.filter(review => review.id !== reviewId));
+  const handleReviewSubmitted = async (newReview) => {
+    await loadReviews();
+  };
+
+  const handleReviewUpdated = async (updatedReview) => {
+    await loadReviews();
+  };
+
+  const handleReviewDeleted = async (reviewId) => {
+    await loadReviews();
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -116,9 +149,20 @@ const GameDetails = () => {
 
           {/* Contenido principal */}
           <div className="relative -mt-32 p-8">
-            <h1 className="text-4xl font-bold text-[#E0E0E0] mb-4 flex items-center mt-10">
-              {game.name}
-            </h1>
+            <div className="flex justify-between items-center">
+              <h1 className="text-4xl font-bold text-[#E0E0E0] mb-4 flex items-center mt-10">
+                {game.name}
+              </h1>
+              <button
+                onClick={handleToggleFavorite}
+                className="text-2xl text-[#3D5AFE] hover:text-[#536DFE] transition-colors"
+                title={
+                  isFavorite ? "Eliminar de favoritos" : "Añadir a favoritos"
+                }
+              >
+                {isFavorite ? <FaHeart /> : <FaRegHeart />}
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 mt-10">
               <div className="bg-[#252525] p-6 rounded-lg">
@@ -233,15 +277,18 @@ const GameDetails = () => {
                   <MdRateReview className="mr-2 text-[#3D5AFE]" />
                   Reseñas
                 </div>
-                {isAuth && !reviews.some(review => review.author.id === currentUser?.id) && (
-                  <button
-                    onClick={() => setShowReviewModal(true)}
-                    className="bg-[#3D5AFE] hover:bg-[#536DFE] text-white cursor-pointer px-4 py-2 rounded-lg flex items-center"
-                  >
-                    <MdRateReview className="mr-2" />
-                    Nueva Reseña
-                  </button>
-                )}
+                {isAuth &&
+                  !reviews.some(
+                    (review) => review.author.id === currentUser?.id
+                  ) && (
+                    <button
+                      onClick={() => setShowReviewModal(true)}
+                      className="bg-[#3D5AFE] hover:bg-[#536DFE] text-white cursor-pointer px-4 py-2 rounded-lg flex items-center"
+                    >
+                      <MdRateReview className="mr-2" />
+                      Nueva Reseña
+                    </button>
+                  )}
               </h2>
 
               {isAuth ? (
@@ -259,7 +306,7 @@ const GameDetails = () => {
                           ✕
                         </button>
                       </div>
-                      
+
                       <div className="flex gap-8">
                         <div className="flex-shrink-0">
                           <img
@@ -306,8 +353,8 @@ const GameDetails = () => {
               )}
 
               {reviews.length > 0 ? (
-                <ReviewList 
-                  reviews={reviews} 
+                <ReviewList
+                  reviews={reviews}
                   setReviews={setReviews}
                   onReviewUpdated={handleReviewUpdated}
                   onReviewDeleted={handleReviewDeleted}

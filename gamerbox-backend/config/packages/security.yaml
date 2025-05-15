@@ -46,6 +46,8 @@ security:
         - { path: ^/api/users/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/reviews/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/reviews/.+/comments$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/games/.+/favorite$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/games/.+/favorite$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
         - { path: ^/api/reviews, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/reviews/.+/comments$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

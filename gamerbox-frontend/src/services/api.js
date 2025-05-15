@@ -456,6 +456,56 @@ export const getUserGames = async (username) => {
   }
 };
 
+export const checkGameFavorite = async (gameId) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${API_URL}/api/games/${gameId}/favorite`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al verificar favorito");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error al verificar favorito", error);
+    throw error;
+  }
+};
+
+export const toggleGameFavorite = async (gameId) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${API_URL}/api/games/${gameId}/favorite`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al actualizar favorito");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error al actualizar favorito", error);
+    throw error;
+  }
+};
+
 const api = {
   login,
   isAuthenticated,

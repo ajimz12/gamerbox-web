@@ -475,7 +475,14 @@ const UserProfile = () => {
                         </h4>
                         <div className="flex items-center text-[#3D5AFE]">
                           <FaStar className="mr-1" />
-                          <span>{game.rating.toFixed(1)}</span>
+                          <span>{game.rating}</span>
+                        </div>
+                        <div className="text-right text-sm text-[#A0A0A0] mt-2">
+                          {new Date(game.playedAt).toLocaleDateString('es-ES', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
                         </div>
                       </div>
                     </div>

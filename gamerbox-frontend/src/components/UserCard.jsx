@@ -7,7 +7,7 @@ const UserCard = ({ user }) => {
   const userData = user.follower || user.followed || user || {};
 
   const isCurrentUser = currentUser?.username === userData.username;
-  const linkTo = isCurrentUser ? '/dashboard' : `/user/${userData.username}`;
+  const linkTo = `/user/${userData.username}`;
 
   return (
     <Link 

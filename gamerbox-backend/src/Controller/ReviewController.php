@@ -97,13 +97,25 @@ class ReviewController extends AbstractController
         $review->setCreatedAt(new \DateTimeImmutable());
         $review->setPlayedBefore($data['playedBefore'] ?? false);
 
-        // Crear entrada en UserGame
-        $userGame = new UserGame();
-        $userGame->setUser($user);
-        $userGame->setGame($gameReference);
-        $userGame->setIsFavorite(false);
-        $userGame->setPlayedAt($review->getPlayedAt() ?? new \DateTimeImmutable());
+        // Buscar UserGame existente o crear uno nuevo
+        $userGame = $entityManager->getRepository(UserGame::class)->findOneBy([
+            'user' => $user,
+            'game' => $gameReference
+        ]);
+
+        if (!$userGame) {
+            $userGame = new UserGame();
+            $userGame->setUser($user);
+            $userGame->setGame($gameReference);
+            $userGame->setIsFavorite(false);
+            $userGame->setPlayedAt($review->getPlayedAt() ?? new \DateTimeImmutable());
+        }
+        
+        // Actualizar el estado a 'played' independientemente de si existía o no
         $userGame->setStatus('played');
+
+        $entityManager->persist($userGame);
+        $entityManager->flush();
 
         $entityManager->persist($review);
         $entityManager->persist($userGame);
