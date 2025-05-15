@@ -15,12 +15,8 @@ const ReviewList = ({ reviews, setReviews }) => {
     setReviews(reviews.filter(review => review.id !== reviewId));
   };
 
-  // Ordenar las reseñas para que la del usuario actual aparezca primero
-  const sortedReviews = [...reviews].sort((a, b) => {
-    if (user && a.author.id === user.id) return -1;
-    if (user && b.author.id === user.id) return 1;
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
+  // Mantener el orden original de las reseñas ya que el backend ya las ordena correctamente
+  const sortedReviews = [...reviews];
 
   return (
     <div className="space-y-6">

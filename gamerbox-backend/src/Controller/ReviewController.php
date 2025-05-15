@@ -231,6 +231,29 @@ class ReviewController extends AbstractController
         return new JsonResponse($reviewsData);
     }
 
+    #[Route('/api/reviews', name: 'api_get_all_reviews', methods: ['GET'])]
+    public function getAllReviews(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $orderBy = $request->query->get('orderBy', 'date');
+        $qb = $entityManager->createQueryBuilder();
+        $qb->select('r')
+           ->from(Review::class, 'r');
+
+        if ($orderBy === 'popular') {
+            $qb->leftJoin('r.likes', 'l')
+               ->groupBy('r.id')
+               ->orderBy('COUNT(l.id)', 'DESC')
+               ->addOrderBy('r.createdAt', 'DESC');
+        } else {
+            $qb->orderBy('r.createdAt', 'DESC');
+        }
+
+        $reviews = $qb->getQuery()->getResult();
+        $reviewsData = array_map([$this, 'formatReviewData'], $reviews);
+
+        return new JsonResponse($reviewsData);
+    }
+
     #[Route('/api/reviews/{id}', name: 'api_get_review', methods: ['GET'])]
     public function getReview(Review $review): JsonResponse
     {

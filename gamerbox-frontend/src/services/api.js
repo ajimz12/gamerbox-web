@@ -506,6 +506,16 @@ export const toggleGameFavorite = async (gameId) => {
   }
 };
 
+export const getAllReviews = async (orderBy = 'date') => {
+  const response = await fetch(`${API_URL}/api/reviews?orderBy=${orderBy}`, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  if (!response.ok) throw new Error('Error al obtener las reseñas');
+  return response.json();
+};
+
 const api = {
   login,
   isAuthenticated,

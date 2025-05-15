@@ -13,6 +13,7 @@ import Following from "../pages/Following";
 import Games from "../pages/Games";
 import GameDetails from "../pages/GameDetails";
 import ReviewDetail from "../pages/ReviewDetail";
+import Reviews from "../pages/Reviews";
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
         path: "reviews/:id",
         element: <ReviewDetail />,
       },
+      {
+        path: "reviews",
+        element: <Reviews />,
+      }
     ],
   },
 ]);

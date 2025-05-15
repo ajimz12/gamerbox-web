@@ -42,6 +42,7 @@ security:
         - { path: ^/api/genres, roles: PUBLIC_ACCESS }
         - { path: ^/api/platforms, roles: PUBLIC_ACCESS }
         - { path: ^/api/comments, roles: PUBLIC_ACCESS }
+        - { path: ^/api/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/games/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/users/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/reviews/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }

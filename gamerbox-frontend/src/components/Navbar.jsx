@@ -63,6 +63,12 @@ const Navbar = () => {
               >
                 Juegos
               </Link>
+              <Link
+                to="/reviews"
+                className="px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
+              >
+                Reseñas
+              </Link>
               {isAuth ? (
                 <>
                   <Link
@@ -129,6 +135,13 @@ const Navbar = () => {
             </Link>
             <Link
               to="/games"
+              className="block px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Juegos
+            </Link>
+            <Link
+              to="/reviews"
               className="block px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
