@@ -31,7 +31,6 @@ export const AuthProvider = ({ children }) => {
         await logout();
         setUser(null);
         setIsAuth(false);
-        // Forzar la limpieza del estado
         localStorage.clear();
     };
 

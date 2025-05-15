@@ -112,7 +112,7 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
       setLikes(response.likes);
       setHasLiked(response.hasLiked);
     } catch (error) {
-      toast.error('Error al dar like a la reseña', {
+      toast.error('Inicia sesion para dar likes', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

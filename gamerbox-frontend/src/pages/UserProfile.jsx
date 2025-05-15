@@ -15,6 +15,7 @@ import {
   FaUserFriends,
   FaGamepad,
   FaStar,
+  FaEnvelope,
 } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,12 +24,21 @@ import ReviewList from "../components/ReviewList";
 
 const UserProfile = () => {
   const { username } = useParams();
+  const { user: currentUser } = useAuth();
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
   const [showUnfollowModal, setShowUnfollowModal] = useState(false);
-  const { user: currentUser } = useAuth();
+  const [reviews, setReviews] = useState([]);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
+  const [activeTab, setActiveTab] = useState("info");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [userGames, setUserGames] = useState([]);
+  const [isLoadingGames, setIsLoadingGames] = useState(true);
+  const reviewsPerPage = 5;
+
+  const isOwnProfile = currentUser?.username === username;
 
   const fetchUserProfile = useCallback(async () => {
     try {
@@ -52,12 +62,6 @@ const UserProfile = () => {
     fetchUserProfile();
   }, [fetchUserProfile]);
 
-  const [reviews, setReviews] = useState([]);
-  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
-  const [activeTab, setActiveTab] = useState("info");
-  const [currentPage, setCurrentPage] = useState(1);
-  const reviewsPerPage = 5;
-
   const indexOfLastReview = currentPage * reviewsPerPage;
   const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
   const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
@@ -79,14 +83,10 @@ const UserProfile = () => {
     fetchUserReviews();
   }, [fetchUserReviews]);
 
-  const [userGames, setUserGames] = useState([]);
-  const [isLoadingGames, setIsLoadingGames] = useState(true);
-
   const fetchUserGames = useCallback(async () => {
     try {
       setIsLoadingGames(true);
       const games = await getUserGames(username);
-      console.log("Juegos del usuario:", games); // 👈 AÑADE ESTO
       setUserGames(games);
     } catch (error) {
       console.error("Error al cargar el diario de juegos:", error);
@@ -155,6 +155,7 @@ const UserProfile = () => {
           confirmButtonClass="bg-red-500 hover:bg-red-600"
         />
       )}
+      
       {/* Banner de perfil */}
       <div className="h-64 bg-gradient-to-r from-[#3D5AFE] via-[#5C6BC0] to-[#3D5AFE] relative">
         <div className="absolute bottom-0 left-0 w-full">
@@ -225,7 +226,14 @@ const UserProfile = () => {
                 <span className="text-[#A0A0A0]">Juegos</span>
               </div>
             </div>
-            {currentUser && currentUser.id !== user?.id && (
+            {isOwnProfile ? (
+              <Link
+                to="/profile/edit"
+                className="px-6 py-2 bg-[#3D5AFE] text-[#E0E0E0] rounded-full hover:bg-[#5C6BC0] transition-colors"
+              >
+                Editar Perfil
+              </Link>
+            ) : currentUser && (
               <button
                 onClick={handleFollow}
                 className={`px-6 py-2 rounded-full cursor-pointer font-medium ${
@@ -253,12 +261,15 @@ const UserProfile = () => {
               )}
 
               <div className="space-y-3">
+                {isOwnProfile && (
+                  <div className="flex items-center text-[#A0A0A0]">
+                    <FaEnvelope className="mr-2 text-[#3D5AFE]" />
+                    <span>{user?.email}</span>
+                  </div>
+                )}
                 {user?.instagram_profile && (
                   <a
-                    href={`https://instagram.com/${user.instagram_profile.replace(
-                      "@",
-                      ""
-                    )}`}
+                    href={`https://instagram.com/${user.instagram_profile.replace("@", "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"
@@ -269,10 +280,7 @@ const UserProfile = () => {
                 )}
                 {user?.twitter_profile && (
                   <a
-                    href={`https://twitter.com/${user.twitter_profile.replace(
-                      "@",
-                      ""
-                    )}`}
+                    href={`https://twitter.com/${user.twitter_profile.replace("@", "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"

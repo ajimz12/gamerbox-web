@@ -9,13 +9,13 @@ const Login = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const { login: authLogin, isAuth } = useAuth();
+    const { login: authLogin, isAuth, user } = useAuth();
 
     useEffect(() => {
-        if (isAuth) {
-            navigate('/dashboard');
+        if (isAuth && user) {
+            navigate(`/user/${user.username}`);
         }
-    }, [isAuth, navigate]);
+    }, [isAuth, navigate, user]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,7 +25,7 @@ const Login = () => {
         try {
             const data = await login(email, password);
             authLogin(data);
-            navigate('/dashboard');
+            navigate(`/user/${data.user.username}`);
         } catch (error) {
             setError('El correo o la contraseña son incorrectos: ', error);
         } finally {

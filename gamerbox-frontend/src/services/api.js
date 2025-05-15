@@ -119,13 +119,21 @@ export const updateProfile = async ({
 
 export const getUserProfile = async (username) => {
   try {
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    // Añadir el token de autorización si existe
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await fetch(
       `${API_URL}/api/profile/${username}`,
       {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: headers,
       }
     );
 

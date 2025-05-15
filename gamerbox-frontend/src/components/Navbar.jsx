@@ -66,7 +66,7 @@ const Navbar = () => {
               {isAuth ? (
                 <>
                   <Link
-                    to="/dashboard"
+                    to={`/user/${user.username}`}
                     className="flex items-center space-x-3 bg-[#3D5AFE] hover:bg-[#5C6BC0] px-4 py-2 rounded-md transition-colors"
                   >
                     <span className="font-medium">{user?.username}</span>
@@ -79,12 +79,14 @@ const Navbar = () => {
                       <img
                         src={
                           user?.profilePicture
-                            ? `${import.meta.env.VITE_API_URL}${user.profilePicture}`
+                            ? `${import.meta.env.VITE_API_URL}${
+                                user.profilePicture
+                              }`
                             : "/profile_pictures/pfp.png"
                         }
                         alt="Profile"
                         className={`w-8 h-8 rounded-full object-cover border-2 border-violet-500 ${
-                          imageLoading ? 'opacity-0' : 'opacity-100'
+                          imageLoading ? "opacity-0" : "opacity-100"
                         }`}
                         onError={(e) => {
                           e.target.src = "/profile_pictures/pfp.png";
@@ -135,7 +137,7 @@ const Navbar = () => {
             {isAuth ? (
               <>
                 <Link
-                  to="/dashboard"
+                  to={`/user/${user.username}`}
                   className="block px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -144,7 +146,9 @@ const Navbar = () => {
                     <img
                       src={
                         user?.profilePicture
-                          ? `${import.meta.env.VITE_API_URL}${user.profilePicture}`
+                          ? `${import.meta.env.VITE_API_URL}${
+                              user.profilePicture
+                            }`
                           : "/profile_pictures/pfp.png"
                       }
                       alt="Profile"
