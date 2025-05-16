@@ -16,6 +16,7 @@ import {
   FaGamepad,
   FaStar,
   FaEnvelope,
+  FaHeart,
 } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -36,6 +37,7 @@ const UserProfile = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [userGames, setUserGames] = useState([]);
   const [isLoadingGames, setIsLoadingGames] = useState(true);
+  const [favoriteGames, setFavoriteGames] = useState([]);
   const reviewsPerPage = 5;
 
   const isOwnProfile = currentUser?.username === username;
@@ -99,6 +101,30 @@ const UserProfile = () => {
     fetchUserGames();
   }, [fetchUserGames]);
 
+  useEffect(() => {
+    if (activeTab === "favorites") {
+      const fetchFavoriteGames = async () => {
+        try {
+          setIsLoadingGames(true);
+          const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/users/${username}/favorites`
+          );
+          if (!response.ok) {
+            throw new Error("Error al cargar los juegos favoritos");
+          }
+          const data = await response.json();
+          setFavoriteGames(data.games);
+        } catch (error) {
+          console.error("Error al cargar los juegos favoritos:", error);
+          toast.error("Error al cargar los juegos favoritos");
+        } finally {
+          setIsLoadingGames(false);
+        }
+      };
+      fetchFavoriteGames();
+    }
+  }, [username, activeTab]);
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -139,6 +165,8 @@ const UserProfile = () => {
     }
   };
 
+  console.log("favoriteGames", favoriteGames);
+
   return (
     <div className="min-h-screen mb-10 bg-[#121212]">
       {showUnfollowModal && (
@@ -155,7 +183,7 @@ const UserProfile = () => {
           confirmButtonClass="bg-red-500 hover:bg-red-600"
         />
       )}
-      
+
       {/* Banner de perfil */}
       <div className="h-64 bg-gradient-to-r from-[#3D5AFE] via-[#5C6BC0] to-[#3D5AFE] relative">
         <div className="absolute bottom-0 left-0 w-full">
@@ -233,17 +261,19 @@ const UserProfile = () => {
               >
                 Editar Perfil
               </Link>
-            ) : currentUser && (
-              <button
-                onClick={handleFollow}
-                className={`px-6 py-2 rounded-full cursor-pointer font-medium ${
-                  isFollowing
-                    ? "bg-[#2C2C2C] text-[#E0E0E0] hover:bg-[#1E1E1E]"
-                    : "bg-[#3D5AFE] text-[#E0E0E0] hover:bg-[#5C6BC0]"
-                } transition-colors`}
-              >
-                {isFollowing ? "Dejar de seguir" : "Seguir"}
-              </button>
+            ) : (
+              currentUser && (
+                <button
+                  onClick={handleFollow}
+                  className={`px-6 py-2 rounded-full cursor-pointer font-medium ${
+                    isFollowing
+                      ? "bg-[#2C2C2C] text-[#E0E0E0] hover:bg-[#1E1E1E]"
+                      : "bg-[#3D5AFE] text-[#E0E0E0] hover:bg-[#5C6BC0]"
+                  } transition-colors`}
+                >
+                  {isFollowing ? "Dejar de seguir" : "Seguir"}
+                </button>
+              )
             )}
           </div>
 
@@ -269,7 +299,10 @@ const UserProfile = () => {
                 )}
                 {user?.instagram_profile && (
                   <a
-                    href={`https://instagram.com/${user.instagram_profile.replace("@", "")}`}
+                    href={`https://instagram.com/${user.instagram_profile.replace(
+                      "@",
+                      ""
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"
@@ -280,7 +313,10 @@ const UserProfile = () => {
                 )}
                 {user?.twitter_profile && (
                   <a
-                    href={`https://twitter.com/${user.twitter_profile.replace("@", "")}`}
+                    href={`https://twitter.com/${user.twitter_profile.replace(
+                      "@",
+                      ""
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-[#A0A0A0] hover:text-[#5C6BC0] transition-colors"
@@ -352,6 +388,16 @@ const UserProfile = () => {
                 }}
               >
                 Diario de Juegos
+              </button>
+              <button
+                className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
+                  activeTab === "favorites"
+                    ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
+                    : "text-[#A0A0A0] hover:text-[#E0E0E0]"
+                }`}
+                onClick={() => setActiveTab("favorites")}
+              >
+                Favoritos
               </button>
             </div>
           </div>
@@ -478,10 +524,10 @@ const UserProfile = () => {
                           <span>{game.rating}</span>
                         </div>
                         <div className="text-right text-sm text-[#A0A0A0] mt-2">
-                          {new Date(game.playedAt).toLocaleDateString('es-ES', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
+                          {new Date(game.playedAt).toLocaleDateString("es-ES", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
                           })}
                         </div>
                       </div>
@@ -491,6 +537,41 @@ const UserProfile = () => {
               ) : (
                 <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
                   No hay juegos en el diario aún
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "favorites" && (
+            <div>
+              {isLoadingGames ? (
+                <LoadingSpinner />
+              ) : favoriteGames.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {favoriteGames.map((game) => (
+                    <div
+                      key={game.id}
+                      className="bg-[#252525] rounded-lg overflow-hidden"
+                    >
+                      <img
+                        src={game.backgroundImage}
+                        alt={game.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-4">
+                        <h4 className="text-[#E0E0E0] font-semibold mb-2">
+                          {game.name}
+                        </h4>
+                        <div className="flex items-center text-[#3D5AFE]">
+                          <FaHeart className="mr-1" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
+                  No hay juegos favoritos aún
                 </div>
               )}
             </div>

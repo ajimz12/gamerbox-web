@@ -155,7 +155,7 @@ const GameDetails = () => {
               </h1>
               <button
                 onClick={handleToggleFavorite}
-                className="text-2xl text-[#3D5AFE] hover:text-[#536DFE] transition-colors"
+                className="text-2xl text-[#3D5AFE] cursor-pointer hover:text-[#536DFE] transition-colors"
                 title={
                   isFavorite ? "Eliminar de favoritos" : "Añadir a favoritos"
                 }

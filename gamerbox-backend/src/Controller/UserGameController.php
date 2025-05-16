@@ -63,6 +63,36 @@ class UserGameController extends AbstractController
         return new JsonResponse(['games' => $gamesData]);
     }
 
+    #[Route('/api/users/{username}/favorites', name: 'api_get_user_favorites', methods: ['GET'])]
+    public function getUserFavorites(
+        string $username,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Usuario no encontrado'], Response::HTTP_NOT_FOUND);
+        }
+
+        $userGames = $entityManager->getRepository(UserGame::class)->findBy(
+            ['user' => $user, 'isFavorite' => true],
+            ['playedAt' => 'DESC']
+        );
+
+        $gamesData = array_map(function (UserGame $userGame) {
+            return [
+                'id' => $userGame->getGame()->getId(),
+                'rawgId' => $userGame->getGame()->getRawgId(),
+                'name' => $userGame->getGame()->getName(),
+                'backgroundImage' => $userGame->getGame()->getBackgroundImage(),
+                'playedAt' => $userGame->getPlayedAt()->format('c'),
+                'status' => $userGame->getStatus()
+            ];
+        }, $userGames);
+
+        return new JsonResponse(['games' => $gamesData]);
+    }
+
     #[Route('/api/games/{id}/favorite', name: 'api_toggle_game_favorite', methods: ['POST'])]
     public function toggleGameFavorite(
         string $id,
@@ -74,13 +104,11 @@ class UserGameController extends AbstractController
             return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
         }
 
-        // Buscar o crear GameReference
         $gameReference = $entityManager->getRepository(GameReference::class)->findOneBy(['rawgId' => $id]);
         if (!$gameReference) {
             $gameReference = new GameReference();
             $gameReference->setRawgId($id);
 
-            // Fetch game details from RAWG API
             try {
                 $response = $this->httpClient->request('GET', 'https://api.rawg.io/api/games/' . $id, [
                     'query' => [
