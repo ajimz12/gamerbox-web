@@ -23,6 +23,9 @@ class UserGame
     private ?bool $isFavorite = null;
 
     #[ORM\Column]
+    private ?bool $isSuperFavorite = false;
+
+    #[ORM\Column]
     private ?\DateTimeImmutable $playedAt = null;
 
     #[ORM\Column(length: 255)]
@@ -65,6 +68,18 @@ class UserGame
     public function setIsFavorite(bool $isFavorite): static
     {
         $this->isFavorite = $isFavorite;
+
+        return $this;
+    }
+
+    public function isSuperFavorite(): ?bool
+    {
+        return $this->isSuperFavorite;
+    }
+
+    public function setIsSuperFavorite(bool $isSuperFavorite): static
+    {
+        $this->isSuperFavorite = $isSuperFavorite;
 
         return $this;
     }

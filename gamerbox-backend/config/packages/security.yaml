@@ -38,6 +38,7 @@ security:
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/profile, roles: PUBLIC_ACCESS }
         - { path: ^/api/users/.+/favorites$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/users/.+/superfavorites$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/users, roles: PUBLIC_ACCESS }
         - { path: ^/api/games, roles: PUBLIC_ACCESS }
         - { path: ^/api/genres, roles: PUBLIC_ACCESS }
@@ -50,6 +51,7 @@ security:
         - { path: ^/api/reviews/.+/comments$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/games/.+/favorite$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/games/.+/favorite$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
+        - { path: ^/api/games/.+/superfavorite$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
         - { path: ^/api/reviews, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/reviews/.+/comments$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

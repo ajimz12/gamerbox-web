@@ -5,6 +5,8 @@ import {
   followUser,
   getUserReviews,
   getUserGames,
+  getFavoriteGames,
+  getSuperFavoriteGames,
 } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import ConfirmationModal from "../components/ConfirmationModal";
@@ -38,6 +40,7 @@ const UserProfile = () => {
   const [userGames, setUserGames] = useState([]);
   const [isLoadingGames, setIsLoadingGames] = useState(true);
   const [favoriteGames, setFavoriteGames] = useState([]);
+  const [superFavoriteGames, setSuperFavoriteGames] = useState([]);
   const reviewsPerPage = 5;
 
   const isOwnProfile = currentUser?.username === username;
@@ -106,14 +109,8 @@ const UserProfile = () => {
       const fetchFavoriteGames = async () => {
         try {
           setIsLoadingGames(true);
-          const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/users/${username}/favorites`
-          );
-          if (!response.ok) {
-            throw new Error("Error al cargar los juegos favoritos");
-          }
-          const data = await response.json();
-          setFavoriteGames(data.games);
+          const games = await getFavoriteGames(username);
+          setFavoriteGames(games);
         } catch (error) {
           console.error("Error al cargar los juegos favoritos:", error);
           toast.error("Error al cargar los juegos favoritos");
@@ -124,6 +121,19 @@ const UserProfile = () => {
       fetchFavoriteGames();
     }
   }, [username, activeTab]);
+
+  useEffect(() => {
+    const fetchSuperFavorites = async () => {
+      try {
+        const games = await getSuperFavoriteGames(username);
+        setSuperFavoriteGames(games);
+      } catch (error) {
+        console.error("Error al cargar los juegos superfavoritos:", error);
+      }
+    };
+
+    fetchSuperFavorites();
+  }, [username]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -164,8 +174,6 @@ const UserProfile = () => {
       setError(error.message || "Error al seguir/dejar de seguir al usuario");
     }
   };
-
-  console.log("favoriteGames", favoriteGames);
 
   return (
     <div className="min-h-screen mb-10 bg-[#121212]">
@@ -348,8 +356,42 @@ const UserProfile = () => {
         </div>
       </div>
 
-      {/*Contenedor para las reseñas */}
+      {/* Contenedor para las reseñas */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        {/* Sección de Juegos Superfavoritos */}
+        {superFavoriteGames.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-[#E0E0E0] mb-4">
+              Juegos Superfavoritos
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {superFavoriteGames.map((game) => (
+                <Link
+                  key={game.rawgId}
+                  to={`/games/${game.rawgId}`}
+                  className="bg-[#1E1E1E] rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform duration-200 border border-[#3D5AFE]"
+                >
+                  <div className="relative">
+                    <img
+                      src={game.backgroundImage}
+                      alt={game.name}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute top-2 right-2">
+                      <FaStar className="text-[#3D5AFE] text-2xl" />
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-[#E0E0E0] font-semibold truncate">
+                      {game.name}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-6 border border-[#2C2C2C]">
           {/* Pestañas */}
           <div className="border-b border-[#2C2C2C] mb-6">
@@ -463,6 +505,7 @@ const UserProfile = () => {
               </div>
             </div>
           ) : null}
+
           {activeTab === "reviews" && (
             <div>
               {isLoadingReviews ? (
@@ -499,6 +542,46 @@ const UserProfile = () => {
             </div>
           )}
 
+          {/* Añadir pestaña de Superfavoritos */}
+          {activeTab === "superfavorites" && (
+            <div>
+              {isLoadingGames ? (
+                <LoadingSpinner />
+              ) : superFavoriteGames.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {superFavoriteGames.map((game) => (
+                    <Link
+                      key={game.rawgId}
+                      to={`/games/${game.rawgId}`}
+                      className="bg-[#252525] rounded-lg overflow-hidden group hover:bg-[#2C2C2C] transition-colors"
+                    >
+                      <div className="relative">
+                        <img
+                          src={game.backgroundImage}
+                          alt={game.name}
+                          className="w-full h-48 object-cover"
+                        />
+                        <div className="absolute top-2 right-2">
+                          <FaStar className="text-[#3D5AFE] text-2xl" />
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <h4 className="text-[#E0E0E0] font-semibold mb-2 group-hover:text-[#3D5AFE] transition-colors">
+                          {game.name}
+                        </h4>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-[#A0A0A0] py-8">
+                  No hay juegos superfavoritos para mostrar
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Resto de las pestañas */}
           {activeTab === "diary" && (
             <div>
               {isLoadingGames ? (

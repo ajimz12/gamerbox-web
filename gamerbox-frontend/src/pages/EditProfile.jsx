@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { updateProfile } from '../services/api';
+import { updateProfile, getSuperFavoriteGames, addSuperFavoriteGame, removeSuperFavoriteGame } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { FaSearch, FaTimes } from 'react-icons/fa';
+import { searchGames } from '../services/rawgService';
+import { toast } from 'react-toastify';
 
 const EditProfile = () => {
   const { user, login: updateAuthUser } = useAuth();
@@ -51,6 +54,65 @@ const EditProfile = () => {
       setError(error.response?.data?.message || 'Error al actualizar el perfil');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [superFavoriteGames, setSuperFavoriteGames] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    const fetchSuperFavorites = async () => {
+      try {
+        const games = await getSuperFavoriteGames(user.username);
+        setSuperFavoriteGames(games);
+      } catch (error) {
+        console.error('Error al cargar juegos superfavoritos:', error);
+      }
+    };
+
+    fetchSuperFavorites();
+  }, [user.username]);
+
+  const handleGameSearch = async () => {
+    if (searchTerm.trim()) {
+      setIsSearching(true);
+      try {
+        const data = await searchGames(searchTerm);
+        setSearchResults(data.results || []);
+      } catch (error) {
+        console.error('Error al buscar juegos:', error);
+        toast.error('Error al buscar juegos');
+      }
+      setIsSearching(false);
+    }
+  };
+
+  const handleAddSuperFavorite = async (game) => {
+    if (superFavoriteGames.length >= 5) {
+      toast.error('Solo puedes tener 5 juegos superfavoritos');
+      return;
+    }
+
+    try {
+      await addSuperFavoriteGame(game.id);
+      setSuperFavoriteGames([...superFavoriteGames, game]);
+      setSearchResults([]);
+      setSearchTerm('');
+      toast.success('Juego añadido a superfavoritos');
+    } catch (error) {
+      toast.error(error.message || 'Error al añadir el juego a superfavoritos');
+    }
+  };
+
+  const handleRemoveSuperFavorite = async (gameId) => {
+    try {
+      await removeSuperFavoriteGame(gameId);
+      setSuperFavoriteGames(superFavoriteGames.filter(game => game.rawgId !== gameId));
+      toast.success('Juego eliminado de superfavoritos');
+    } catch (error) {
+      toast.error('Error al eliminar el juego de superfavoritos');
     }
   };
 
@@ -104,6 +166,82 @@ const EditProfile = () => {
                 placeholder-[#A0A0A0] bg-[#1E1E1E] text-[#E0E0E0]
                 focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE]"
             />
+          </div>
+
+          {/* Sección de Juegos Superfavoritos */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium text-[#E0E0E0] mb-2">
+              Juegos Superfavoritos (máximo 5)
+            </label>
+            
+            {/* Lista de juegos superfavoritos */}
+            <div className="space-y-2">
+              {superFavoriteGames.map((game) => (
+                <div key={`superfav-${game.rawgId}`} className="flex items-center justify-between bg-[#252525] p-2 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <img
+                      src={game.backgroundImage}
+                      alt={game.name}
+                      className="w-10 h-10 object-cover rounded"
+                    />
+                    <span className="text-[#E0E0E0]">{game.name}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSuperFavorite(game.rawgId)}
+                    className="text-red-500 hover:text-red-600"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Buscador de juegos */}
+            {superFavoriteGames.length < 5 && (
+              <div className="relative">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Buscar juegos para añadir..."
+                      className="w-full px-3 py-2 pl-10 border border-[#2C2C2C] rounded-md bg-[#1E1E1E] text-[#E0E0E0]"
+                    />
+                    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A0A0A0]" />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleGameSearch}
+                    disabled={isSearching}
+                    className="px-4 py-2 bg-[#3D5AFE] text-[#E0E0E0] rounded-md hover:bg-[#5C6BC0] disabled:opacity-50"
+                  >
+                    {isSearching ? 'Buscando...' : 'Buscar'}
+                  </button>
+                </div>
+
+                {/* Resultados de búsqueda */}
+                {searchResults.length > 0 && (
+                  <div className="mt-2 bg-[#252525] rounded-md shadow-lg max-h-60 overflow-auto">
+                    {searchResults.map((game) => (
+                      <div
+                        key={`search-${game.id}`}
+                        className="flex items-center space-x-2 p-2 hover:bg-[#3D3D3D] cursor-pointer"
+                        onClick={() => handleAddSuperFavorite(game)}
+                      >
+                        <img
+                          src={game.background_image}
+                          alt={game.name}
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                        <span className="text-[#E0E0E0]">{game.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div>
@@ -186,7 +324,7 @@ const EditProfile = () => {
           <div className="flex justify-end space-x-4">
             <button
               type="button"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/')}
               className="px-4 py-2 text-sm font-medium text-[#E0E0E0] bg-[#2C2C2C] hover:bg-[#1E1E1E] rounded-md cursor-pointer"
             >
               Cancelar

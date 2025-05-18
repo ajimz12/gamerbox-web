@@ -39,7 +39,7 @@ class UserGameController extends AbstractController
         }
 
         $userGames = $entityManager->getRepository(UserGame::class)->findBy(
-            ['user' => $user],
+            ['user' => $user, 'status' => 'played'],
             ['playedAt' => 'DESC']
         );
 
@@ -53,10 +53,11 @@ class UserGameController extends AbstractController
                 'rawgId' => $userGame->getGame()->getRawgId(),
                 'name' => $userGame->getGame()->getName(),
                 'backgroundImage' => $userGame->getGame()->getBackgroundImage(),
-                'playedAt' => $review?->getPlayedAt()?->format('c') ?? $userGame->getPlayedAt()->format('c'),
-                'rating' => $review?->getRating() ?? null,
+                'playedAt' => $review ? $review->getPlayedAt()->format('c') : $userGame->getPlayedAt()->format('c'),
+                'rating' => $review ? $review->getRating() : null,
                 'isFavorite' => $userGame->isFavorite(),
-                'status' => $userGame->getStatus()
+                'status' => $userGame->getStatus(),
+                'isSuperFavorite' => $userGame->isSuperFavorite()
             ];
         }, $userGames);
 
@@ -177,5 +178,109 @@ class UserGameController extends AbstractController
         ]);
 
         return new JsonResponse(['isFavorite' => $userGame ? $userGame->isFavorite() : false]);
+    }
+
+    #[Route('/api/games/{id}/superfavorite', name: 'api_toggle_game_superfavorite', methods: ['POST'])]
+    public function toggleGameSuperFavorite(
+        string $id,
+        EntityManagerInterface $entityManager,
+        Security $security
+    ): JsonResponse {
+        $user = $security->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Verificar si el usuario ya tiene 5 juegos superfavoritos
+        $existingSuperFavorites = $entityManager->getRepository(UserGame::class)->count([
+            'user' => $user,
+            'isSuperFavorite' => true
+        ]);
+
+        $gameReference = $entityManager->getRepository(GameReference::class)->findOneBy(['rawgId' => $id]);
+        if (!$gameReference) {
+            $gameReference = new GameReference();
+            $gameReference->setRawgId($id);
+
+            try {
+                $response = $this->httpClient->request('GET', 'https://api.rawg.io/api/games/' . $id, [
+                    'query' => [
+                        'key' => $this->rawgApiKey,
+                    ]
+                ]);
+
+                if ($response->getStatusCode() === 200) {
+                    $gameData = $response->toArray();
+                    $gameReference->setName($gameData['name'] ?? 'Unknown Game');
+                    $gameReference->setSlug($gameData['slug'] ?? 'unknown-game');
+                    $gameReference->setBackgroundImage($gameData['background_image'] ?? null);
+                }
+            } catch (\Exception $e) {
+                return new JsonResponse(['error' => 'Error al obtener detalles del juego'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            $entityManager->persist($gameReference);
+        }
+
+        $userGame = $entityManager->getRepository(UserGame::class)->findOneBy([
+            'user' => $user,
+            'game' => $gameReference
+        ]);
+
+        if (!$userGame) {
+            $userGame = new UserGame();
+            $userGame->setUser($user);
+            $userGame->setGame($gameReference);
+            $userGame->setPlayedAt(new \DateTimeImmutable());
+            $userGame->setStatus('pending');
+            $userGame->setIsFavorite(false);
+        }
+
+        $currentStatus = $userGame->isSuperFavorite();
+        if (!$currentStatus && $existingSuperFavorites >= 5) {
+            return new JsonResponse([
+                'error' => 'Ya tienes 5 juegos superfavoritos. Debes eliminar uno antes de añadir otro.',
+                'isSuperFavorite' => false
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $userGame->setIsSuperFavorite(!$currentStatus);
+        $entityManager->persist($userGame);
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'isSuperFavorite' => $userGame->isSuperFavorite(),
+            'superFavoritesCount' => $existingSuperFavorites + ($currentStatus ? -1 : 1)
+        ]);
+    }
+
+    #[Route('/api/users/{username}/superfavorites', name: 'api_get_user_superfavorites', methods: ['GET'])]
+    public function getUserSuperFavorites(
+        string $username,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Usuario no encontrado'], Response::HTTP_NOT_FOUND);
+        }
+
+        $userGames = $entityManager->getRepository(UserGame::class)->findBy(
+            ['user' => $user, 'isSuperFavorite' => true],
+            ['playedAt' => 'DESC']
+        );
+
+        $gamesData = array_map(function (UserGame $userGame) {
+            return [
+                'id' => $userGame->getGame()->getId(),
+                'rawgId' => $userGame->getGame()->getRawgId(),
+                'name' => $userGame->getGame()->getName(),
+                'backgroundImage' => $userGame->getGame()->getBackgroundImage(),
+                'playedAt' => $userGame->getPlayedAt()->format('c'),
+                'status' => $userGame->getStatus()
+            ];
+        }, $userGames);
+
+        return new JsonResponse(['games' => $gamesData]);
     }
 }
