@@ -584,6 +584,50 @@ export const getAllReviews = async (orderBy = 'date') => {
   return response.json();
 };
 
+export const createList = async (listData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/api/lists`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(listData)
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al crear la lista');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error al crear la lista:', error);
+    throw error;
+  }
+};
+
+export const addGameToList = async (listId, gameId) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/api/lists/${listId}/games/${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al añadir el juego a la lista');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error al añadir el juego a la lista:', error);
+    throw error;
+  }
+};
+
 const api = {
   login,
   isAuthenticated,

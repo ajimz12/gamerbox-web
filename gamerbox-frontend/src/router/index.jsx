@@ -14,6 +14,7 @@ import Games from "../pages/Games";
 import GameDetails from "../pages/GameDetails";
 import ReviewDetail from "../pages/ReviewDetail";
 import Reviews from "../pages/Reviews";
+import CreateList from "../pages/CreateList";
 
 export const router = createBrowserRouter([
   {
@@ -72,7 +73,15 @@ export const router = createBrowserRouter([
       {
         path: "reviews",
         element: <Reviews />,
-      }
+      },
+      {
+        path: "create-list",
+        element: (
+          <ProtectedRoute>
+            <CreateList />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);

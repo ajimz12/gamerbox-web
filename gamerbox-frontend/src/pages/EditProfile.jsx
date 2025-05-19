@@ -47,9 +47,9 @@ const EditProfile = () => {
       const updatedUser = await updateProfile(formData);
       updateAuthUser({
         user: updatedUser,
-        token: localStorage.getItem('token')
+        token: localStorage.getItem('token')        
       });
-      navigate('/dashboard');
+      navigate(`/user/${username}`);
     } catch (error) {
       setError(error.response?.data?.message || 'Error al actualizar el perfil');
     } finally {
@@ -324,7 +324,7 @@ const EditProfile = () => {
           <div className="flex justify-end space-x-4">
             <button
               type="button"
-              onClick={() => navigate('/')}
+              onClick={() => navigate(-1)}
               className="px-4 py-2 text-sm font-medium text-[#E0E0E0] bg-[#2C2C2C] hover:bg-[#1E1E1E] rounded-md cursor-pointer"
             >
               Cancelar

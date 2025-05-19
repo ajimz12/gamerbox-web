@@ -44,6 +44,8 @@ security:
         - { path: ^/api/genres, roles: PUBLIC_ACCESS }
         - { path: ^/api/platforms, roles: PUBLIC_ACCESS }
         - { path: ^/api/comments, roles: PUBLIC_ACCESS }
+        - { path: ^/api/lists$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/lists/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/games/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/users/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
@@ -52,6 +54,10 @@ security:
         - { path: ^/api/games/.+/favorite$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/games/.+/favorite$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
         - { path: ^/api/games/.+/superfavorite$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
+        - { path: ^/api/lists, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
+        - { path: ^/api/lists/\d+, roles: IS_AUTHENTICATED_FULLY, methods: [PUT, DELETE] }
+        - { path: ^/api/lists/\d+/games, roles: IS_AUTHENTICATED_FULLY, methods: [POST, DELETE] }
+        - { path: ^/api/users/.+/lists$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/reviews, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/reviews/.+/comments$, roles: IS_AUTHENTICATED_FULLY, methods: [POST] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
