@@ -154,7 +154,7 @@ const ListDetails = () => {
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
-        title="Eliminar Lista"
+        title="¿Eliminar Lista?"
         message="¿Estás seguro de que deseas eliminar esta lista? Esta acción no se puede deshacer."
         confirmText="Eliminar"
         cancelText="Cancelar"

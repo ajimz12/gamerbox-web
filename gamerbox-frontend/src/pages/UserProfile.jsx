@@ -16,15 +16,12 @@ import {
   FaTwitter,
   FaUserFriends,
   FaGamepad,
-  FaStar,
-  FaEnvelope,
-  FaHeart,
 } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ReviewList from "../components/ReviewList";
-import ListCard from "../components/ListCard";
+import UserTabs from "../components/UserTabs";
 
 const UserProfile = () => {
   const { username } = useParams();
@@ -69,11 +66,6 @@ const UserProfile = () => {
   useEffect(() => {
     fetchUserProfile();
   }, [fetchUserProfile]);
-
-  const indexOfLastReview = currentPage * reviewsPerPage;
-  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-  const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
-  const totalPages = Math.ceil(reviews.length / reviewsPerPage);
 
   const fetchUserReviews = useCallback(async () => {
     try {
@@ -144,8 +136,7 @@ const UserProfile = () => {
         try {
           setIsLoadingLists(true);
           const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/users/${username}/lists`,
-            
+            `${import.meta.env.VITE_API_URL}/api/users/${username}/lists`
           );
           if (!response.ok) {
             throw new Error("Error al cargar las listas");
@@ -383,361 +374,36 @@ const UserProfile = () => {
         </div>
       </div>
 
-      {/* Contenedor para las reseñas */}
+      {/* Contenedor para las pestañas */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-        {/* Sección de Juegos Superfavoritos */}
-        {superFavoriteGames.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-[#E0E0E0] mb-4">
-              Superfavoritos
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {superFavoriteGames.map((game) => (
-                <Link
-                  key={game.rawgId}
-                  to={`/games/${game.rawgId}`}
-                  className="bg-[#1E1E1E] rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform duration-200 border border-[#3D5AFE]"
-                >
-                  <div className="relative">
-                    <img
-                      src={game.backgroundImage}
-                      alt={game.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="absolute top-2 right-2">
-                      <FaStar className="text-[#3D5AFE] text-2xl" />
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-[#E0E0E0] font-semibold truncate">
-                      {game.name}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-6 border border-[#2C2C2C]">
-          {/* Pestañas */}
-          <div className="border-b border-[#2C2C2C] mb-6">
-            <div className="flex space-x-8">
-              <button
-                className={`py-4 cursor-pointer text-sm font-medium transition-colors ${
-                  activeTab === "info"
-                    ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
-                    : "text-[#A0A0A0] hover:text-[#E0E0E0]"
-                }`}
-                onClick={() => setActiveTab("info")}
-              >
-                Información General
-              </button>
-              <button
-                className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
-                  activeTab === "reviews"
-                    ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
-                    : "text-[#A0A0A0] hover:text-[#E0E0E0]"
-                }`}
-                onClick={() => {
-                  setActiveTab("reviews");
-                  setCurrentPage(1);
-                }}
-              >
-                Todas las Reseñas
-              </button>
-              <button
-                className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
-                  activeTab === "diary"
-                    ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
-                    : "text-[#A0A0A0] hover:text-[#E0E0E0]"
-                }`}
-                onClick={() => {
-                  setActiveTab("diary");
-                }}
-              >
-                Diario de Juegos
-              </button>
-              <button
-                className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
-                  activeTab === "favorites"
-                    ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
-                    : "text-[#A0A0A0] hover:text-[#E0E0E0]"
-                }`}
-                onClick={() => setActiveTab("favorites")}
-              >
-                Favoritos
-              </button>
-              <button
-                className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
-                  activeTab === "lists"
-                    ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
-                    : "text-[#A0A0A0] hover:text-[#E0E0E0]"
-                }`}
-                onClick={() => setActiveTab("lists")}
-              >
-                Listas
-              </button>
-            </div>
-          </div>
-
-          {/* Contenido de las pestañas */}
-          <div className="p-6">
-            {activeTab === "info" ? (
-              <div>
-                <h3 className="text-lg font-semibold text-[#E0E0E0] mb-4">
-                  Estadísticas de {user.username}
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-[#2C2C2C] p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#A0A0A0]">Total de reseñas</span>
-                      <span className="text-[#3D5AFE] font-bold">
-                        {reviews.length}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#2C2C2C] p-4 rounded-lg col-span-2">
-                    <div className="space-y-2">
-                      <div className="flex items-end justify-between h-40 gap-0.5 mt-10 px-4">
-                        {[1, 2, 3, 4, 5].map((rating) => {
-                          const count = reviews.filter(
-                            (review) => Math.round(review.rating) === rating
-                          ).length;
-                          const percentage =
-                            reviews.length > 0
-                              ? (count / reviews.length) * 100
-                              : 0;
-
-                          return (
-                            <div
-                              key={rating}
-                              className="flex flex-col items-center gap-2 w-10"
-                            >
-                              <div className="w-full h-32 relative">
-                                <div
-                                  className={`absolute bottom-0 w-full transition-all duration-300 rounded-t ${
-                                    count > 0
-                                      ? "bg-[#3D5AFE]"
-                                      : "bg-[#3D5AFE] bg-opacity-10"
-                                  }`}
-                                  style={{
-                                    height:
-                                      count > 0 ? `${percentage}%` : "10%",
-                                  }}
-                                />
-                              </div>
-
-                              <div className="text-[#A0A0A0] text-xs">
-                                {"★".repeat(rating)}
-                              </div>
-                              <span className="text-[#A0A0A0] text-xs">
-                                {count}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            {activeTab === "reviews" && (
-              <div>
-                {isLoadingReviews ? (
-                  <LoadingSpinner />
-                ) : reviews.length > 0 ? (
-                  <>
-                    <ReviewList
-                      reviews={currentReviews}
-                      setReviews={setReviews}
-                    />
-                    {totalPages > 1 && (
-                      <div className="flex justify-center mt-6 space-x-2">
-                        {[...Array(totalPages)].map((_, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setCurrentPage(index + 1)}
-                            className={`px-4 py-2 rounded-md ${
-                              currentPage === index + 1
-                                ? "bg-[#3D5AFE] text-white"
-                                : "bg-[#2C2C2C] text-[#A0A0A0] hover:bg-[#3D3D3D]"
-                            }`}
-                          >
-                            {index + 1}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-center text-[#A0A0A0] py-8">
-                    No hay reseñas para mostrar
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Añadir pestaña de Superfavoritos */}
-            {activeTab === "superfavorites" && (
-              <div>
-                {isLoadingGames ? (
-                  <LoadingSpinner />
-                ) : superFavoriteGames.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {superFavoriteGames.map((game) => (
-                      <Link
-                        key={game.rawgId}
-                        to={`/games/${game.rawgId}`}
-                        className="bg-[#252525] rounded-lg overflow-hidden group hover:bg-[#2C2C2C] transition-colors"
-                      >
-                        <div className="relative">
-                          <img
-                            src={game.backgroundImage}
-                            alt={game.name}
-                            className="w-full h-48 object-cover"
-                          />
-                          <div className="absolute top-2 right-2">
-                            <FaStar className="text-[#3D5AFE] text-2xl" />
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <h4 className="text-[#E0E0E0] font-semibold mb-2 group-hover:text-[#3D5AFE] transition-colors">
-                            {game.name}
-                          </h4>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center text-[#A0A0A0] py-8">
-                    No hay juegos superfavoritos para mostrar
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Resto de las pestañas */}
-            {activeTab === "diary" && (
-              <div>
-                {isLoadingGames ? (
-                  <LoadingSpinner />
-                ) : userGames.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {userGames.map((game) => (
-                      <div
-                        key={game.id}
-                        className="bg-[#252525] rounded-lg overflow-hidden"
-                      >
-                        <img
-                          src={game.backgroundImage}
-                          alt={game.name}
-                          className="w-full h-48 object-cover"
-                        />
-                        <div className="p-4">
-                          <h4 className="text-[#E0E0E0] font-semibold mb-2">
-                            {game.name}
-                          </h4>
-                          <div className="flex items-center text-[#3D5AFE]">
-                            <FaStar className="mr-1" />
-                            <span>{game.rating}</span>
-                          </div>
-                          <div className="text-right text-sm text-[#A0A0A0] mt-2">
-                            {new Date(game.playedAt).toLocaleDateString(
-                              "es-ES",
-                              {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              }
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
-                    No hay juegos en el diario aún
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === "favorites" && (
-              <div>
-                {isLoadingGames ? (
-                  <LoadingSpinner />
-                ) : favoriteGames.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {favoriteGames.map((game) => (
-                      <div
-                        key={game.id}
-                        className="bg-[#252525] rounded-lg overflow-hidden"
-                      >
-                        <img
-                          src={game.backgroundImage}
-                          alt={game.name}
-                          className="w-full h-48 object-cover"
-                        />
-                        <div className="p-4">
-                          <h4 className="text-[#E0E0E0] font-semibold mb-2">
-                            {game.name}
-                          </h4>
-                          <div className="flex items-center text-[#3D5AFE]">
-                            <FaHeart className="mr-1" />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
-                    No hay juegos favoritos aún
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === "lists" && (
-              <div className="space-y-6">
-                {isOwnProfile && (
-                  <div className="flex justify-end">
-                    <Link
-                      to="/create-list"
-                      className="inline-block bg-[#3D5AFE] text-white px-6 py-2 rounded-lg hover:bg-[#5C6BC0] transition-colors"
-                    >
-                      Crear nueva lista
-                    </Link>
-                  </div>
-                )}
-                {isLoadingLists ? (
-                  <LoadingSpinner />
-                ) : userLists.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {userLists.map((list) => (
-                      <ListCard key={list.id} list={list} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center text-[#A0A0A0] bg-[#1E1E1E] p-8 rounded-lg shadow-sm border border-[#2C2C2C]">
-                    {isOwnProfile ? (
-                      <div className="space-y-4">
-                        <p>Aún no has creado ninguna lista</p>
-                      </div>
-                    ) : (
-                      <p>Este usuario aún no ha creado ninguna lista</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+        <UserTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          reviews={reviews}
+          isLoadingReviews={isLoadingReviews}
+          userGames={userGames}
+          isLoadingGames={isLoadingGames}
+          favoriteGames={favoriteGames}
+          superFavoriteGames={superFavoriteGames}
+          userLists={userLists}
+          isLoadingLists={isLoadingLists}
+          setCurrentPage={setCurrentPage}
+          user={user}
+        />
       </div>
+
+      {/* Modal de confirmación para dejar de seguir */}
+      <ConfirmationModal
+        isOpen={showUnfollowModal}
+        onClose={() => setShowUnfollowModal(false)}
+        onConfirm={processFollow}
+        title="Dejar de seguir"
+        message={`¿Estás seguro de que quieres dejar de seguir a ${user?.username}?`}
+        confirmText="Dejar de seguir"
+        cancelText="Cancelar"
+      />
+
+      <ToastContainer />
     </div>
   );
 };

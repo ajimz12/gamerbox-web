@@ -17,6 +17,7 @@ import Reviews from "../pages/Reviews";
 import CreateList from "../pages/CreateList";
 import ListDetails from "../pages/ListDetails";
 import EditList from "../pages/EditList";
+import Lists from "../pages/Lists";
 
 export const router = createBrowserRouter([
   {
@@ -83,6 +84,10 @@ export const router = createBrowserRouter([
             <CreateList />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "lists",
+        element: <Lists />,
       },
       {
         path: "lists/:id",
