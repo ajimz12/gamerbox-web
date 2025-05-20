@@ -144,22 +144,30 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
           </span>
         </Link>
         
-        {user && user.id === review.author.id && (
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              className="p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"
-            >
-              <FaEdit />
-            </button>
-            <button
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="p-2 text-[#E0E0E0] hover:text-red-500 cursor-pointer transition-colors"
-            >
-              <FaTrash />
-            </button>
-          </div>
-        )}
+        <div className="flex items-center space-x-2">
+          {user && user.id === review.author.id && (
+            <>
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                className="p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"
+              >
+                <FaEdit />
+              </button>
+              <button
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="p-2 text-[#E0E0E0] hover:text-red-500 cursor-pointer transition-colors"
+              >
+                <FaTrash />
+              </button>
+            </>
+          )}
+          <Link
+            to={`/reviews/${review.id}`}
+            className="p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"
+          >
+            Ver detalles
+          </Link>
+        </div>
       </div>
 
       <Link to={`/games/${review.gameId}`} className="block mb-4">

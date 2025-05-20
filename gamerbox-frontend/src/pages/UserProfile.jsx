@@ -145,14 +145,10 @@ const UserProfile = () => {
           setIsLoadingLists(true);
           const response = await fetch(
             `${import.meta.env.VITE_API_URL}/api/users/${username}/lists`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
+            
           );
           if (!response.ok) {
-            throw new Error('Error al cargar las listas');
+            throw new Error("Error al cargar las listas");
           }
           const data = await response.json();
           setUserLists(data.lists);
@@ -334,16 +330,6 @@ const UserProfile = () => {
                   )}
 
                   <div className="space-y-3">
-                    {isOwnProfile && (
-                      <div className="mt-4 flex justify-end">
-                        <Link
-                          to="/create-list"
-                          className="bg-[#3D5AFE] text-white px-4 py-2 rounded hover:bg-[#5C6BC0]"
-                        >
-                          Crear Nueva Lista
-                        </Link>
-                      </div>
-                    )}
                     {user?.instagram_profile && (
                       <a
                         href={`https://instagram.com/${user.instagram_profile.replace(
@@ -718,6 +704,16 @@ const UserProfile = () => {
 
             {activeTab === "lists" && (
               <div className="space-y-6">
+                {isOwnProfile && (
+                  <div className="flex justify-end">
+                    <Link
+                      to="/create-list"
+                      className="inline-block bg-[#3D5AFE] text-white px-6 py-2 rounded-lg hover:bg-[#5C6BC0] transition-colors"
+                    >
+                      Crear nueva lista
+                    </Link>
+                  </div>
+                )}
                 {isLoadingLists ? (
                   <LoadingSpinner />
                 ) : userLists.length > 0 ? (
@@ -731,12 +727,6 @@ const UserProfile = () => {
                     {isOwnProfile ? (
                       <div className="space-y-4">
                         <p>Aún no has creado ninguna lista</p>
-                        <Link
-                          to="/create-list"
-                          className="inline-block bg-[#3D5AFE] text-white px-6 py-2 rounded-lg hover:bg-[#5C6BC0] transition-colors"
-                        >
-                          Crear mi primera lista
-                        </Link>
                       </div>
                     ) : (
                       <p>Este usuario aún no ha creado ninguna lista</p>

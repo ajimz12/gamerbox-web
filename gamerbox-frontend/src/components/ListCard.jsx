@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const ListCard = ({ list }) => {
-  // Validación para asegurarse de que list existe
-  if (!list) {
+  const { user } = useAuth();
+  
+  if (!list || (!list.isPublic && (!user || user.id !== list.creator.id))) {
     return null;
   }
 

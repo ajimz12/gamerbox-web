@@ -1,4 +1,4 @@
-const API_URL=import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const login = async (email, password) => {
   try {
@@ -129,13 +129,10 @@ export const getUserProfile = async (username) => {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const response = await fetch(
-      `${API_URL}/api/profile/${username}`,
-      {
-        method: "GET",
-        headers: headers,
-      }
-    );
+    const response = await fetch(`${API_URL}/api/profile/${username}`, {
+      method: "GET",
+      headers: headers,
+    });
 
     if (!response.ok) {
       throw new Error("Error al obtener datos del usuario");
@@ -200,7 +197,13 @@ export const followUser = async (userId) => {
   }
 };
 
-export const createReview = async (gameId, rating, text, playedBefore, playedAt) => {
+export const createReview = async (
+  gameId,
+  rating,
+  text,
+  playedBefore,
+  playedAt
+) => {
   try {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -213,12 +216,12 @@ export const createReview = async (gameId, rating, text, playedBefore, playedAt)
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ 
-        gameId, 
-        rating, 
+      body: JSON.stringify({
+        gameId,
+        rating,
         text,
         playedBefore,
-        playedAt 
+        playedAt,
       }),
     });
 
@@ -274,14 +277,14 @@ export const deleteReview = async (reviewId) => {
     }
 
     const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {
-      throw new Error('Error al eliminar la reseña');
+      throw new Error("Error al eliminar la reseña");
     }
 
     return true;
@@ -291,7 +294,10 @@ export const deleteReview = async (reviewId) => {
   }
 };
 
-export const updateReview = async (reviewId, { rating, text, playedBefore, playedAt }) => {
+export const updateReview = async (
+  reviewId,
+  { rating, text, playedBefore, playedAt }
+) => {
   try {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -390,14 +396,17 @@ export const createComment = async (reviewId, text) => {
       throw new Error("No authentication token found");
     }
 
-    const response = await fetch(`${API_URL}/api/reviews/${reviewId}/comments`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ text }),
-    });
+    const response = await fetch(
+      `${API_URL}/api/reviews/${reviewId}/comments`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Error al crear el comentario");
@@ -465,8 +474,8 @@ export const checkGameFavorite = async (gameId) => {
 
     const response = await fetch(`${API_URL}/api/games/${gameId}/favorite`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {
@@ -488,11 +497,11 @@ export const toggleGameFavorite = async (gameId) => {
     }
 
     const response = await fetch(`${API_URL}/api/games/${gameId}/favorite`, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
@@ -522,11 +531,13 @@ export const getFavoriteGames = async (username) => {
 
 export const getSuperFavoriteGames = async (username) => {
   try {
-    const response = await fetch(`${API_URL}/api/users/${username}/superfavorites`);
+    const response = await fetch(
+      `${API_URL}/api/users/${username}/superfavorites`
+    );
     const data = await response.json();
     return data.games || [];
   } catch (error) {
-    console.error('Error al cargar juegos superfavoritos:', error);
+    console.error("Error al cargar juegos superfavoritos:", error);
     throw error;
   }
 };
@@ -536,16 +547,18 @@ export const addSuperFavoriteGame = async (gameId) => {
     const response = await fetch(
       `${API_URL}/api/games/${gameId}/superfavorite`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       }
     );
 
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.error || 'Error al añadir el juego a superfavoritos');
+      throw new Error(
+        data.error || "Error al añadir el juego a superfavoritos"
+      );
     }
     return data;
   } catch (error) {
@@ -558,15 +571,15 @@ export const removeSuperFavoriteGame = async (gameId) => {
     const response = await fetch(
       `${API_URL}/api/games/${gameId}/superfavorite`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       }
     );
 
     if (!response.ok) {
-      throw new Error('Error al eliminar el juego de superfavoritos');
+      throw new Error("Error al eliminar el juego de superfavoritos");
     }
     return response.json();
   } catch (error) {
@@ -574,56 +587,100 @@ export const removeSuperFavoriteGame = async (gameId) => {
   }
 };
 
-export const getAllReviews = async (orderBy = 'date') => {
+export const getAllReviews = async (orderBy = "date") => {
   const response = await fetch(`${API_URL}/api/reviews?orderBy=${orderBy}`, {
     headers: {
-      'Content-Type': 'application/json'
-    }
+      "Content-Type": "application/json",
+    },
   });
-  if (!response.ok) throw new Error('Error al obtener las reseñas');
+  if (!response.ok) throw new Error("Error al obtener las reseñas");
   return response.json();
 };
 
 export const createList = async (listData) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     const response = await fetch(`${API_URL}/api/lists`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(listData)
+      body: JSON.stringify(listData),
     });
 
     if (!response.ok) {
-      throw new Error('Error al crear la lista');
+      throw new Error("Error al crear la lista");
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error al crear la lista:', error);
+    console.error("Error al crear la lista:", error);
+    throw error;
+  }
+};
+
+export const deleteList = async (listId) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/api/lists/${listId}`, {
+      method: "DELETE",
+      headers: {  
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al eliminar la lista");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar la lista:", error);
     throw error;
   }
 };
 
 export const addGameToList = async (listId, gameId) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/api/lists/${listId}/games/${gameId}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `${API_URL}/api/lists/${listId}/games/${gameId}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    });
+    );
 
     if (!response.ok) {
-      throw new Error('Error al añadir el juego a la lista');
+      throw new Error("Error al añadir el juego a la lista");
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error al añadir el juego a la lista:', error);
+    console.error("Error al añadir el juego a la lista:", error);
+    throw error;
+  }
+};
+
+export const getListDetails = async (listId) => {
+  try {
+    const token = localStorage.getItem("token");
+    const headers = {
+      Authorization: token ? `Bearer ${token}` : undefined,
+    };
+
+    const response = await fetch(`${API_URL}/api/lists/${listId}`, { headers });
+
+    if (!response.ok) {
+      throw new Error("Error al cargar los detalles de la lista");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al cargar los detalles de la lista:", error);
     throw error;
   }
 };

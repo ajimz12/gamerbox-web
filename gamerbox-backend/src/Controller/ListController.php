@@ -81,6 +81,7 @@ class ListController extends AbstractController
     public function addGameToList(
         int $id,
         string $gameId,
+        Request $request,
         EntityManagerInterface $entityManager,
         Security $security
     ): JsonResponse {
@@ -95,11 +96,17 @@ class ListController extends AbstractController
         }
 
         $game = $entityManager->getRepository(GameReference::class)->findOneBy(['rawgId' => $gameId]);
+        
         if (!$game) {
-            return new JsonResponse(['error' => 'Juego no encontrado'], Response::HTTP_NOT_FOUND);
+            $data = json_decode($request->getContent(), true);
+            $game = new GameReference();
+            $game->setRawgId($gameId);
+            $game->setName($data['name']);
+            $game->setBackgroundImage($data['background_image']);
+            $game->setSlug($data['slug']);
+            $entityManager->persist($game);
         }
 
-        // Verificar si el juego ya está en la lista
         $existingItem = $entityManager->getRepository(ListItem::class)->findOneBy([
             'list' => $list,
             'game' => $game
@@ -258,5 +265,53 @@ class ListController extends AbstractController
             ],
             'games' => $gamesData
         ]);
+    }
+
+    #[Route('/api/lists/{id}', name: 'api_update_list', methods: ['PUT'])]
+    public function updateList(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Security $security
+    ): JsonResponse {
+        try {
+            $user = $security->getUser();
+            if (!$user) {
+                return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
+            }
+
+            $list = $entityManager->getRepository(ListEntity::class)->find($id);
+            if (!$list || $list->getCreator() !== $user) {
+                return new JsonResponse(['error' => 'Lista no encontrada o sin permisos'], Response::HTTP_NOT_FOUND);
+            }
+
+            $data = json_decode($request->getContent(), true);
+            if (!isset($data['title']) || empty(trim($data['title']))) {
+                return new JsonResponse(['error' => 'El título es requerido'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $list->setTitle($data['title']);
+            $list->setDescription($data['description'] ?? $list->getDescription());
+            $list->setIsPublic($data['isPublic'] ?? $list->isPublic());
+
+            $entityManager->flush();
+
+            return new JsonResponse([
+                'id' => $list->getId(),
+                'title' => $list->getTitle(),
+                'description' => $list->getDescription(),
+                'isPublic' => $list->isPublic(),
+                'createdAt' => $list->getCreatedAt()->format('c'),
+                'creator' => [
+                    'id' => $list->getCreator()->getId(),
+                    'username' => $list->getCreator()->getUsername()
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                ['error' => 'Error al actualizar la lista: ' . $e->getMessage()],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

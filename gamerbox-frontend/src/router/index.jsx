@@ -15,6 +15,8 @@ import GameDetails from "../pages/GameDetails";
 import ReviewDetail from "../pages/ReviewDetail";
 import Reviews from "../pages/Reviews";
 import CreateList from "../pages/CreateList";
+import ListDetails from "../pages/ListDetails";
+import EditList from "../pages/EditList";
 
 export const router = createBrowserRouter([
   {
@@ -79,6 +81,18 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CreateList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "lists/:id",
+        element: <ListDetails />,
+      },
+      {
+        path: "lists/:id/edit",
+        element: (
+          <ProtectedRoute>
+            <EditList />
           </ProtectedRoute>
         ),
       },

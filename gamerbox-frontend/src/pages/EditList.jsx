@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { searchGames } from "../services/rawgService";
-import { createList } from "../services/api";
+import { getListDetails } from "../services/api";
 import { toast } from "react-toastify";
 
-const CreateList = () => {
+const EditList = () => {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(true);
@@ -13,6 +14,30 @@ const CreateList = () => {
   const [selectedGames, setSelectedGames] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchListDetails = async () => {
+      try {
+        const data = await getListDetails(id);
+        setTitle(data.title);
+        setDescription(data.description);
+        setIsPublic(data.isPublic);
+        setSelectedGames(
+          data.games.map((game) => ({
+            id: game.rawgId,
+            name: game.name,
+            background_image: game.backgroundImage,
+            slug: game.slug,
+          }))
+        );
+      } catch (error) {
+        toast.error("Error al cargar la lista");
+        navigate("/");
+      }
+    };
+
+    fetchListDetails();
+  }, [id, navigate]);
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -48,27 +73,88 @@ const CreateList = () => {
     }
 
     try {
-      const data = await createList({
-        title,
-        description,
-        isPublic,
-        games: selectedGames
-      });
-      
-      toast.success("Lista creada exitosamente");
-      navigate(`/user/${localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).username : ''}`);
+      const updateResponse = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/lists/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            title,
+            description,
+            isPublic,
+            games: selectedGames,
+          }),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        throw new Error("Error al actualizar los detalles de la lista");
+      }
+
+      const currentList = await getListDetails(id);
+      const currentGames = new Set(
+        currentList.games.map((game) => game.rawgId)
+      );
+      const newGames = new Set(selectedGames.map((game) => game.id.toString()));
+
+      const gamesToRemove = [...currentGames].filter(
+        (gameId) => !newGames.has(gameId)
+      );
+      const gamesToAdd = [...newGames].filter(
+        (gameId) => !currentGames.has(gameId)
+      );
+
+      for (const gameId of gamesToRemove) {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/lists/${id}/games/${gameId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error al eliminar el juego ${gameId}`);
+        }
+      }
+
+      for (const gameId of gamesToAdd) {
+        const gameData = selectedGames.find((g) => g.id.toString() === gameId);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/lists/${id}/games/${gameId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify(gameData),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error al añadir el juego ${gameId}`);
+        }
+      }
+
+      toast.success("Lista actualizada exitosamente");
+      navigate(`/lists/${id}`);
     } catch (error) {
       console.error("Error:", error);
-      toast.error(error.message || "Error al crear la lista");
+      toast.error(error.message || "Error al actualizar la lista");
     }
   };
 
   return (
     <div className="min-h-screen bg-[#121212] py-8 px-4">
       <div className="max-w-2xl mx-auto bg-[#1E1E1E] p-6 rounded-lg shadow">
-        <h2 className="text-2xl font-bold text-white mb-6">
-          Crear Nueva Lista
-        </h2>
+        <h2 className="text-2xl font-bold text-white mb-6">Editar Lista</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -177,7 +263,7 @@ const CreateList = () => {
             type="submit"
             className="w-full bg-[#3D5AFE] text-white cursor-pointer py-2 rounded hover:bg-[#5C6BC0]"
           >
-            Crear Lista
+            Guardar Cambios
           </button>
         </form>
       </div>
@@ -185,4 +271,4 @@ const CreateList = () => {
   );
 };
 
-export default CreateList;
+export default EditList;
