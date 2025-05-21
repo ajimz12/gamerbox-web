@@ -36,7 +36,7 @@ const PopularGames = () => {
   const scroll = (direction) => {
     const el = scrollRef.current;
     if (!el) return;
-    const scrollAmount = 500; 
+    const scrollAmount = 500;
     el.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
@@ -71,8 +71,6 @@ const PopularGames = () => {
 
   return (
     <div className="relative p-8">
-      <h1 className="text-2xl font-bold mb-6">Juegos Populares</h1>
-
       {/* Botón Izquierda */}
       {canScrollLeft && (
         <button

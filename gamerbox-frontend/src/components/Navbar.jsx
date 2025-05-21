@@ -75,6 +75,14 @@ const Navbar = () => {
               >
                 Listas
               </Link>
+              {isAuth && user?.roles?.includes('ROLE_ADMIN') && (
+                <Link
+                  to="/dashboard"
+                  className="px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
+                >
+                  Dashboard
+                </Link>
+              )}
               {isAuth ? (
                 <>
                   <Link
@@ -160,6 +168,15 @@ const Navbar = () => {
             >
               Listas
             </Link>
+            {isAuth && user?.roles?.includes('ROLE_ADMIN') && (
+              <Link
+                to="/dashboard"
+                className="block px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+            )}
             {isAuth ? (
               <>
                 <Link

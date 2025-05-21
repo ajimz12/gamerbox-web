@@ -44,9 +44,11 @@ security:
         - { path: ^/api/genres, roles: PUBLIC_ACCESS }
         - { path: ^/api/platforms, roles: PUBLIC_ACCESS }
         - { path: ^/api/comments, roles: PUBLIC_ACCESS }
+        - { path: ^/api/lists/recent$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/lists$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/lists/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/reviews/following$, roles: IS_AUTHENTICATED_FULLY, methods: [GET] }
         - { path: ^/api/games/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/users/.+/reviews$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/reviews/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }

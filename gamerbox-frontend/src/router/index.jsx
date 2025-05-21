@@ -18,6 +18,7 @@ import CreateList from "../pages/CreateList";
 import ListDetails from "../pages/ListDetails";
 import EditList from "../pages/EditList";
 import Lists from "../pages/Lists";
+import Dashboard from "../pages/Dashboard";
 
 export const router = createBrowserRouter([
   {
@@ -98,6 +99,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <EditList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
           </ProtectedRoute>
         ),
       },

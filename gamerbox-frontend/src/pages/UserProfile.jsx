@@ -197,13 +197,27 @@ const UserProfile = () => {
           ? [...(prevUser.followers || []), currentUser]
           : (prevUser.followers || []).filter((f) => f.id !== currentUser.id),
       }));
-      if (result.isFollowing) {
-        toast.success(`Ahora sigues a ${user.username}`);
-      } else {
-        toast.info(`Has dejado de seguir a ${user.username}`);
-      }
+      
+      // Cerrar el modal después de procesar la acción
+      setShowUnfollowModal(false);
+      
+      toast.success(
+        result.isFollowing
+          ? `Ahora sigues a ${user.username}`
+          : `Has dejado de seguir a ${user.username}`,
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "dark",
+        }
+      );
     } catch (error) {
-      setError(error.message || "Error al seguir/dejar de seguir al usuario");
+      toast.error("Error al actualizar el seguimiento");
+      setShowUnfollowModal(false);
     }
   };
 

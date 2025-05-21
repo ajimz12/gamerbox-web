@@ -133,17 +133,21 @@ const GameDetails = () => {
       ? `${game.description_raw.substring(0, 300)}...`
       : game.description_raw;
 
+  const defaultImage = "/img/noimage.png";
+
   return (
     <div className="min-h-screen bg-[#121212] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#1E1E1E] rounded-lg overflow-hidden shadow-xl">
           {/* Imagen de fondo */}
           <div className="relative h-96">
-            <img
-              src={game.background_image}
-              alt={game.name}
-              className="w-full h-full object-cover"
-            />
+            {game.background_image && (
+              <img
+                src={game.background_image}
+                alt={game.name}
+                className="w-full h-full object-cover"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#1E1E1E] to-transparent" />
           </div>
 
@@ -246,28 +250,38 @@ const GameDetails = () => {
 
               {/* Imagen destacada */}
               <div className="mb-6">
-                <img
-                  src={selectedImage || game.background_image_additional}
-                  alt={game.name}
-                  className="w-full h-[500px] object-cover rounded-lg shadow-lg"
-                />
+                {(selectedImage || game.background_image_additional) && (
+                  <img
+                    src={selectedImage || game.background_image_additional}
+                    alt={game.name}
+                    className="w-full h-[500px] object-cover rounded-lg shadow-lg"
+                  />
+                )}
               </div>
 
               {/* Grid de miniaturas */}
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {screenshots.slice(0, -1).map((screenshot) => (
-                  <img
-                    key={screenshot.id}
-                    src={screenshot.image}
-                    alt="Screenshot"
-                    onClick={() => setSelectedImage(screenshot.image)}
-                    className={`w-full h-24 object-cover rounded-lg cursor-pointer transition-all duration-200 ${
-                      selectedImage === screenshot.image
-                        ? "ring-2 ring-[#3D5AFE]"
-                        : "hover:opacity-80"
-                    }`}
-                  />
-                ))}
+                {screenshots && screenshots.length > 0 ? (
+                  screenshots.slice(0, -1).map((screenshot) => (
+                    screenshot.image && (
+                      <img
+                        key={screenshot.id}
+                        src={screenshot.image}
+                        alt="Screenshot"
+                        onClick={() => setSelectedImage(screenshot.image)}
+                        className={`w-full h-24 object-cover rounded-lg cursor-pointer transition-all duration-200 ${
+                          selectedImage === screenshot.image
+                            ? "ring-2 ring-[#3D5AFE]"
+                            : "hover:opacity-80"
+                        }`}
+                      />
+                    )
+                  ))
+                ) : (
+                  <p className="text-[#A0A0A0] col-span-full text-center py-4">
+                    No hay capturas de pantalla disponibles
+                  </p>
+                )}
               </div>
             </div>
 

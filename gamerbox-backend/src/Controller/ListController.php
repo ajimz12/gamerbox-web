@@ -271,6 +271,56 @@ class ListController extends AbstractController
         }
     }
 
+    #[Route('/api/lists/recent', name: 'api_get_recent_lists', methods: ['GET'])]
+    public function getRecentLists(
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        try {
+            $lists = $entityManager->getRepository(ListEntity::class)
+                ->createQueryBuilder('l')
+                ->where('l.isPublic = :isPublic')
+                ->setParameter('isPublic', true)
+                ->orderBy('l.createdAt', 'DESC')
+                ->setMaxResults(3)
+                ->getQuery()
+                ->getResult();
+
+            $listsData = array_map(function (ListEntity $list) {
+                $gamesData = array_map(function (ListItem $item) {
+                    $game = $item->getGame();
+                    return [
+                        'id' => $game->getId(),
+                        'rawgId' => $game->getRawgId(),
+                        'name' => $game->getName(),
+                        'backgroundImage' => $game->getBackgroundImage(),
+                        'slug' => $game->getSlug()
+                    ];
+                }, $list->getListItems()->toArray());
+
+                return [
+                    'id' => $list->getId(),
+                    'title' => $list->getTitle(),
+                    'description' => $list->getDescription(),
+                    'isPublic' => $list->isPublic(),
+                    'createdAt' => $list->getCreatedAt()->format('c'),
+                    'creator' => [
+                        'id' => $list->getCreator()->getId(),
+                        'username' => $list->getCreator()->getUsername(),
+                        'profilePicture' => $list->getCreator()->getProfilePicture()
+                    ],
+                    'games' => $gamesData
+                ];
+            }, $lists);
+
+            return new JsonResponse(['lists' => $listsData]);
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                ['error' => 'Error al obtener las listas recientes: ' . $e->getMessage()],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     #[Route('/api/lists/{id}', name: 'api_get_list_details', methods: ['GET'])]
     public function getListDetails(
         int $id,

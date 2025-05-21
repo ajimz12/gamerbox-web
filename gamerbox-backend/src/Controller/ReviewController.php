@@ -17,6 +17,34 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ReviewController extends AbstractController
 {
+
+
+    #[Route('/api/reviews/following', name: 'api_get_following_reviews', methods: ['GET'])]
+    public function getFollowingReviews(EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $qb = $entityManager->createQueryBuilder();
+        $qb->select('r')
+            ->from(Review::class, 'r')
+            ->join('r.author', 'a')
+            ->join('a.followers', 'f')
+            ->where('f.follower = :user')
+            ->setParameter('user', $user)
+            ->orderBy('r.createdAt', 'DESC');
+
+        $reviews = $qb->getQuery()->getResult();
+        $reviewsData = array_map([$this, 'formatReviewData'], $reviews);
+
+        return new JsonResponse($reviewsData);
+    }
+
+
     #[Route('/api/reviews', name: 'api_create_review', methods: ['POST'])]
     public function createReview(
         Request $request,
@@ -71,12 +99,11 @@ class ReviewController extends AbstractController
                 if ($response->getStatusCode() === 200) {
                     $gameData = $response->toArray();
                     error_log('RAWG API Response: ' . json_encode($gameData));
-                    
+
                     $gameReference->setName($gameData['name'] ?? 'Nombre desconocido');
                     $gameReference->setSlug($gameData['slug'] ?? 'slug-desconocido');
                     $gameReference->setBackgroundImage($gameData['background_image'] ?? null);
-                } 
-                else {
+                } else {
                     $gameReference->setName('Nombre desconocido');
                     $gameReference->setSlug('slug-desconocido');
                     $gameReference->setBackgroundImage(null);
@@ -110,7 +137,7 @@ class ReviewController extends AbstractController
             $userGame->setIsFavorite(false);
             $userGame->setPlayedAt($review->getPlayedAt() ?? new \DateTimeImmutable());
         }
-        
+
         // Actualizar el estado a 'played' independientemente de si existía o no
         $userGame->setStatus('played');
 
@@ -237,13 +264,13 @@ class ReviewController extends AbstractController
         $orderBy = $request->query->get('orderBy', 'date');
         $qb = $entityManager->createQueryBuilder();
         $qb->select('r')
-           ->from(Review::class, 'r');
+            ->from(Review::class, 'r');
 
         if ($orderBy === 'popular') {
             $qb->leftJoin('r.likes', 'l')
-               ->groupBy('r.id')
-               ->orderBy('COUNT(l.id)', 'DESC')
-               ->addOrderBy('r.createdAt', 'DESC');
+                ->groupBy('r.id')
+                ->orderBy('COUNT(l.id)', 'DESC')
+                ->addOrderBy('r.createdAt', 'DESC');
         } else {
             $qb->orderBy('r.createdAt', 'DESC');
         }

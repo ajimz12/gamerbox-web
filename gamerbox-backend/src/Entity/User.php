@@ -104,7 +104,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
         $this->userGames = new ArrayCollection();
         $this->follows = new ArrayCollection();
         $this->reviewComments = new ArrayCollection();
-        $this->roles = ['ROLE_USER']; // Set default role
+        $this->roles = ['ROLE_USER']; // Rol por defecto
     }
 
     public function getId(): ?int

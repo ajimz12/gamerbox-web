@@ -30,13 +30,28 @@ const GameCard = ({ game }) => {
     navigate(`/games/${game.id}`);
   };
 
+  const defaultImage = "/img/noimage.png";
+
   return (
     <div className="game-card cursor-pointer" onClick={handleClick}>
       <div className="image-container">
         <img
-          src={game.background_image}
+          src={game.background_image || defaultImage}
           alt={game.name}
           className="game-image"
+          onError={(e) => {
+            e.target.src = defaultImage;
+          }}
+          style={!game.background_image ? {
+            width: '150px',
+            height: '150px',
+            objectFit: 'contain',
+            display: 'block',
+            margin: '0 auto',
+            position: 'relative',
+            top: '50%',
+            transform: 'translateY(-50%)'
+          } : {}}
         />
         <div className="game-info">
           <h2 className="text-lg font-semibold">{game.name}</h2>

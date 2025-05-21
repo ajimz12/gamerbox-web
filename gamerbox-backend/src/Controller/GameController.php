@@ -28,11 +28,13 @@ class GameController extends AbstractController
         $genres = $request->query->get('genres');
         $platforms = $request->query->get('parent_platforms');
         $dates = $request->query->get('dates');
+        $ordering = $request->query->get('ordering', '-metacritic');
 
         $query = [
             'key' => $this->rawgApiKey,
             'page' => $page,
-            'page_size' => $pageSize
+            'page_size' => $pageSize,
+            'ordering' => $ordering
         ];
 
         if ($search) {

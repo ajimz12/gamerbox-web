@@ -1,24 +1,30 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const fetchGames = async (page = 1, pageSize = 20, genres = null, platforms = null, year = null) => {
+export const fetchGames = async (
+  page = 1,
+  pageSize = 20,
+  genres = null,
+  platforms = null,
+  year = null
+) => {
   const url = new URL(`${API_URL}/api/games`);
-  url.searchParams.append('page', page);
-  url.searchParams.append('page_size', pageSize);
-  
+  url.searchParams.append("page", page);
+  url.searchParams.append("page_size", pageSize);
+
   if (genres) {
-    url.searchParams.append('genres', genres);
+    url.searchParams.append("genres", genres);
   }
-  
+
   if (platforms) {
-    url.searchParams.append('parent_platforms', platforms);
+    url.searchParams.append("parent_platforms", platforms);
   }
-  
+
   if (year) {
     const startDate = `${year}-01-01`;
     const endDate = `${year}-12-31`;
-    url.searchParams.append('dates', `${startDate},${endDate}`);
+    url.searchParams.append("dates", `${startDate},${endDate}`);
   }
-  
+
   const response = await fetch(url);
   return response.json();
 };
@@ -27,11 +33,21 @@ export const searchGames = async (searchTerm) => {
   const response = await fetch(`${API_URL}/api/games?search=${searchTerm}`);
   return response.json();
 };
-
 export const fetchPopularGames = async (pageSize = 10) => {
-  const response = await fetch(
-    `${API_URL}/api/games?page_size=${pageSize}&ordering=-metacritic`
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+  const url = new URL(`${API_URL}/api/games`);
+  url.searchParams.append("page_size", pageSize);
+  url.searchParams.append("ordering", "-added");
+  url.searchParams.append(
+    "dates",
+    `${sixMonthsAgo.toISOString().split("T")[0]},${
+      new Date().toISOString().split("T")[0]
+    }`
   );
+
+  const response = await fetch(url);
   return response.json();
 };
 
@@ -57,4 +73,14 @@ export const fetchPlatforms = async () => {
   const url = new URL(`${API_URL}/api/platforms`);
   const response = await fetch(url);
   return response.json();
+};
+
+export const fetchTotalGames = async () => {
+  const url = new URL(`${API_URL}/api/games`);
+  url.searchParams.append("page", 1);
+  url.searchParams.append("page_size", 1);
+  
+  const response = await fetch(url);
+  const data = await response.json();
+  return data.count;
 };

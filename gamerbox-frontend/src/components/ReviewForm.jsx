@@ -113,7 +113,6 @@ const ReviewForm = ({ gameId, onReviewSubmitted, reviews }) => {
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className="text-[#E0E0E0] text-lg">Jugado el</span>
 
           <div className="flex items-center space-x-3">
             <span className="text-[#E0E0E0] text-lg">Jugado el</span>
