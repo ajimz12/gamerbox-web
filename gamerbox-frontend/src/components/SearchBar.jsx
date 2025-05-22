@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { IoSearchOutline } from "react-icons/io5";
+import debounce from 'lodash/debounce';
 
 const SearchBar = ({ onSearch, placeholder = "Buscar..." }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
+  const debouncedSearch = useCallback(
+    debounce((value) => {
+      onSearch(value);
+    }, 300),
+    [onSearch]
+  );
+
   const handleChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    onSearch(value); 
+    debouncedSearch(value);
   };
 
   return (

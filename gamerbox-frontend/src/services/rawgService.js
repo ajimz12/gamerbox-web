@@ -30,7 +30,8 @@ export const fetchGames = async (
 };
 
 export const searchGames = async (searchTerm) => {
-  const response = await fetch(`${API_URL}/api/games?search=${searchTerm}`);
+  const encodedSearchTerm = encodeURIComponent(searchTerm);
+  const response = await fetch(`${API_URL}/api/games?search=${encodedSearchTerm}`);
   return response.json();
 };
 export const fetchPopularGames = async (pageSize = 10) => {

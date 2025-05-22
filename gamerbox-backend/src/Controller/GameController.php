@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use ApiPlatform\OpenApi\Model\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -111,5 +113,63 @@ class GameController extends AbstractController
 
         $data = $response->toArray();
         return $this->json($data);
+    }
+
+    public function searchGames(Request $request): JsonResponse
+    {
+        $search = $request->query->get('search', '');
+        $platforms = $request->query->get('platforms');
+        $genres = $request->query->get('genres');
+        $dates = $request->query->get('dates');
+        $ordering = $request->query->get('ordering', '-rating');
+        $page = $request->query->get('page', 1);
+        $page_size = $request->query->get('page_size', 20);
+
+        $query = [
+            'key' => $this->rawgApiKey,
+            'page_size' => $page_size,
+            'page' => $page,
+            'ordering' => $ordering
+        ];
+
+        if ($search) {
+            $query['search'] = trim($search);
+            $query['search_precise'] = true;
+        }
+
+        if ($genres) {
+            $query['genres'] = $genres;
+        }
+
+        if ($platforms) {
+            $query['parent_platforms'] = $platforms;
+        }
+
+        if ($dates) {
+            $query['dates'] = $dates;
+        }
+
+        try {
+            $response = $this->client->request('GET', 'https://api.rawg.io/api/games', [
+                'query' => $query,
+            ]);
+
+            $data = $response->toArray();
+            
+            // Añadir caché para resultados frecuentes
+            $cacheKey = md5(json_encode($query));
+            $cache = new FilesystemAdapter();
+            
+            if (!$cache->getItem($cacheKey)->isHit()) {
+                $cacheItem = $cache->getItem($cacheKey);
+                $cacheItem->set($data);
+                $cacheItem->expiresAfter(3600); // Cache for 1 hour
+                $cache->save($cacheItem);
+            }
+
+            return $this->json($data);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Error al buscar juegos'], 500);
+        }
     }
 }

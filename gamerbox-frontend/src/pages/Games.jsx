@@ -8,6 +8,7 @@ import {
   searchGames,
   fetchGenres,
   fetchPlatforms,
+  fetchPopularGames
 } from "../services/rawgService";
 import { MdCake } from "react-icons/md";
 import { IoIosArrowBack, IoIosArrowForward, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
@@ -89,18 +90,19 @@ const Games = () => {
     if (!searchTerm) {
       loadGames();
     }
-  }, [currentPage, searchTerm, selectedGenre, selectedPlatform, selectedYear]);
+  }, [currentPage, selectedGenre, selectedPlatform, selectedYear]);
 
   const debouncedSearch = useCallback(
     debounce(async (term) => {
-      if (!term.trim()) {
+      if (!term) {
         setFilteredGames(games);
         return;
       }
 
       try {
         setIsLoading(true);
-        const data = await searchGames(term);
+        const encodedTerm = encodeURIComponent(term.trim());
+        const data = await searchGames(encodedTerm);
         let results = data.results;
 
         if (selectedGenre) {
