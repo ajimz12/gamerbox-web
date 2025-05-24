@@ -18,8 +18,17 @@ export const toggleGameFavorite = async (gameId) => {
 };
 
 export const getFavoriteGames = async (username) => {
-  const response = await fetch(`${API_URL}/api/users/${username}/favorites`);
-  return handleResponse(response);
+  try {
+    const response = await fetch(`${API_URL}/api/users/${username}/favorites`);
+    if (!response.ok) {
+      throw new Error("Error al cargar los juegos favoritos");
+    }
+    const data = await response.json();
+    return data.games;
+  } catch (error) {
+    console.error("Error al cargar los juegos favoritos:", error);
+    throw error;
+  }
 };
 
 export const getSuperFavoriteGames = async (username) => {

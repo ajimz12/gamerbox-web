@@ -180,9 +180,74 @@ const Home = () => {
             <PopularGames />
           </div>
 
-          {/* Sección de Actividad de Seguidos */}
+          <div className="space-y-32 mt-30 mb-40">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold text-[#E0E0E0]">¿Qué es Gamerbox?</h2>
+                <p className="text-[#A0A0A0] text-lg leading-relaxed">
+                  Gamerbox es tu espacio personal para explorar, compartir y organizar tu pasión por los videojuegos. Una plataforma diseñada por y para gamers, donde podrás descubrir nuevos títulos, conectar con otros jugadores y mantener un registro de tus experiencias gaming.
+                </p>
+              </div>
+              <div className="relative group">
+                <img
+                  src="/img/logo.png"
+                  alt="Gamerbox"
+                  className="rounded-lg shadow-xl transform group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1 relative group">
+                <img
+                  src="/img/feature-2.png"
+                  alt="Comparte tu opinion"
+                  className="rounded-lg shadow-xl transform group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="order-1 md:order-2 space-y-4">
+                <h2 className="text-3xl font-bold text-[#E0E0E0]">Expresa tus opiniones sobre juegos</h2>
+                <p className="text-[#A0A0A0] text-lg leading-relaxed">
+                  Comparte tus experiencias, escribe reseñas detalladas y valora los juegos que has probado. Tu opinión ayuda a otros jugadores a descubrir nuevos títulos y contribuye a crear una comunidad más informada.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold text-[#E0E0E0]">Descubre a lo que juegan tus amigos</h2>
+                <p className="text-[#A0A0A0] text-lg leading-relaxed">
+                  Conecta con otros jugadores, sigue sus actividades y descubre nuevos juegos a través de sus experiencias. Mantente al día con las últimas reseñas y recomendaciones de tu círculo de amigos gaming.
+                </p>
+              </div>
+              <div className="relative group">
+                <img
+                  src="/img/feature-3.png"
+                  alt="Connect with friends"
+                  className="rounded-lg shadow-xl transform group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1 relative group">
+                <img
+                  src="/img/feature-4.png"
+                  alt="Organiza tus juegos"
+                  className="rounded-lg shadow-xl transform group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="order-1 md:order-2 space-y-4">
+                <h2 className="text-3xl font-bold text-[#E0E0E0]">Organiza tus juegos en listas</h2>
+                <p className="text-[#A0A0A0] text-lg leading-relaxed">
+                  Crea listas personalizadas para organizar tus juegos: pendientes, favoritos, completados y más. Una manera perfecta de mantener un registro de tu colección y compartir recomendaciones temáticas con la comunidad.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {user && (
-            <div>
+            <div className="mb-40">
               <div className="flex justify-between items-center mb-8">
                 <h2 className="text-3xl font-bold text-[#E0E0E0]">
                   Lo Último de tus Amigos
@@ -214,7 +279,7 @@ const Home = () => {
           )}
 
           {/* Sección de Últimas Listas */}
-          <div>
+          <div className="mb-40">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-3xl font-bold text-[#E0E0E0]">
                 Colecciones de la Comunidad

@@ -275,6 +275,20 @@ const UserTabs = ({
                           <h3 className="text-[#E0E0E0] font-semibold truncate">
                             {game.name}
                           </h3>
+                          <div className="flex items-center text-[#3D5AFE]">
+                            <FaStar className="mr-1" />
+                            <span>{game.rating}</span>
+                          </div>
+                          <div className="text-right text-sm text-[#A0A0A0] mt-2">
+                            {new Date(game.playedAt).toLocaleDateString(
+                              "es-ES",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </div>
                         </div>
                       </Link>
                     ))}

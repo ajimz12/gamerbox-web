@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaStar, FaEdit, FaTrash, FaHeart } from "react-icons/fa";
+import { FaStar, FaEdit, FaTrash, FaHeart, FaComment } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { useAuth } from "../context/AuthContext";
@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmationModal from "./ConfirmationModal";
 import { deleteReview, updateReview, likeReview } from "../services/api/reviews";
+import { getReviewComments } from "../services/api/comments";
 
 const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
   const { user } = useAuth();
@@ -23,6 +24,20 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [likes, setLikes] = useState(review.likes);
   const [hasLiked, setHasLiked] = useState(review.hasLiked);
+  const [commentsCount, setCommentsCount] = useState(review.commentsCount || 0);
+
+  useEffect(() => {
+    const fetchCommentsCount = async () => {
+      try {
+        const comments = await getReviewComments(review.id);
+        setCommentsCount(comments.length);
+      } catch (error) {
+        console.error('Error al obtener los comentarios:', error);
+      }
+    };
+
+    fetchCommentsCount();
+  }, [review.id]);
 
   useEffect(() => {
     setLikes(review.likes);
@@ -311,17 +326,26 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
       </div>
 
       <div className="flex items-center justify-between">
-        <button
-          onClick={handleLike}
-          className={`flex items-center cursor-pointer space-x-2 px-3 py-1 rounded-full transition-colors ${
-            hasLiked
-              ? "text-red-500 hover:text-red-600"
-              : "text-gray-400 hover:text-red-500"
-          }`}
-        >
-          <FaHeart className={`${hasLiked ? "fill-current" : "stroke-current"}`} />
-          <span>{likes}</span>
-        </button>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={handleLike}
+            className={`flex items-center cursor-pointer space-x-2 px-3 py-1 rounded-full transition-colors ${
+              hasLiked
+                ? "text-red-500 hover:text-red-600"
+                : "text-gray-400 hover:text-red-500"
+            }`}
+          >
+            <FaHeart className={`${hasLiked ? "fill-current" : "stroke-current"}`} />
+            <span>{likes}</span>
+          </button>
+
+          <div className="flex items-center space-x-2 text-gray-400 hover:text-[#3D5AFE] transition-colors">
+            <Link to={`/reviews/${review.id}`} className="flex items-center space-x-2">
+              <FaComment />
+              <span>{commentsCount}</span>
+            </Link>
+          </div>
+        </div>
 
         <span className="text-sm text-gray-400">
           {formatDistanceToNow(new Date(review.createdAt), {

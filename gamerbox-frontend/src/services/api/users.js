@@ -31,8 +31,24 @@ export const followUser = async (userId) => {
 };
 
 export const getUserGames = async (username) => {
-  const response = await fetch(`${API_URL}/api/users/${username}/games`, {
-    headers: getAuthHeaders(),
-  });
-  return handleResponse(response);
+  try {
+    const response = await fetch(`${API_URL}/api/users/${username}/games`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener los juegos del usuario");
+    }
+
+    const data = await response.json();
+    return data.games;
+  } catch (error) {
+    console.error("Error al obtener los juegos del usuario", error);
+    throw error;
+  }
 };
+
+
