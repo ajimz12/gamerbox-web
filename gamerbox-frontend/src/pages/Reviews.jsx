@@ -38,7 +38,7 @@ const Reviews = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-[#E0E0E0]">Reseñas</h1>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center font-chakra gap-4">
             <label className="text-[#E0E0E0] text-sm">Ordenar por:</label>
             <select
               value={orderBy}

@@ -3,12 +3,12 @@ import PopularGames from "../components/PopularGames";
 import ListCard from "../components/ListCard";
 import { useState, useEffect } from "react";
 import { getAllReviews } from "../services/api/reviews";
-import { fetchTotalGames } from "../services/rawgService"; // Importa la función
+import { fetchTotalGames } from "../services/rawgService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ReviewItem from "../components/ReviewItem";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import { MdRateReview, MdGames } from "react-icons/md"; // Añade MdGames
+import { MdRateReview, MdGames } from "react-icons/md";
 import { FaList, FaUsers } from "react-icons/fa";
 
 const Home = () => {
@@ -16,7 +16,7 @@ const Home = () => {
   const [followingReviews, setFollowingReviews] = useState([]);
   const [recentLists, setRecentLists] = useState([]);
   const [users, setUsers] = useState([]);
-  const [totalGamesCount, setTotalGamesCount] = useState(0); // Nuevo estado para el conteo de juegos
+  const [totalGamesCount, setTotalGamesCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
@@ -29,30 +29,29 @@ const Home = () => {
           listsData,
           usersData,
           gamesCountData,
-        ] = // Cambiado gamesData a gamesCountData
-          await Promise.all([
-            getAllReviews("popular"),
-            user
-              ? fetch(`${import.meta.env.VITE_API_URL}/api/reviews/following`, {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  },
-                }).then((res) => res.json())
-              : Promise.resolve([]),
-            fetch(`${import.meta.env.VITE_API_URL}/api/lists/recent`).then(
-              (res) => res.json()
-            ),
-            fetch(`${import.meta.env.VITE_API_URL}/api/users`).then((res) =>
-              res.json()
-            ),
-            fetchTotalGames(), // Llama a la función para obtener el conteo total de juegos
-          ]);
+        ] = await Promise.all([
+          getAllReviews("popular"),
+          user
+            ? fetch(`${import.meta.env.VITE_API_URL}/api/reviews/following`, {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }).then((res) => res.json())
+            : Promise.resolve([]),
+          fetch(`${import.meta.env.VITE_API_URL}/api/lists/recent`).then(
+            (res) => res.json()
+          ),
+          fetch(`${import.meta.env.VITE_API_URL}/api/users`).then((res) =>
+            res.json()
+          ),
+          fetchTotalGames(),
+        ]);
 
         setPopularReviews(popularData.slice(0, 6));
         setFollowingReviews(followingData.slice(0, 3));
         setRecentLists(listsData.lists?.slice(0, 3) || []);
         setUsers(usersData.users || []);
-        setTotalGamesCount(gamesCountData); // Actualiza el estado con el conteo de juegos
+        setTotalGamesCount(gamesCountData);
       } catch (error) {
         console.error("Error al cargar los datos:", error);
       } finally {
@@ -77,7 +76,7 @@ const Home = () => {
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-transparent to-[#121212] opacity-20" />
-          <div className="z-10 flex flex-col items-center gap-4 text-[#E0E0E0] text-2xl md:text-4xl font-bold">
+          <div className="z-10 flex flex-col font-press-start items-center gap-4 text-[#E0E0E0] text-2xl md:text-4xl font-bold">
             <h1>Juega.</h1>
             <h1>Descubre.</h1>
             <h1>Comparte.</h1>
@@ -106,7 +105,7 @@ const Home = () => {
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-transparent to-[#121212] opacity-20" />
-        <div className="z-10 flex flex-col items-center gap-8 text-[#E0E0E0] text-2xl md:text-4xl font-bold">
+        <div className="z-10 flex flex-col font-press-start items-center gap-8 text-[#E0E0E0] text-2xl md:text-4xl font-bold">
           <h1 className="animate-slide-in" style={{ animationDelay: "0.3s" }}>
             Juega.
           </h1>
@@ -120,7 +119,7 @@ const Home = () => {
       </div>
 
       {/* Estadísticas */}
-      <div className="w-full max-w-2xl mx-auto -mt-16 px-4 mb-16">
+      <div className="w-full max-w-2xl font-chakra mx-auto -mt-16 px-4 mb-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Link to="/reviews" className="block">
             <div className="bg-[#1E1E1E] shadow-xl p-4 rounded-full text-center transform hover:scale-105 transition-all duration-300 w-32 h-32 flex flex-col items-center justify-center mx-auto cursor-pointer">
@@ -160,7 +159,7 @@ const Home = () => {
               <div className="text-[#4A90E2] text-3xl mb-1">
                 <MdGames />
               </div>
-              <div className="text-xl font-bold text-[#E0E0E0]">
+              <div className="text-xl  font-bold text-[#E0E0E0]">
                 {totalGamesCount?.toLocaleString() || 0}
               </div>
               <div className="text-xs text-[#A0A0A0]">Juegos</div>
@@ -173,9 +172,9 @@ const Home = () => {
         <div className="space-y-16">
           <div>
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold text-[#E0E0E0]">
+              <h1 className="text-xl font-bold text-[#E0E0E0]">
                 Descubre los Juegos del Momento
-              </h2>
+              </h1>
             </div>
             <PopularGames />
           </div>
@@ -183,9 +182,15 @@ const Home = () => {
           <div className="space-y-32 mt-30 mb-40">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="space-y-4">
-                <h2 className="text-3xl font-bold text-[#E0E0E0]">¿Qué es Gamerbox?</h2>
-                <p className="text-[#A0A0A0] text-lg leading-relaxed">
-                  Gamerbox es tu espacio personal para explorar, compartir y organizar tu pasión por los videojuegos. Una plataforma diseñada por y para gamers, donde podrás descubrir nuevos títulos, conectar con otros jugadores y mantener un registro de tus experiencias gaming.
+                <h1 className="text-2xl font-bold  text-[#E0E0E0]">
+                  ¿Qué es Gamerbox?
+                </h1>
+                <p className="text-[#A0A0A0] text-xl font-chakra leading-relaxed">
+                  Gamerbox es tu espacio personal para explorar, compartir y
+                  organizar tu pasión por los videojuegos. Una plataforma
+                  diseñada por y para gamers, donde podrás descubrir nuevos
+                  títulos, conectar con otros jugadores y mantener un registro
+                  de tus experiencias gaming.
                 </p>
               </div>
               <div className="relative group">
@@ -206,18 +211,28 @@ const Home = () => {
                 />
               </div>
               <div className="order-1 md:order-2 space-y-4">
-                <h2 className="text-3xl font-bold text-[#E0E0E0]">Expresa tus opiniones sobre juegos</h2>
-                <p className="text-[#A0A0A0] text-lg leading-relaxed">
-                  Comparte tus experiencias, escribe reseñas detalladas y valora los juegos que has probado. Tu opinión ayuda a otros jugadores a descubrir nuevos títulos y contribuye a crear una comunidad más informada.
+                <h1 className="text-2xl font-bold text-[#E0E0E0]">
+                  Expresa tus opiniones sobre juegos
+                </h1>
+                <p className="text-[#A0A0A0] font-chakra text-xl leading-relaxed">
+                  Comparte tus experiencias, escribe reseñas detalladas y valora
+                  los juegos que has probado. Tu opinión ayuda a otros jugadores
+                  a descubrir nuevos títulos y contribuye a crear una comunidad
+                  más informada.
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="space-y-4">
-                <h2 className="text-3xl font-bold text-[#E0E0E0]">Descubre a lo que juegan tus amigos</h2>
-                <p className="text-[#A0A0A0] text-lg leading-relaxed">
-                  Conecta con otros jugadores, sigue sus actividades y descubre nuevos juegos a través de sus experiencias. Mantente al día con las últimas reseñas y recomendaciones de tu círculo de amigos gaming.
+                <h1 className="text-2xl font-bold text-[#E0E0E0]">
+                  Descubre a lo que juegan tus amigos
+                </h1>
+                <p className="text-[#A0A0A0] text-xl font-chakra leading-relaxed">
+                  Conecta con otros jugadores, sigue sus actividades y descubre
+                  nuevos juegos a través de sus experiencias. Mantente al día
+                  con las últimas reseñas y recomendaciones de tu círculo de
+                  amigos gaming.
                 </p>
               </div>
               <div className="relative group">
@@ -238,9 +253,14 @@ const Home = () => {
                 />
               </div>
               <div className="order-1 md:order-2 space-y-4">
-                <h2 className="text-3xl font-bold text-[#E0E0E0]">Organiza tus juegos en listas</h2>
-                <p className="text-[#A0A0A0] text-lg leading-relaxed">
-                  Crea listas personalizadas para organizar tus juegos: pendientes, favoritos, completados y más. Una manera perfecta de mantener un registro de tu colección y compartir recomendaciones temáticas con la comunidad.
+                <h1 className="text-2xl font-bold text-[#E0E0E0]">
+                  Organiza tus juegos
+                </h1>
+                <p className="text-[#A0A0A0] text-xl font-chakra leading-relaxed">
+                  Crea listas personalizadas para organizar tus juegos:
+                  pendientes, favoritos, completados y más. Una manera perfecta
+                  de mantener un registro de tu colección y compartir
+                  recomendaciones temáticas con la comunidad.
                 </p>
               </div>
             </div>
@@ -266,10 +286,10 @@ const Home = () => {
                 </div>
               ) : (
                 <div className="bg-[#1E1E1E] p-8 rounded-lg text-center text-[#A0A0A0]">
-                  <p className="text-lg">
+                  <p className="text-lg font-chakra">
                     No hay actividad reciente de tus seguidos
                   </p>
-                  <p className="mt-2">
+                  <p className="mt-2 font-chakra">
                     ¡Comienza a seguir a otros gamers para ver sus
                     actualizaciones!
                   </p>
@@ -286,7 +306,7 @@ const Home = () => {
               </h2>
               <Link
                 to="/lists"
-                className="text-[#3D5AFE] hover:text-[#536DFE] text-lg font-medium hover:underline"
+                className="text-[#3D5AFE] hover:text-[#536DFE] text-lg font-chakra font-medium hover:underline"
               >
                 Ver todas las listas
               </Link>
@@ -303,8 +323,10 @@ const Home = () => {
                 ))
               ) : (
                 <div className="col-span-3 bg-[#1E1E1E] p-8 rounded-lg text-center text-[#A0A0A0]">
-                  <p className="text-lg">Aún no hay listas disponibles</p>
-                  <p className="mt-2">
+                  <p className="text-lg font-chakra">
+                    Aún no hay listas disponibles
+                  </p>
+                  <p className="mt-2 font-chakra">
                     ¡Sé el primero en crear una lista de juegos!
                   </p>
                 </div>
@@ -320,7 +342,7 @@ const Home = () => {
               </h2>
               <Link
                 to="/reviews"
-                className="text-[#3D5AFE] hover:text-[#536DFE] text-lg font-medium hover:underline"
+                className="text-[#3D5AFE] hover:text-[#536DFE] text-lg font-chakra font-medium hover:underline"
               >
                 Ver todas las reseñas
               </Link>

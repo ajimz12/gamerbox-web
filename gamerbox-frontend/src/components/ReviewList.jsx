@@ -2,7 +2,7 @@ import React from "react";
 import ReviewItem from "./ReviewItem";
 import { useAuth } from "../context/AuthContext";
 
-const ReviewList = ({ reviews, setReviews }) => {
+const ReviewList = ({ reviews, setReviews, limitToThree = false }) => {
   const { user } = useAuth();
 
   const handleReviewUpdated = (updatedReview) => {
@@ -15,12 +15,11 @@ const ReviewList = ({ reviews, setReviews }) => {
     setReviews(reviews.filter(review => review.id !== reviewId));
   };
 
-  // Mantener el orden original de las reseñas ya que el backend ya las ordena correctamente
-  const sortedReviews = [...reviews];
+  const displayedReviews = limitToThree ? [...reviews].slice(-3) : reviews;
 
   return (
     <div className="space-y-6">
-      {sortedReviews.map((review) => (
+      {displayedReviews.map((review) => (
         <ReviewItem 
           key={review.id} 
           review={review} 

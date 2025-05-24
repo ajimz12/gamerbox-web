@@ -32,7 +32,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-[#1E1E1E] text-[#E0E0E0] shadow-lg border-b border-[#2C2C2C]">
+      <nav className="bg-[#1E1E1E] text-[#E0E0E0] shadow-lg font-chakra text-lg border-b border-[#2C2C2C]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
             <Link to="/" className="flex items-center space-x-2 cursor-pointer">

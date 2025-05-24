@@ -116,7 +116,7 @@ const EditList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#121212] py-8 px-4">
+    <div className="min-h-screen font-chakra bg-[#121212] py-8 px-4">
       <div className="max-w-2xl mx-auto bg-[#1E1E1E] p-6 rounded-lg shadow">
         <h2 className="text-2xl font-bold text-white mb-6">Editar Lista</h2>
 

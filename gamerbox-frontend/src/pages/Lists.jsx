@@ -53,17 +53,17 @@ const Lists = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#121212]">
+      <div className="min-h-screen font-chakra flex items-center justify-center bg-[#121212]">
         <div className="text-red-500">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#121212] py-8">
+    <div className="min-h-screen font-chakra bg-[#121212] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-[#E0E0E0]">
+          <h1 className="text-3xl mb-10 font-bold text-[#E0E0E0]">
             Listas de Juegos
           </h1>
           {localStorage.getItem("token") && (

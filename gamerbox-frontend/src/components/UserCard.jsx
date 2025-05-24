@@ -6,9 +6,9 @@ const UserCard = ({ user }) => {
   return (
     <Link
       to={`/user/${userData.username}`}
-      className="block bg-[#1E1E1E] rounded-lg shadow-md hover:shadow-lg transition-shadow border border-[#2C2C2C] hover:bg-[#2C2C2C]"
+      className="block bg-[#1E1E1E] rounded-lg shadow-md  hover:shadow-lg transition-shadow border border-[#2C2C2C] hover:bg-[#2C2C2C]"
     >
-      <div className="p-4">
+      <div className="p-4 font-chakra">
         <div className="flex items-center space-x-4">
           <img
             src={

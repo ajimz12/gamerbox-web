@@ -166,7 +166,6 @@ const Games = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center mb-8">
           <h1 className="text-3xl font-bold text-[#E0E0E0] mb-6 flex items-center gap-2">
-            <BiJoystick className="text-[#3D5AFE]" />
             Explorar Juegos
           </h1>
           <div className="w-full max-w-4xl space-y-4 flex flex-col items-center mt-5">
@@ -177,7 +176,7 @@ const Games = () => {
               />
             </div>
 
-            <div className="relative w-full max-w-lg mx-auto">
+            <div className="relative w-full max-w-lg mx-auto font-chakra">
               <button
                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
                 className="w-full flex items-center justify-between px-4 py-2 bg-[#1E1E1E] text-[#E0E0E0] rounded-lg hover:bg-[#2D2D2D] transition-colors cursor-pointer"
@@ -286,7 +285,7 @@ const Games = () => {
             >
               <IoIosArrowBack className="text-2xl" />
             </button>
-            <span className="text-[#E0E0E0] px-4 py-2">
+            <span className="text-[#E0E0E0] font-chakra px-4 py-2">
               Página {currentPage} de {totalPages}
             </span>
             <button

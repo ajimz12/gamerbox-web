@@ -1,19 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Silkscreen&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch&display=swap");
+
 @import "tailwindcss";
 
 @layer base {
   :root {
     --color-background: #121212;
-    --color-background-secondary: #1E1E1E;
-    --color-text-primary: #E0E0E0;
-    --color-text-secondary: #A0A0A0;
-    --color-accent: #3D5AFE;
-    --color-border: #2C2C2C;
-    --color-hover: #5C6BC0;
+    --color-background-secondary: #1e1e1e;
+    --color-text-primary: #e0e0e0;
+    --color-text-secondary: #a0a0a0;
+    --color-accent: #3d5afe;
+    --color-border: #2c2c2c;
+    --color-hover: #5c6bc0;
   }
-  
+
   body {
     background-color: var(--color-background);
     color: var(--color-text-primary);
+  }
+
+  .font-press-start {
+    font-family: "Press Start 2P";
+  }
+
+  .font-silkscreen {
+    font-family: "Silkscreen";
+  }
+
+  .font-chakra {
+    font-family: "Chakra Petch";
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -23,7 +40,14 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+}
+
+h1,
+h2,
+h4,
+h5,
+h6 {
+  font-family: "Press Start 2P";
 }
 
 @keyframes slideInRight {

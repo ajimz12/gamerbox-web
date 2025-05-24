@@ -142,7 +142,7 @@ const EditProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#121212] py-8">
+    <div className="min-h-screen font-chakra bg-[#121212] py-8">
       <div className="max-w-2xl mx-auto bg-[#1E1E1E] p-8 rounded-lg shadow border border-[#2C2C2C]">
         <h2 className="text-2xl font-bold text-[#E0E0E0] mb-6">
           Editar Perfil

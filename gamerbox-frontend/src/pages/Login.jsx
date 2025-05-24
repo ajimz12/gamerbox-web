@@ -37,15 +37,15 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#121212] to-[#1A1A1A] p-4">
+    <div className="min-h-screen flex items-center font-chakra justify-center bg-gradient-to-br from-[#121212] to-[#1A1A1A] p-4">
       <div className="max-w-md w-full space-y-10 p-10 bg-[#1E1E1E] rounded-xl shadow-2xl border border-[#2C2C2C]">
         <div className="text-center">
           {/* LOGO */}
-          {/* <img src="/path/to/your/logo.svg" alt="GamerBox Logo" className="mx-auto h-12 w-auto mb-6" /> */}
-          <h2 className="text-3xl font-bold text-[#E0E0E0] tracking-tight">
+          <img src="/img/logo.png" alt="GamerBox Logo" className="mx-auto h-24 w-auto mb-12" />
+          <h1 className="text-2xl font-bold mb-5 text-[#E0E0E0] tracking-tight">
             Bienvenido de Nuevo
-          </h2>
-          <p className="mt-2 text-sm text-[#A0A0A0]">
+          </h1>
+          <p className="mt-2 text-lg text-[#A0A0A0]">
             Inicia sesión para continuar en GamerBox
           </p>
         </div>
@@ -135,7 +135,7 @@ const Login = () => {
           </div>
         </form>
 
-        <div className="text-center text-sm text-[#A0A0A0]">
+        <div className="text-center text-md text-[#A0A0A0]">
           ¿Aún no tienes una cuenta?{" "}
           <Link
             to="/register"

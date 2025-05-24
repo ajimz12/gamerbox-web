@@ -140,7 +140,7 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
   };
 
   return (
-    <div className="bg-[#252525] p-6 rounded-lg">
+    <div className="bg-[#252525] p-6 font-chakra rounded-lg">
       <div className="flex items-center justify-between mb-4">
         <Link
           to={`/user/${review.author.username}`}

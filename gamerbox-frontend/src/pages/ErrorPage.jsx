@@ -3,7 +3,7 @@ import { GiEyepatch } from "react-icons/gi";
 
 const ErrorPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#121212] px-4">
+    <div className="min-h-screen flex font-chakra items-center justify-center bg-[#121212] px-4">
       <div className="flex flex-col items-center text-center bg-[#1E1E1E] p-10 rounded-2xl shadow-2xl border border-[#2C2C2C] max-w-lg w-full space-y-6">
         <div className="flex flex-col items-center">
           <GiEyepatch className="text-5xl text-[#3D5AFE] mb-4" />

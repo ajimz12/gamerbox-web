@@ -42,3 +42,7 @@
 .image-container:hover .game-info {
   opacity: 1;
 }
+
+h2{
+  font-size: 15px;
+}

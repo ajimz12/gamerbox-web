@@ -195,7 +195,6 @@ const UserProfile = () => {
           : (prevUser.followers || []).filter((f) => f.id !== currentUser.id),
       }));
       
-      // Cerrar el modal después de procesar la acción
       setShowUnfollowModal(false);
       
       toast.success(
@@ -219,7 +218,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#121212] py-8">
+    <div className="min-h-screen bg-[#121212] font-chakra py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Sección de perfil */}
         <div className="bg-[#1E1E1E] rounded-lg overflow-hidden shadow-lg">
@@ -372,7 +371,7 @@ const UserProfile = () => {
                   {isLoadingReviews ? (
                     <LoadingSpinner />
                   ) : reviews.length > 0 ? (
-                    <ReviewList reviews={reviews} />
+                    <ReviewList reviews={reviews} limitToThree={true} />
                   ) : (
                     <div className="bg-[#2C2C2C] rounded-lg p-4 text-center text-[#A0A0A0]">
                       No hay reseñas para mostrar

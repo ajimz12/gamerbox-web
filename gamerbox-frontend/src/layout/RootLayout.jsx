@@ -38,11 +38,11 @@ const RootLayout = () => {
         <Outlet />
       </main>
 
-      <footer className="bg-[#1E1E1E] text-[#E0E0E0] py-6">
+      <footer className="bg-[#1E1E1E] font-chakra text-lg text-[#E0E0E0] py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-sm">
+              <p>
                 © 2025 GamerBox. Todos los derechos reservados.
               </p>
             </div>

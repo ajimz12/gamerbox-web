@@ -168,7 +168,7 @@ const GameDetails = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 mt-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 font-chakra gap-8 mb-8 mt-10">
               <div className="bg-[#252525] p-6 rounded-lg">
                 <h2 className="text-xl font-semibold text-[#E0E0E0] mb-4 flex items-center">
                   <BiJoystick className="mr-2 text-[#3D5AFE]" />
@@ -222,12 +222,12 @@ const GameDetails = () => {
               </div>
             </div>
 
-            <div className="mb-8">
+            <div className="mb-8 font-chakra">
               <h2 className="text-xl font-semibold text-[#E0E0E0] mb-4 flex items-center">
                 <MdDescription className="mr-2 text-[#3D5AFE]" />
                 Descripción
               </h2>
-              <p className="text-[#A0A0A0] leading-relaxed">
+              <p className="text-[#A0A0A0]  leading-relaxed">
                 {showFullDescription
                   ? game.description_raw
                   : truncatedDescription}
@@ -307,7 +307,7 @@ const GameDetails = () => {
 
               {isAuth ? (
                 showReviewModal && (
-                  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+                  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex font-chakra items-center justify-center z-50">
                     <div className="bg-[#1E1E1E] rounded-lg p-6 w-full max-w-4xl mx-4">
                       <div className="flex justify-between items-center mb-6">
                         <h3 className="text-xl font-semibold text-[#E0E0E0]">
@@ -374,7 +374,7 @@ const GameDetails = () => {
                   onReviewDeleted={handleReviewDeleted}
                 />
               ) : (
-                <div className="text-center text-[#A0A0A0]">
+                <div className="text-center font-chakra text-[#A0A0A0]">
                   No hay reseñas todavía. ¡Sé el primero en escribir una!
                 </div>
               )}

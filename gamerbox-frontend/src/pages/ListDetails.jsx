@@ -74,7 +74,7 @@ const ListDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#121212] py-8 px-4">
+    <div className="min-h-screen font-chakra bg-[#121212] py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="bg-[#1E1E1E] rounded-lg shadow-lg overflow-hidden">
           <div className="p-6 border-b border-[#2C2C2C]">
