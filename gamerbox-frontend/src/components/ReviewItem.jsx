@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmationModal from "./ConfirmationModal";
-import { deleteReview, updateReview, likeReview } from "../services/api";
+import { deleteReview, updateReview, likeReview } from "../services/api/reviews";
 
 const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
   const { user } = useAuth();

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { updateProfile } from "../services/api/profile";
 import {
-  updateProfile,
   getSuperFavoriteGames,
   addSuperFavoriteGame,
   removeSuperFavoriteGame,
-} from "../services/api";
+} from "../services/api/favorites";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { searchGames } from "../services/rawgService";
@@ -79,9 +79,11 @@ const EditProfile = () => {
     const fetchSuperFavorites = async () => {
       try {
         const games = await getSuperFavoriteGames(user.username);
-        setSuperFavoriteGames(games);
+        setSuperFavoriteGames(Array.isArray(games) ? games : []);
       } catch (error) {
         console.error("Error al cargar juegos superfavoritos:", error);
+        setSuperFavoriteGames([]);
+        toast.error("Error al cargar los juegos superfavoritos");
       }
     };
 
@@ -94,13 +96,13 @@ const EditProfile = () => {
       try {
         const encodedSearchTerm = encodeURIComponent(searchTerm.trim());
         const data = await searchGames(encodedSearchTerm);
-        
+
         const results = data.results || [];
-        
-        const filteredResults = results.filter(game => 
+
+        const filteredResults = results.filter((game) =>
           game.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
         );
-        
+
         setSearchResults(filteredResults);
       } catch (error) {
         console.error("Error al buscar juegos:", error);

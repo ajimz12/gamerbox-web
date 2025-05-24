@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getReviewById } from "../services/api";
+import { getReviewById } from "../services/api/reviews";
 import ReviewItem from "../components/ReviewItem";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { FaArrowLeft } from "react-icons/fa";

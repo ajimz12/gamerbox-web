@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getAllReviews } from "../services/api";
+import { getAllReviews } from "../services/api/reviews";
 import ReviewList from "../components/ReviewList";
 import LoadingSpinner from "../components/LoadingSpinner";
 

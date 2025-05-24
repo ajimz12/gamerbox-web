@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { isAuthenticated, logout } from '../services/api';
+import { isAuthenticated, logout } from '../services/api/auth';
 
 const AuthContext = createContext(null);
 

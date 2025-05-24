@@ -59,8 +59,8 @@ class GameController extends AbstractController
             'query' => $query,
         ]);
 
-        $data = $response->toArray();
-        return $this->json($data);
+        $data = $response->toArray(); // $data aquí contendrá el campo "count"
+        return $this->json($data); // Se devuelve la respuesta completa, incluyendo "count"
     }
 
     #[Route('/api/games/{id}', name: 'api_game_details')]

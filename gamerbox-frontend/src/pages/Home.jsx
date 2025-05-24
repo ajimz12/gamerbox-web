@@ -2,26 +2,34 @@ import React from "react";
 import PopularGames from "../components/PopularGames";
 import ListCard from "../components/ListCard";
 import { useState, useEffect } from "react";
-import { getAllReviews } from "../services/api";
+import { getAllReviews } from "../services/api/reviews";
+import { fetchTotalGames } from "../services/rawgService"; // Importa la función
 import LoadingSpinner from "../components/LoadingSpinner";
 import ReviewItem from "../components/ReviewItem";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import { MdRateReview } from "react-icons/md";
-import { FaList, FaUsers, FaGamepad } from "react-icons/fa";
+import { MdRateReview, MdGames } from "react-icons/md"; // Añade MdGames
+import { FaList, FaUsers } from "react-icons/fa";
 
 const Home = () => {
   const [popularReviews, setPopularReviews] = useState([]);
   const [followingReviews, setFollowingReviews] = useState([]);
   const [recentLists, setRecentLists] = useState([]);
   const [users, setUsers] = useState([]);
+  const [totalGamesCount, setTotalGamesCount] = useState(0); // Nuevo estado para el conteo de juegos
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [popularData, followingData, listsData, usersData, gamesData] =
+        const [
+          popularData,
+          followingData,
+          listsData,
+          usersData,
+          gamesCountData,
+        ] = // Cambiado gamesData a gamesCountData
           await Promise.all([
             getAllReviews("popular"),
             user
@@ -37,15 +45,14 @@ const Home = () => {
             fetch(`${import.meta.env.VITE_API_URL}/api/users`).then((res) =>
               res.json()
             ),
-            fetch(`${import.meta.env.VITE_API_URL}/api/games/count`).then(
-              (res) => res.json()
-            ),
+            fetchTotalGames(), // Llama a la función para obtener el conteo total de juegos
           ]);
 
         setPopularReviews(popularData.slice(0, 6));
         setFollowingReviews(followingData.slice(0, 3));
         setRecentLists(listsData.lists?.slice(0, 3) || []);
         setUsers(usersData.users || []);
+        setTotalGamesCount(gamesCountData); // Actualiza el estado con el conteo de juegos
       } catch (error) {
         console.error("Error al cargar los datos:", error);
       } finally {
@@ -113,42 +120,57 @@ const Home = () => {
       </div>
 
       {/* Estadísticas */}
-      <div className="w-full max-w-4xl mx-auto -mt-16 px-4 mb-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-[#1E1E1E] shadow-xl p-6 rounded-lg text-center transform hover:scale-105 transition-all duration-300">
-            <div className="text-[#FF6B6B] text-4xl mb-3">
-              <MdRateReview />
+      <div className="w-full max-w-2xl mx-auto -mt-16 px-4 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Link to="/reviews" className="block">
+            <div className="bg-[#1E1E1E] shadow-xl p-4 rounded-full text-center transform hover:scale-105 transition-all duration-300 w-32 h-32 flex flex-col items-center justify-center mx-auto cursor-pointer">
+              <div className="text-[#FF6B6B] text-3xl mb-1">
+                <MdRateReview />
+              </div>
+              <div className="text-xl font-bold text-[#E0E0E0]">
+                {popularReviews.length}
+              </div>
+              <div className="text-xs text-[#A0A0A0]">Reseñas</div>
             </div>
-            <div className="text-2xl font-bold text-[#E0E0E0]">
-              {popularReviews.length}
+          </Link>
+          <Link to="/lists" className="block">
+            <div className="bg-[#1E1E1E] shadow-xl p-4 rounded-full text-center transform hover:scale-105 transition-all duration-300 w-32 h-32 flex flex-col items-center justify-center mx-auto cursor-pointer">
+              <div className="text-[#4ECDC4] text-3xl mb-1">
+                <FaList />
+              </div>
+              <div className="text-xl font-bold text-[#E0E0E0]">
+                {recentLists.length}
+              </div>
+              <div className="text-xs text-[#A0A0A0]">Listas</div>
             </div>
-            <div className="text-sm text-[#A0A0A0]">Reseñas</div>
-          </div>
-          <div className="bg-[#1E1E1E] shadow-xl p-6 rounded-lg text-center transform hover:scale-105 transition-all duration-300">
-            <div className="text-[#4ECDC4] text-4xl mb-3">
-              <FaList />
+          </Link>
+          <Link to="/users" className="block">
+            <div className="bg-[#1E1E1E] shadow-xl p-4 rounded-full text-center transform hover:scale-105 transition-all duration-300 w-32 h-32 flex flex-col items-center justify-center mx-auto cursor-pointer">
+              <div className="text-[#FFD93D] text-3xl mb-1">
+                <FaUsers />
+              </div>
+              <div className="text-xl font-bold text-[#E0E0E0]">
+                {users?.length || 0}
+              </div>
+              <div className="text-xs text-[#A0A0A0]">Miembros</div>
             </div>
-            <div className="text-2xl font-bold text-[#E0E0E0]">
-              {recentLists.length}
+          </Link>
+          <Link to="/games" className="block">
+            <div className="bg-[#1E1E1E] shadow-xl p-4 rounded-full text-center transform hover:scale-105 transition-all duration-300 w-32 h-32 flex flex-col items-center justify-center mx-auto cursor-pointer">
+              <div className="text-[#4A90E2] text-3xl mb-1">
+                <MdGames />
+              </div>
+              <div className="text-xl font-bold text-[#E0E0E0]">
+                {totalGamesCount?.toLocaleString() || 0}
+              </div>
+              <div className="text-xs text-[#A0A0A0]">Juegos</div>
             </div>
-            <div className="text-sm text-[#A0A0A0]">Listas</div>
-          </div>
-          <div className="bg-[#1E1E1E] shadow-xl p-6 rounded-lg text-center transform hover:scale-105 transition-all duration-300">
-            <div className="text-[#FFD93D] text-4xl mb-3">
-              <FaUsers />
-            </div>
-            <div className="text-2xl font-bold text-[#E0E0E0]">
-              {users?.length || 0}
-            </div>
-            <div className="text-sm text-[#A0A0A0]">Usuarios</div>
-          </div>
+          </Link>
         </div>
       </div>
 
-      {/* Contenido principal con diseño mejorado */}
       <div className="w-full max-w-7xl px-4 py-10">
         <div className="space-y-16">
-          {/* Sección de Juegos Populares con título mejorado */}
           <div>
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-3xl font-bold text-[#E0E0E0]">

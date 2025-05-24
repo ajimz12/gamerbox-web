@@ -79,9 +79,9 @@ export const fetchPlatforms = async () => {
 export const fetchTotalGames = async () => {
   const url = new URL(`${API_URL}/api/games`);
   url.searchParams.append("page", 1);
-  url.searchParams.append("page_size", 1);
+  url.searchParams.append("page_size", 1); // Pedimos solo 1 juego para obtener el conteo total
   
   const response = await fetch(url);
   const data = await response.json();
-  return data.count;
+  return data.count; // La API de RAWG devuelve el conteo total en el campo 'count'
 };

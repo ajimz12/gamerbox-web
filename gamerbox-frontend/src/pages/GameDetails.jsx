@@ -13,7 +13,7 @@ import ReviewList from "../components/ReviewList";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { checkGameFavorite, toggleGameFavorite } from "../services/api";
+import { checkGameFavorite, toggleGameFavorite } from "../services/api/favorites";
 
 const GameDetails = () => {
   const { id } = useParams();

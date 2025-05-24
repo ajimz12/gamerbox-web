@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { FaTrash } from "react-icons/fa";
-import { deleteComment, getReviewComments, createComment } from "../services/api";
+import { deleteComment, getReviewComments, createComment } from "../services/api/comments";
 
 const CommentSection = ({ reviewId }) => {
   const { user } = useAuth();

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { register } from "../services/api";
+import { register } from "../services/api/auth";
 import { useAuth } from "../context/AuthContext";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { FiUser, FiMail, FiLock, FiLogIn } from 'react-icons/fi'; 
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ const Register = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { isAuth, user } = useAuth();  // Añadimos user al destructuring
+  const { isAuth, user } = useAuth();
 
   useEffect(() => {
     if (isAuth && user) {
@@ -35,89 +35,99 @@ const Register = () => {
     setIsLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Las contraseñas no coinciden");
+      setError("Las contraseñas no coinciden.");
       setIsLoading(false);
       return;
     }
 
     try {
       await register(formData);
-      navigate("/login");
+      navigate("/login?registered=true"); 
     } catch (error) {
-      setError(
-        "Error al registrar el usuario. Por favor, inténtalo de nuevo: ",
-        error
-      );
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Error al registrar el usuario. Por favor, inténtalo de nuevo.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#121212]">
-      <div className="max-w-md w-full space-y-8 p-8 bg-[#1E1E1E] rounded-lg shadow border border-[#2C2C2C]">
-        <div>
-          <h2 className="text-center text-3xl font-extrabold text-[#E0E0E0]">
-            Crear Cuenta
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#121212] to-[#1A1A1A] p-4">
+      <div className="max-w-md w-full space-y-8 p-10 bg-[#1E1E1E] rounded-xl shadow-2xl border border-[#2C2C2C]">
+        <div className="text-center">
+          {/* LOGO */}
+          {/* <img src="/path/to/your/logo.svg" alt="GamerBox Logo" className="mx-auto h-12 w-auto mb-6" /> */}
+          <h2 className="text-3xl font-bold text-[#E0E0E0] tracking-tight">
+            Únete a GamerBox
           </h2>
+          <p className="mt-2 text-sm text-[#A0A0A0]">
+            Crea tu cuenta para empezar a explorar.
+          </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="username" className="sr-only">
-                Nombre de Usuario
-              </label>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiUser className="h-5 w-5 text-[#A0A0A0] z-10" />
+              </span>
               <input
                 id="username"
                 name="username"
                 type="text"
+                autoComplete="username"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#1E1E1E] focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE] focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#252525] focus:outline-none focus:ring-2 focus:ring-[#3D5AFE] focus:border-[#3D5AFE] sm:text-sm transition-all duration-200"
                 placeholder="Nombre de Usuario"
                 value={formData.username}
                 onChange={handleChange}
               />
             </div>
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Correo Electrónico
-              </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiMail className="h-5 w-5 text-[#A0A0A0] z-10" />
+              </span>
               <input
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#1E1E1E] focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE] focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#252525] focus:outline-none focus:ring-2 focus:ring-[#3D5AFE] focus:border-[#3D5AFE] sm:text-sm transition-all duration-200"
                 placeholder="Correo Electrónico"
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Contraseña
-              </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiLock className="h-5 w-5 text-[#A0A0A0] z-10" />
+              </span>
               <input
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="new-password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#1E1E1E] focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE] focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#252525] focus:outline-none focus:ring-2 focus:ring-[#3D5AFE] focus:border-[#3D5AFE] sm:text-sm transition-all duration-200"
                 placeholder="Contraseña"
                 value={formData.password}
                 onChange={handleChange}
               />
             </div>
-            <div>
-              <label htmlFor="confirmPassword" className="sr-only">
-                Confirmar Contraseña
-              </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiLock className="h-5 w-5 text-[#A0A0A0] z-10" />
+              </span>
               <input
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
+                autoComplete="new-password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#1E1E1E] focus:outline-none focus:ring-[#3D5AFE] focus:border-[#3D5AFE] focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-[#2C2C2C] placeholder-[#A0A0A0] text-[#E0E0E0] bg-[#252525] focus:outline-none focus:ring-2 focus:ring-[#3D5AFE] focus:border-[#3D5AFE] sm:text-sm transition-all duration-200"
                 placeholder="Confirmar Contraseña"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -126,46 +136,39 @@ const Register = () => {
           </div>
 
           {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
+            <div className="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded-lg relative" role="alert">
+                <strong className="font-bold">Error: </strong>
+                <span className="block sm:inline">{error}</span>
+            </div>
           )}
 
           <div>
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-[#E0E0E0] bg-[#3D5AFE] hover:bg-[#5C6BC0] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3D5AFE] disabled:opacity-50"
+              className="group relative w-full cursor-pointer flex items-center justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg text-white bg-[#3D5AFE] hover:bg-[#536DFE] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1E1E1E] focus:ring-[#3D5AFE] disabled:opacity-60 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               {isLoading ? (
-                <svg
-                  className="animate-spin h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
+                <>
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="ml-2">Registrando...</span>
+                </>
               ) : (
-                "Registrarse"
+                <>
+                  <FiLogIn className="mr-2 h-5 w-5" />
+                  Crear Cuenta
+                </>
               )}
             </button>
           </div>
-          <div className="text-sm text-center">
-            <span className="text-[#A0A0A0]">¿Ya tienes una cuenta? </span>
+          <div className="text-center text-sm text-[#A0A0A0]">
+            ¿Ya tienes una cuenta?{' '}
             <Link
               to="/login"
-              className="font-medium text-[#3D5AFE] hover:text-[#5C6BC0]"
+              className="font-semibold text-[#3D5AFE] hover:text-[#536DFE] hover:underline"
             >
               Inicia Sesión
             </Link>

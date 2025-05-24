@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { searchGames } from "../services/rawgService";
-import { getListDetails } from "../services/api";
+import { getListDetails, updateList, removeGameFromList, addGameToList } from "../services/api/lists";
 import { toast } from "react-toastify";
 
 const EditList = () => {
@@ -82,74 +82,27 @@ const EditList = () => {
 
     setIsSaving(true);
     try {
-      const updateResponse = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/lists/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            title,
-            description,
-            isPublic,
-            games: selectedGames,
-          }),
-        }
-      );
-
-      if (!updateResponse.ok) {
-        throw new Error("Error al actualizar los detalles de la lista");
-      }
+      await updateList(id, {
+        title,
+        description,
+        isPublic,
+        games: selectedGames,
+      });
 
       const currentList = await getListDetails(id);
-      const currentGames = new Set(
-        currentList.games.map((game) => game.rawgId)
-      );
+      const currentGames = new Set(currentList.games.map((game) => game.rawgId));
       const newGames = new Set(selectedGames.map((game) => game.id.toString()));
 
-      const gamesToRemove = [...currentGames].filter(
-        (gameId) => !newGames.has(gameId)
-      );
-      const gamesToAdd = [...newGames].filter(
-        (gameId) => !currentGames.has(gameId)
-      );
+      const gamesToRemove = [...currentGames].filter((gameId) => !newGames.has(gameId));
+      const gamesToAdd = [...newGames].filter((gameId) => !currentGames.has(gameId));
 
       for (const gameId of gamesToRemove) {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/lists/${id}/games/${gameId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Error al eliminar el juego ${gameId}`);
-        }
+        await removeGameFromList(id, gameId);
       }
 
       for (const gameId of gamesToAdd) {
         const gameData = selectedGames.find((g) => g.id.toString() === gameId);
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/lists/${id}/games/${gameId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify(gameData),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Error al añadir el juego ${gameId}`);
-        }
+        await addGameToList(id, gameId, gameData);
       }
 
       toast.success("Lista actualizada exitosamente");

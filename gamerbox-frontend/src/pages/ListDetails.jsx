@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { deleteList } from "../services/api";
+import { deleteList } from "../services/api/lists";
 import ConfirmationModal from "../components/ConfirmationModal";
 
 const ListDetails = () => {

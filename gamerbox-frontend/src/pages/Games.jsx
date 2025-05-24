@@ -8,10 +8,14 @@ import {
   searchGames,
   fetchGenres,
   fetchPlatforms,
-  fetchPopularGames
 } from "../services/rawgService";
 import { MdCake } from "react-icons/md";
-import { IoIosArrowBack, IoIosArrowForward, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import {
+  IoIosArrowBack,
+  IoIosArrowForward,
+  IoIosArrowDown,
+  IoIosArrowUp,
+} from "react-icons/io";
 import { BiFilterAlt, BiJoystick } from "react-icons/bi";
 import { FaGamepad } from "react-icons/fa";
 import { MdCalendarToday } from "react-icons/md";
@@ -149,11 +153,11 @@ const Games = () => {
   };
 
   const handlePageChange = (newPage) => {
-    setIsLoading(true); 
+    setIsLoading(true);
     setCurrentPage(newPage);
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
@@ -167,9 +171,12 @@ const Games = () => {
           </h1>
           <div className="w-full max-w-4xl space-y-4 flex flex-col items-center mt-5">
             <div className="w-full max-w-lg mx-auto">
-              <SearchBar onSearch={handleSearch} placeholder="Buscar juegos..." />
+              <SearchBar
+                onSearch={handleSearch}
+                placeholder="Buscar juegos..."
+              />
             </div>
-            
+
             <div className="relative w-full max-w-lg mx-auto">
               <button
                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
@@ -251,7 +258,9 @@ const Games = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredGames.length > 0 ? (
-              filteredGames.map((game) => <GameCard key={game.id} game={game} />)
+              filteredGames.map((game) => (
+                <GameCard key={game.id} game={game} />
+              ))
             ) : (
               <div className="col-span-full flex flex-col justify-center items-center py-12 space-y-4">
                 <MdCake className="text-6xl text-[#E0E0E0]" />

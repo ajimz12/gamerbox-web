@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
-import {
-  getUserProfile,
-  followUser,
-  getUserReviews,
-  getUserGames,
-  getFavoriteGames,
-  getSuperFavoriteGames,
-} from "../services/api";
+import { followUser } from "../services/api/users";
+import { getUserProfile } from "../services/api/profile";
+import { getUserReviews } from "../services/api/reviews";
+import { getUserGames } from "../services/api/users";
+import { getFavoriteGames, getSuperFavoriteGames } from "../services/api/favorites";
 import { useAuth } from "../context/AuthContext";
 import ConfirmationModal from "../components/ConfirmationModal";
 import {

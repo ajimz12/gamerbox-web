@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { searchGames } from "../services/rawgService";
-import { createList } from "../services/api";
+import { createList } from "../services/api/lists";
 import { toast } from "react-toastify";
 
 const CreateList = () => {

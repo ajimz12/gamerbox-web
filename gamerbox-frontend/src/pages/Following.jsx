@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { getUserProfile } from '../services/api';
+import { getUserProfile } from '../services/api/profile';
 import UserCard from '../components/UserCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 
