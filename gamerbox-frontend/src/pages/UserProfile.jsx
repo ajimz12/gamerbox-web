@@ -19,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ReviewList from "../components/ReviewList";
 import UserTabs from "../components/UserTabs";
+import { getUserLists } from "../services/api/lists";
 
 const UserProfile = () => {
   const { username } = useParams();
@@ -132,13 +133,7 @@ const UserProfile = () => {
       const fetchUserLists = async () => {
         try {
           setIsLoadingLists(true);
-          const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/users/${username}/lists`
-          );
-          if (!response.ok) {
-            throw new Error("Error al cargar las listas");
-          }
-          const data = await response.json();
+          const data = await getUserLists(username);
           setUserLists(data.lists);
         } catch (error) {
           console.error("Error al cargar las listas:", error);

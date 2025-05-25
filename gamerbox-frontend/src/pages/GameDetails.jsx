@@ -13,7 +13,8 @@ import ReviewList from "../components/ReviewList";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { checkGameFavorite } from "../services/api/favorites";
+import { toggleGameFavorite, checkGameFavorite } from "../services/api/favorites";
+import { getGameReviews } from "../services/api/reviews";
 
 const GameDetails = () => {
   const { id } = useParams();
@@ -67,22 +68,7 @@ const GameDetails = () => {
     }
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/games/${id}/favorite`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Error al actualizar favorito");
-      }
-
-      const data = await response.json();
+      const data = await toggleGameFavorite(id);
       setIsFavorite(data.isFavorite);
     } catch (error) {
       console.error("Error:", error);
@@ -91,13 +77,7 @@ const GameDetails = () => {
 
   const loadReviews = async () => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/games/${id}/reviews`
-      );
-      if (!response.ok) {
-        throw new Error("Error al cargar las reseñas");
-      }
-      const data = await response.json();
+      const data = await getGameReviews(id);
       setReviews(data);
     } catch (error) {
       console.error("Error cargando reseñas:", error);

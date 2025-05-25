@@ -5,6 +5,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { deleteList } from "../services/api/lists";
+import { getListDetails } from "../services/api/lists";
 import ConfirmationModal from "../components/ConfirmationModal";
 
 const ListDetails = () => {
@@ -20,23 +21,7 @@ const ListDetails = () => {
     const fetchListDetails = async () => {
       try {
         setIsLoading(true);
-        const headers = {};
-        if (localStorage.getItem("token")) {
-          headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
-        }
-        
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/lists/${id}`,
-          {
-            headers
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Error al cargar los detalles de la lista");
-        }
-
-        const data = await response.json();
+        const data = await getListDetails(id);
         setList(data);
       } catch (error) {
         setError(error.message);

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ListCard from "../components/ListCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import SearchBar from "../components/SearchBar";
+import { getAllLists } from "../services/api/lists";
 
 const Lists = () => {
   const [lists, setLists] = useState([]);
@@ -14,15 +15,7 @@ const Lists = () => {
     const fetchLists = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/lists`
-        );
-
-        if (!response.ok) {
-          throw new Error("Error al cargar las listas");
-        }
-
-        const data = await response.json();
+        const data = await getAllLists();
         setLists(data.lists);
         setFilteredLists(data.lists);
       } catch (error) {

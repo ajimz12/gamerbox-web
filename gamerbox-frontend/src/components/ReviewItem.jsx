@@ -140,8 +140,8 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
   };
 
   return (
-    <div className="bg-[#252525] p-6 font-chakra rounded-lg">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-[#252525] p-4 sm:p-6 font-chakra rounded-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4">
         <Link
           to={`/user/${review.author.username}`}
           className="flex items-center space-x-3 hover:text-[#3D5AFE]"
@@ -149,28 +149,28 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
           <img
             src={`${import.meta.env.VITE_API_URL}/uploads/profile_pictures/${review.author.profilePicture}`}
             alt={review.author.username}
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
             onError={(e) => {
               e.target.src = "/profile_pictures/pfp.png";
             }}
           />
-          <span className="font-medium text-[#E0E0E0]">
+          <span className="font-medium text-sm sm:text-base text-[#E0E0E0]">
             {review.author.username}
           </span>
         </Link>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 text-sm sm:text-base">
           {user && user.id === review.author.id && (
             <>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"
+                className="p-1.5 sm:p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"
               >
                 <FaEdit />
               </button>
               <button
                 onClick={() => setIsDeleteModalOpen(true)}
-                className="p-2 text-[#E0E0E0] hover:text-red-500 cursor-pointer transition-colors"
+                className="p-1.5 sm:p-2 text-[#E0E0E0] hover:text-red-500 cursor-pointer transition-colors"
               >
                 <FaTrash />
               </button>
@@ -178,7 +178,7 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
           )}
           <Link
             to={`/reviews/${review.id}`}
-            className="p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"
+            className="p-1.5 sm:p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"
           >
             Ver detalles
           </Link>
@@ -329,25 +329,25 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
         <div className="flex items-center space-x-4">
           <button
             onClick={handleLike}
-            className={`flex items-center cursor-pointer space-x-2 px-3 py-1 rounded-full transition-colors ${
+            className={`flex items-center cursor-pointer space-x-2 px-2 sm:px-3 py-1 rounded-full transition-colors text-sm sm:text-base ${
               hasLiked
                 ? "text-red-500 hover:text-red-600"
                 : "text-gray-400 hover:text-red-500"
             }`}
           >
-            <FaHeart className={`${hasLiked ? "fill-current" : "stroke-current"}`} />
+            <FaHeart className={`${hasLiked ? "fill-current" : "stroke-current"} w-4 h-4 sm:w-5 sm:h-5`} />
             <span>{likes}</span>
           </button>
 
-          <div className="flex items-center space-x-2 text-gray-400 hover:text-[#3D5AFE] transition-colors">
+          <div className="flex items-center space-x-2 text-gray-400 hover:text-[#3D5AFE] transition-colors text-sm sm:text-base">
             <Link to={`/reviews/${review.id}`} className="flex items-center space-x-2">
-              <FaComment />
+              <FaComment className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>{commentsCount}</span>
             </Link>
           </div>
         </div>
 
-        <span className="text-sm text-gray-400">
+        <span className="text-xs sm:text-sm text-gray-400">
           {formatDistanceToNow(new Date(review.createdAt), {
             addSuffix: true,
             locale: es,

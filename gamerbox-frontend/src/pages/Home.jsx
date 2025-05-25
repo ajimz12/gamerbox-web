@@ -2,7 +2,9 @@ import React from "react";
 import PopularGames from "../components/PopularGames";
 import ListCard from "../components/ListCard";
 import { useState, useEffect } from "react";
-import { getAllReviews } from "../services/api/reviews";
+import { getAllReviews, getFollowingReviews } from "../services/api/reviews";
+import { getRecentLists } from "../services/api/lists";
+import { getAllUsers } from "../services/api/users";
 import { fetchTotalGames } from "../services/rawgService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ReviewItem from "../components/ReviewItem";
@@ -31,26 +33,16 @@ const Home = () => {
           gamesCountData,
         ] = await Promise.all([
           getAllReviews("popular"),
-          user
-            ? fetch(`${import.meta.env.VITE_API_URL}/api/reviews/following`, {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              }).then((res) => res.json())
-            : Promise.resolve([]),
-          fetch(`${import.meta.env.VITE_API_URL}/api/lists/recent`).then(
-            (res) => res.json()
-          ),
-          fetch(`${import.meta.env.VITE_API_URL}/api/users`).then((res) =>
-            res.json()
-          ),
+          user ? getFollowingReviews() : Promise.resolve([]),
+          getRecentLists(),
+          getAllUsers(),
           fetchTotalGames(),
         ]);
 
         setPopularReviews(popularData.slice(0, 6));
         setFollowingReviews(followingData.slice(0, 3));
         setRecentLists(listsData.lists?.slice(0, 3) || []);
-        setUsers(usersData.users || []);
+        setUsers(usersData || []);
         setTotalGamesCount(gamesCountData);
       } catch (error) {
         console.error("Error al cargar los datos:", error);

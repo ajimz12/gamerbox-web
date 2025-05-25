@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaStar } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
+import { createReview } from "../services/api/reviews";
 
 const ReviewForm = ({ gameId, onReviewSubmitted, reviews }) => {
   const { user } = useAuth();
@@ -58,29 +59,7 @@ const ReviewForm = ({ gameId, onReviewSubmitted, reviews }) => {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/reviews`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            gameId,
-            rating,
-            text,
-            playedBefore,
-            playedAt: playedAt || null,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Error al enviar la reseña");
-      }
-
-      const data = await response.json();
+      const data = await createReview(gameId, rating, text, playedBefore, playedAt);
       toast.success("¡Reseña publicada con éxito!");
       setText("");
       setRating(0);

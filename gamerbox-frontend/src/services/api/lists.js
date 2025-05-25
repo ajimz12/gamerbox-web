@@ -58,3 +58,18 @@ export const addGameToList = async (listId, gameId, gameData) => {
   );
   return handleResponse(response);
 };
+
+export const getRecentLists = async () => {
+  const response = await fetch(`${API_URL}/api/lists/recent`);
+  return handleResponse(response);
+};
+
+export const getAllLists = async () => {
+  const response = await fetch(`${API_URL}/api/lists`);
+  return handleResponse(response);
+};
+
+export const getUserLists = async (username) => {
+  const response = await fetch(`${API_URL}/api/users/${username}/lists`);
+  return handleResponse(response);
+};

@@ -92,3 +92,10 @@ export const getAllReviews = async (orderBy = "date") => {
 
   return handleResponse(response);
 };
+
+export const getFollowingReviews = async () => {
+  const response = await fetch(`${API_URL}/api/reviews/following`, {
+    headers: getAuthHeaders()
+  });
+  return handleResponse(response);
+};
