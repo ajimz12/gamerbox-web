@@ -36,14 +36,14 @@ const Reviews = () => {
   return (
     <div className="min-h-screen bg-[#121212] py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 mb-8">
           <h1 className="text-3xl font-bold text-[#E0E0E0]">Reseñas</h1>
-          <div className="flex items-center font-chakra gap-4">
-            <label className="text-[#E0E0E0] text-sm">Ordenar por:</label>
+          <div className="flex items-center font-chakra gap-2">
+            <label className="text-[#E0E0E0] text-sm whitespace-nowrap">Ordenar por:</label>
             <select
               value={orderBy}
               onChange={(e) => setOrderBy(e.target.value)}
-              className="bg-[#252525] text-[#E0E0E0] px-4 py-2 rounded-lg border border-[#404040]"
+              className="bg-[#252525] text-[#E0E0E0] px-4 py-2 rounded-lg border border-[#404040] flex-grow sm:flex-grow-0"
             >
               <option value="date">Más recientes</option>
               <option value="popular">Más populares</option>

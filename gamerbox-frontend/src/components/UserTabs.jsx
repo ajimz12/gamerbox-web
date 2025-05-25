@@ -114,10 +114,10 @@ const UserTabs = ({
 
       <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-6 border border-[#2C2C2C]">
         {/* Pestañas */}
-        <div className="border-b border-[#2C2C2C] mb-6">
-          <div className="flex space-x-8">
+        <div className="border-b border-[#2C2C2C] mb-6 overflow-x-auto">
+          <div className="flex flex-nowrap min-w-max sm:min-w-0 sm:flex-wrap gap-2 sm:gap-4 pb-1">
             <button
-              className={`py-4 cursor-pointer text-sm font-medium transition-colors ${
+              className={`py-3 px-4 whitespace-nowrap text-sm cursor-pointer font-medium transition-colors ${
                 activeTab === "info"
                   ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
                   : "text-[#A0A0A0] hover:text-[#E0E0E0]"
@@ -127,7 +127,7 @@ const UserTabs = ({
               Información General
             </button>
             <button
-              className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
+              className={`py-3 px-4 whitespace-nowrap text-sm cursor-pointer font-medium transition-colors ${
                 activeTab === "reviews"
                   ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
                   : "text-[#A0A0A0] hover:text-[#E0E0E0]"
@@ -140,7 +140,7 @@ const UserTabs = ({
               Todas las Reseñas
             </button>
             <button
-              className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
+              className={`py-3 px-4 whitespace-nowrap text-sm cursor-pointer font-medium transition-colors ${
                 activeTab === "diary"
                   ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
                   : "text-[#A0A0A0] hover:text-[#E0E0E0]"
@@ -152,7 +152,7 @@ const UserTabs = ({
               Diario de Juegos
             </button>
             <button
-              className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
+              className={`py-3 px-4 whitespace-nowrap text-sm cursor-pointer font-medium transition-colors ${
                 activeTab === "favorites"
                   ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
                   : "text-[#A0A0A0] hover:text-[#E0E0E0]"
@@ -162,7 +162,7 @@ const UserTabs = ({
               Favoritos
             </button>
             <button
-              className={`py-4 text-sm cursor-pointer font-medium transition-colors ${
+              className={`py-3 px-4 whitespace-nowrap text-sm cursor-pointer font-medium transition-colors ${
                 activeTab === "lists"
                   ? "text-[#3D5AFE] border-b-2 border-[#3D5AFE]"
                   : "text-[#A0A0A0] hover:text-[#E0E0E0]"

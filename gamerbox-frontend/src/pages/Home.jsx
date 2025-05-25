@@ -182,7 +182,7 @@ const Home = () => {
           <div className="space-y-32 mt-30 mb-40">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="space-y-4">
-                <h1 className="text-2xl font-bold  text-[#E0E0E0]">
+                <h1 className="text-2xl font-bold text-[#E0E0E0]">
                   ¿Qué es Gamerbox?
                 </h1>
                 <p className="text-[#A0A0A0] text-xl font-chakra leading-relaxed">
@@ -197,7 +197,7 @@ const Home = () => {
                 <img
                   src="/img/logo.png"
                   alt="Gamerbox"
-                  className="rounded-lg shadow-xl transform group-hover:scale-105 transition-transform duration-300"
+                  className="rounded-lg shadow-xl h-100  transform group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
             </div>
@@ -269,9 +269,9 @@ const Home = () => {
           {user && (
             <div className="mb-40">
               <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-bold text-[#E0E0E0]">
+                <h1 className="text-xl font-bold text-[#E0E0E0]">
                   Lo Último de tus Amigos
-                </h2>
+                </h1>
               </div>
               {followingReviews.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -301,9 +301,9 @@ const Home = () => {
           {/* Sección de Últimas Listas */}
           <div className="mb-40">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold text-[#E0E0E0]">
+              <h1 className="text-xl font-bold text-[#E0E0E0]">
                 Colecciones de la Comunidad
-              </h2>
+              </h1>
               <Link
                 to="/lists"
                 className="text-[#3D5AFE] hover:text-[#536DFE] text-lg font-chakra font-medium hover:underline"
@@ -337,9 +337,9 @@ const Home = () => {
           {/* Sección de Reseñas Populares */}
           <div>
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold text-[#E0E0E0]">
+              <h1 className="text-xl font-bold text-[#E0E0E0]">
                 Reseñas populares esta semana
-              </h2>
+              </h1>
               <Link
                 to="/reviews"
                 className="text-[#3D5AFE] hover:text-[#536DFE] text-lg font-chakra font-medium hover:underline"

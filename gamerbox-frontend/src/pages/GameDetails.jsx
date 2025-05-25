@@ -5,7 +5,7 @@ import {
   fetchGameScreenshots,
 } from "../services/rawgService";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { FaCalendarAlt, FaGamepad, FaImage } from "react-icons/fa";
+import { FaCalendarAlt, FaGamepad, FaImage, FaStar } from "react-icons/fa";
 import { BiJoystick } from "react-icons/bi";
 import { MdDescription, MdRateReview } from "react-icons/md";
 import ReviewForm from "../components/ReviewForm";
@@ -13,7 +13,7 @@ import ReviewList from "../components/ReviewList";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { checkGameFavorite, toggleGameFavorite } from "../services/api/favorites";
+import { checkGameFavorite } from "../services/api/favorites";
 
 const GameDetails = () => {
   const { id } = useParams();
@@ -220,6 +220,87 @@ const GameDetails = () => {
                   </div>
                 </div>
               </div>
+
+              <div className="bg-[#252525] p-6 rounded-lg">
+                <h2 className="text-xl font-semibold text-[#E0E0E0] mb-4 flex items-center">
+                  <MdRateReview className="mr-2 text-[#3D5AFE]" />
+                  Estadísticas
+                </h2>
+                <div className="grid grid-cols-1 gap-4 text-[#A0A0A0]">
+                  <div className="bg-[#1E1E1E] p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#808080]">Total de reseñas</span>
+                      <span className="text-[#E0E0E0] font-semibold">
+                        {reviews.length}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#1E1E1E] p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#808080]">Valoración media</span>
+                      <div className="flex items-center">
+                        <FaStar className="text-[#3D5AFE] mr-1" />
+                        <span className="text-[#E0E0E0] font-semibold">
+                          {reviews.length > 0
+                            ? (
+                                reviews.reduce(
+                                  (acc, review) => acc + review.rating,
+                                  0
+                                ) / reviews.length
+                              ).toFixed(1)
+                            : "--"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#1E1E1E] p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[#808080]">
+                        Distribución de valoraciones
+                      </span>
+                    </div>
+                    <div className="flex items-end justify-between h-32 gap-0.5 mt-4">
+                      {[1, 2, 3, 4, 5].map((rating) => {
+                        const count = reviews.filter(
+                          (review) => Math.round(review.rating) === rating
+                        ).length;
+                        const percentage =
+                          reviews.length > 0
+                            ? (count / reviews.length) * 100
+                            : 0;
+
+                        return (
+                          <div
+                            key={rating}
+                            className="flex flex-col items-center gap-1 w-12"
+                          >
+                            <div className="w-full h-24 relative">
+                              <div
+                                className={`absolute bottom-0 w-full transition-all duration-300 rounded-t ${
+                                  count > 0
+                                    ? "bg-[#3D5AFE]"
+                                    : "bg-[#3D5AFE] bg-opacity-10"
+                                }`}
+                                style={{
+                                  height: count > 0 ? `${percentage}%` : "10%",
+                                }}
+                              />
+                            </div>
+                            <div className="text-[#A0A0A0] text-xs">
+                              {"★".repeat(rating)}
+                            </div>
+                            <span className="text-[#A0A0A0] text-xs">
+                              {count}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="mb-8 font-chakra">
@@ -262,21 +343,24 @@ const GameDetails = () => {
               {/* Grid de miniaturas */}
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {screenshots && screenshots.length > 0 ? (
-                  screenshots.slice(0, -1).map((screenshot) => (
-                    screenshot.image && (
-                      <img
-                        key={screenshot.id}
-                        src={screenshot.image}
-                        alt="Screenshot"
-                        onClick={() => setSelectedImage(screenshot.image)}
-                        className={`w-full h-24 object-cover rounded-lg cursor-pointer transition-all duration-200 ${
-                          selectedImage === screenshot.image
-                            ? "ring-2 ring-[#3D5AFE]"
-                            : "hover:opacity-80"
-                        }`}
-                      />
+                  screenshots
+                    .slice(0, -1)
+                    .map(
+                      (screenshot) =>
+                        screenshot.image && (
+                          <img
+                            key={screenshot.id}
+                            src={screenshot.image}
+                            alt="Screenshot"
+                            onClick={() => setSelectedImage(screenshot.image)}
+                            className={`w-full h-24 object-cover rounded-lg cursor-pointer transition-all duration-200 ${
+                              selectedImage === screenshot.image
+                                ? "ring-2 ring-[#3D5AFE]"
+                                : "hover:opacity-80"
+                            }`}
+                          />
+                        )
                     )
-                  ))
                 ) : (
                   <p className="text-[#A0A0A0] col-span-full text-center py-4">
                     No hay capturas de pantalla disponibles
@@ -308,7 +392,7 @@ const GameDetails = () => {
               {isAuth ? (
                 showReviewModal && (
                   <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex font-chakra items-center justify-center z-50">
-                    <div className="bg-[#1E1E1E] rounded-lg p-6 w-full max-w-4xl mx-4">
+                    <div className="bg-[#1E1E1E] rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
                       <div className="flex justify-between items-center mb-6">
                         <h3 className="text-xl font-semibold text-[#E0E0E0]">
                           He jugado...
@@ -321,17 +405,14 @@ const GameDetails = () => {
                         </button>
                       </div>
 
-                      <div className="flex gap-8">
-                        <div className="flex-shrink-0">
+                      <div className="flex flex-col gap-8">
+                        <div className="flex flex-col items-center">
                           <img
                             src={game.background_image}
                             alt={game.name}
                             className="w-40 h-56 object-cover rounded-lg shadow-lg"
                           />
-                        </div>
-
-                        <div className="flex-grow">
-                          <div className="mb-4">
+                          <div className="mt-4 text-center">
                             <h4 className="text-xl font-medium text-[#E0E0E0]">
                               {game.name}
                             </h4>
@@ -339,13 +420,16 @@ const GameDetails = () => {
                               {new Date(game.released).getFullYear()}
                             </p>
                           </div>
+                        </div>
 
+                        <div className="flex-grow">
                           <ReviewForm
                             gameId={id}
                             onReviewSubmitted={(newReview) => {
                               handleReviewSubmitted(newReview);
                               setShowReviewModal(false);
                             }}
+                            reviews={reviews}
                           />
                         </div>
                       </div>

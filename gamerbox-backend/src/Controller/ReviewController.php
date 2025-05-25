@@ -29,16 +29,7 @@ class ReviewController extends AbstractController
             return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $qb = $entityManager->createQueryBuilder();
-        $qb->select('r')
-            ->from(Review::class, 'r')
-            ->join('r.author', 'a')
-            ->join('a.followers', 'f')
-            ->where('f.follower = :user')
-            ->setParameter('user', $user)
-            ->orderBy('r.createdAt', 'DESC');
-
-        $reviews = $qb->getQuery()->getResult();
+        $reviews = $entityManager->getRepository(Review::class)->findFollowingReviews($user);
         $reviewsData = array_map([$this, 'formatReviewData'], $reviews);
 
         return new JsonResponse($reviewsData);
@@ -229,11 +220,7 @@ class ReviewController extends AbstractController
             return new JsonResponse([], Response::HTTP_OK);
         }
 
-        $reviews = $entityManager->getRepository(Review::class)->findBy(
-            ['game' => $gameReference],
-            ['createdAt' => 'DESC']
-        );
-
+        $reviews = $entityManager->getRepository(Review::class)->findByGame($gameReference);
         $reviewsData = array_map([$this, 'formatReviewData'], $reviews);
 
         return new JsonResponse($reviewsData);
@@ -248,11 +235,7 @@ class ReviewController extends AbstractController
             return new JsonResponse(['error' => 'Usuario no encontrado'], Response::HTTP_NOT_FOUND);
         }
 
-        $reviews = $entityManager->getRepository(Review::class)->findBy(
-            ['author' => $user],
-            ['createdAt' => 'DESC']
-        );
-
+        $reviews = $entityManager->getRepository(Review::class)->findByUser($user);
         $reviewsData = array_map([$this, 'formatReviewData'], $reviews);
 
         return new JsonResponse($reviewsData);
@@ -262,20 +245,10 @@ class ReviewController extends AbstractController
     public function getAllReviews(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $orderBy = $request->query->get('orderBy', 'date');
-        $qb = $entityManager->createQueryBuilder();
-        $qb->select('r')
-            ->from(Review::class, 'r');
+        $reviews = $orderBy === 'popular'
+            ? $entityManager->getRepository(Review::class)->findAllOrderedByPopularity()
+            : $entityManager->getRepository(Review::class)->findAllOrderedByDate();
 
-        if ($orderBy === 'popular') {
-            $qb->leftJoin('r.likes', 'l')
-                ->groupBy('r.id')
-                ->orderBy('COUNT(l.id)', 'DESC')
-                ->addOrderBy('r.createdAt', 'DESC');
-        } else {
-            $qb->orderBy('r.createdAt', 'DESC');
-        }
-
-        $reviews = $qb->getQuery()->getResult();
         $reviewsData = array_map([$this, 'formatReviewData'], $reviews);
 
         return new JsonResponse($reviewsData);

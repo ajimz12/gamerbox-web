@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Review;
 use App\Entity\ReviewComment;
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ReviewCommentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +14,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CommentController extends AbstractController
 {
+    public function __construct(
+        private ReviewCommentRepository $commentRepository
+    ) {}
+
     private function formatCommentData(ReviewComment $comment): array
     {
         return [
@@ -31,8 +35,8 @@ class CommentController extends AbstractController
     #[Route('/api/reviews/{id}/comments', name: 'api_get_review_comments', methods: ['GET'])]
     public function getReviewComments(Review $review): JsonResponse
     {
-        $comments = $review->getReviewComments();
-        $commentsData = array_map([$this, 'formatCommentData'], $comments->toArray());
+        $comments = $this->commentRepository->findByReview($review);
+        $commentsData = array_map([$this, 'formatCommentData'], $comments);
         
         return new JsonResponse($commentsData);
     }
@@ -40,8 +44,7 @@ class CommentController extends AbstractController
     #[Route('/api/reviews/{id}/comments', name: 'api_create_comment', methods: ['POST'])]
     public function createComment(
         Review $review,
-        Request $request,
-        EntityManagerInterface $entityManager
+        Request $request
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -62,17 +65,14 @@ class CommentController extends AbstractController
         $comment->setAuthor($user);
         $comment->setCreatedAt(new \DateTimeImmutable());
 
-        $entityManager->persist($comment);
-        $entityManager->flush();
+        $this->commentRepository->save($comment);
 
         return new JsonResponse($this->formatCommentData($comment), Response::HTTP_CREATED);
     }
 
     #[Route('/api/comments/{id}', name: 'api_delete_comment', methods: ['DELETE'])]
-    public function deleteComment(
-        ReviewComment $comment,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
+    public function deleteComment(ReviewComment $comment): JsonResponse
+    {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -84,8 +84,7 @@ class CommentController extends AbstractController
             return new JsonResponse(['error' => 'No tienes permiso para eliminar este comentario'], Response::HTTP_FORBIDDEN);
         }
 
-        $entityManager->remove($comment);
-        $entityManager->flush();
+        $this->commentRepository->remove($comment);
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

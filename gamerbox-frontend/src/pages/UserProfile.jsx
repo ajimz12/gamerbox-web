@@ -226,25 +226,17 @@ const UserProfile = () => {
           <div className="h-64 bg-gradient-to-r from-[#3D5AFE] via-[#5C6BC0] to-[#3D5AFE] relative">
             <div className="absolute bottom-0 left-0 w-full">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-                <div className="flex items-end space-x-6">
+                <div className="flex flex-col sm:flex-row items-center sm:items-end space-y-4 sm:space-y-0 sm:space-x-6">
                   <img
-                    src={
-                      user?.profilePicture
-                        ? `${import.meta.env.VITE_API_URL}${
-                            user.profilePicture
-                          }`
-                        : "/profile_pictures/pfp.png"
-                    }
+                    src={user?.profilePicture ? `${import.meta.env.VITE_API_URL}${user.profilePicture}` : "/profile_pictures/pfp.png"}
                     alt={`${user?.username}'s profile`}
-                    className="w-32 h-32 rounded-full border-4 border-[#3D5AFE] shadow-xl object-cover transform -translate-y-4"
-                    onError={(e) => {
-                      e.target.src = "/profile_pictures/pfp.png";
-                    }}
+                    className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-[#3D5AFE] shadow-xl object-cover transform sm:-translate-y-4"
+                    onError={(e) => { e.target.src = "/profile_pictures/pfp.png"; }}
                   />
-                  <div className="pb-4 text-[#E0E0E0]">
-                    <h1 className="text-4xl font-bold">{user?.username}</h1>
+                  <div className="pb-4 text-[#E0E0E0] text-center sm:text-left">
+                    <h1 className="text-3xl sm:text-4xl font-bold">{user?.username}</h1>
                     {user?.location && (
-                      <div className="flex items-center mt-2 text-[#A0A0A0]">
+                      <div className="flex items-center justify-center sm:justify-start mt-2 text-[#A0A0A0]">
                         <FaMapMarkerAlt className="mr-2" />
                         <span>{user.location}</span>
                       </div>
@@ -258,63 +250,70 @@ const UserProfile = () => {
           {/* Contenido principal */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
             <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-6 border border-[#2C2C2C]">
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex space-x-8 mt-10">
-                  <Link
-                    to={`/user/${user.username}/followers`}
-                    className="text-center hover:text-[#5C6BC0]"
-                  >
-                    <div className="flex items-center justify-center space-x-2">
-                      <FaUserFriends className="text-[#3D5AFE] text-xl" />
-                      <span className="block text-2xl font-bold text-[#3D5AFE]">
-                        {user?.followers?.length || 0}
-                      </span>
+              <div className="flex flex-col mb-6">
+                {/* Stats container - centered on mobile, left-aligned on desktop */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-8 mt-10">
+                    <Link
+                      to={`/user/${user.username}/followers`}
+                      className="text-center hover:text-[#5C6BC0]"
+                    >
+                      <div className="flex items-center justify-center space-x-2">
+                        <FaUserFriends className="text-[#3D5AFE] text-xl" />
+                        <span className="block text-2xl font-bold text-[#3D5AFE]">
+                          {user?.followers?.length || 0}
+                        </span>
+                      </div>
+                      <span className="text-[#A0A0A0]">Seguidores</span>
+                    </Link>
+                    <Link
+                      to={`/user/${user.username}/following`}
+                      className="text-center hover:text-[#5C6BC0]"
+                    >
+                      <div className="flex items-center justify-center space-x-2">
+                        <FaUserFriends className="text-[#3D5AFE] text-xl" />
+                        <span className="block text-2xl font-bold text-[#3D5AFE]">
+                          {user?.following?.length || 0}
+                        </span>
+                      </div>
+                      <span className="text-[#A0A0A0]">Siguiendo</span>
+                    </Link>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <FaGamepad className="text-[#3D5AFE] text-xl" />
+                        <span className="block text-2xl font-bold text-[#3D5AFE]">
+                          {user?.reviews?.length || 0}
+                        </span>
+                      </div>
+                      <span className="text-[#A0A0A0]">Juegos</span>
                     </div>
-                    <span className="text-[#A0A0A0]">Seguidores</span>
-                  </Link>
-                  <Link
-                    to={`/user/${user.username}/following`}
-                    className="text-center hover:text-[#5C6BC0]"
-                  >
-                    <div className="flex items-center justify-center space-x-2">
-                      <FaUserFriends className="text-[#3D5AFE] text-xl" />
-                      <span className="block text-2xl font-bold text-[#3D5AFE]">
-                        {user?.following?.length || 0}
-                      </span>
-                    </div>
-                    <span className="text-[#A0A0A0]">Siguiendo</span>
-                  </Link>
-                  <div className="text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      <FaGamepad className="text-[#3D5AFE] text-xl" />
-                      <span className="block text-2xl font-bold text-[#3D5AFE]">
-                        {user?.reviews?.length || 0}
-                      </span>
-                    </div>
-                    <span className="text-[#A0A0A0]">Juegos</span>
+                  </div>
+                  
+                  {/* Button container - centered on mobile, right-aligned on desktop */}
+                  <div className="flex justify-center sm:justify-end mt-6 sm:mt-10">
+                    {isOwnProfile ? (
+                      <Link
+                        to="/profile/edit"
+                        className="px-6 py-2 bg-[#3D5AFE] text-[#E0E0E0] rounded-full hover:bg-[#5C6BC0] transition-colors w-full sm:w-auto max-w-xs"
+                      >
+                        Editar Perfil
+                      </Link>
+                    ) : (
+                      currentUser && (
+                        <button
+                          onClick={handleFollow}
+                          className={`px-6 py-2 rounded-full cursor-pointer font-medium w-full sm:w-auto max-w-xs ${
+                            isFollowing
+                              ? "bg-[#2C2C2C] text-[#E0E0E0] hover:bg-[#1E1E1E]"
+                              : "bg-[#3D5AFE] text-[#E0E0E0] hover:bg-[#5C6BC0]"
+                          } transition-colors`}
+                        >
+                          {isFollowing ? "Dejar de seguir" : "Seguir"}
+                        </button>
+                      )
+                    )}
                   </div>
                 </div>
-                {isOwnProfile ? (
-                  <Link
-                    to="/profile/edit"
-                    className="px-6 py-2 bg-[#3D5AFE] text-[#E0E0E0] rounded-full hover:bg-[#5C6BC0] transition-colors"
-                  >
-                    Editar Perfil
-                  </Link>
-                ) : (
-                  currentUser && (
-                    <button
-                      onClick={handleFollow}
-                      className={`px-6 py-2 rounded-full cursor-pointer font-medium ${
-                        isFollowing
-                          ? "bg-[#2C2C2C] text-[#E0E0E0] hover:bg-[#1E1E1E]"
-                          : "bg-[#3D5AFE] text-[#E0E0E0] hover:bg-[#5C6BC0]"
-                      } transition-colors`}
-                    >
-                      {isFollowing ? "Dejar de seguir" : "Seguir"}
-                    </button>
-                  )
-                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
