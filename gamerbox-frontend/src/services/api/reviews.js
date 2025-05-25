@@ -1,11 +1,17 @@
-import { API_URL, getAuthHeaders, handleResponse } from './config';
+import { API_URL, getAuthHeaders, handleResponse } from "./config";
 
-export const createReview = async (gameId, rating, text, playedBefore, playedAt) => {
+export const createReview = async (
+  gameId,
+  rating,
+  text,
+  playedBefore,
+  playedAt
+) => {
   const response = await fetch(`${API_URL}/api/reviews`, {
     method: "POST",
     headers: {
       ...getAuthHeaders(),
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       gameId,
@@ -27,8 +33,8 @@ export const getGameReviews = async (gameId) => {
 export const getUserReviews = async (username) => {
   const response = await fetch(`${API_URL}/api/users/${username}/reviews`, {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 
   return handleResponse(response);
@@ -37,18 +43,21 @@ export const getUserReviews = async (username) => {
 export const deleteReview = async (reviewId) => {
   const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
     method: "DELETE",
-    headers: getAuthHeaders()
+    headers: getAuthHeaders(),
   });
 
   return handleResponse(response);
 };
 
-export const updateReview = async (reviewId, { rating, text, playedBefore, playedAt }) => {
+export const updateReview = async (
+  reviewId,
+  { rating, text, playedBefore, playedAt }
+) => {
   const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
     method: "PUT",
     headers: {
       ...getAuthHeaders(),
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       rating,
@@ -66,8 +75,8 @@ export const likeReview = async (reviewId) => {
     method: "POST",
     headers: {
       ...getAuthHeaders(),
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 
   return handleResponse(response);
@@ -76,8 +85,8 @@ export const likeReview = async (reviewId) => {
 export const getReviewById = async (reviewId) => {
   const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 
   return handleResponse(response);
@@ -86,16 +95,23 @@ export const getReviewById = async (reviewId) => {
 export const getAllReviews = async (orderBy = "date") => {
   const response = await fetch(`${API_URL}/api/reviews?orderBy=${orderBy}`, {
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 
   return handleResponse(response);
 };
 
+export const getAllReviews2 = async () => {
+  const response = await fetch(`${API_URL}/api/reviews/`, {
+    headers: getAuthHeaders(),
+  });
+  return handleResponse(response);
+};
+
 export const getFollowingReviews = async () => {
   const response = await fetch(`${API_URL}/api/reviews/following`, {
-    headers: getAuthHeaders()
+    headers: getAuthHeaders(),
   });
   return handleResponse(response);
 };

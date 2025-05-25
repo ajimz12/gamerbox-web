@@ -2,8 +2,12 @@ import React from "react";
 import PopularGames from "../components/PopularGames";
 import ListCard from "../components/ListCard";
 import { useState, useEffect } from "react";
-import { getAllReviews, getFollowingReviews } from "../services/api/reviews";
-import { getRecentLists } from "../services/api/lists";
+import {
+  getAllReviews,
+  getAllReviews2,
+  getFollowingReviews,
+} from "../services/api/reviews";
+import { getRecentLists, getAllLists } from "../services/api/lists";
 import { getAllUsers } from "../services/api/users";
 import { fetchTotalGames } from "../services/rawgService";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -15,6 +19,8 @@ import { FaList, FaUsers } from "react-icons/fa";
 
 const Home = () => {
   const [popularReviews, setPopularReviews] = useState([]);
+  const [allReviews, setAllReviews] = useState([]);
+  const [allLists, setAllLists] = useState([]);
   const [followingReviews, setFollowingReviews] = useState([]);
   const [recentLists, setRecentLists] = useState([]);
   const [users, setUsers] = useState([]);
@@ -27,21 +33,27 @@ const Home = () => {
       try {
         const [
           popularData,
+          allData,
           followingData,
-          listsData,
+          recentListsData,
           usersData,
           gamesCountData,
+          allListsData,
         ] = await Promise.all([
           getAllReviews("popular"),
+          getAllReviews2(),
           user ? getFollowingReviews() : Promise.resolve([]),
           getRecentLists(),
           getAllUsers(),
           fetchTotalGames(),
+          getAllLists(),
         ]);
 
         setPopularReviews(popularData.slice(0, 6));
+        setAllReviews(allData);
         setFollowingReviews(followingData.slice(0, 3));
-        setRecentLists(listsData.lists?.slice(0, 3) || []);
+        setRecentLists(recentListsData.lists?.slice(0, 3) || []);
+        setAllLists(allListsData?.lists || []);
         setUsers(usersData || []);
         setTotalGamesCount(gamesCountData);
       } catch (error) {
@@ -119,7 +131,7 @@ const Home = () => {
                 <MdRateReview />
               </div>
               <div className="text-xl font-bold text-[#E0E0E0]">
-                {popularReviews.length}
+                {allReviews.length || 0}
               </div>
               <div className="text-xs text-[#A0A0A0]">Reseñas</div>
             </div>
@@ -130,7 +142,7 @@ const Home = () => {
                 <FaList />
               </div>
               <div className="text-xl font-bold text-[#E0E0E0]">
-                {recentLists.length}
+                {allLists.length || 0}
               </div>
               <div className="text-xs text-[#A0A0A0]">Listas</div>
             </div>
