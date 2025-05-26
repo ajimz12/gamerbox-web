@@ -16,28 +16,10 @@ class ListEntityRepository extends ServiceEntityRepository
         parent::__construct($registry, ListEntity::class);
     }
 
-    //    /**
-    //     * @return ListEntity[] Returns an array of ListEntity objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('l.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?ListEntity
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->getQuery()
+            ->getResult();
+    }
 }

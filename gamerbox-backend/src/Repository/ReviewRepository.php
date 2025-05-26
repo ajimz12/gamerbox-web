@@ -18,6 +18,14 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, Review::class);
     }
 
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findFollowingReviews(User $user): array
     {
         return $this->createQueryBuilder('r')

@@ -95,6 +95,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     #[ORM\OneToMany(mappedBy: 'follower', targetEntity: Follow::class)]
     private Collection $following;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $banned = false;
+
     public function __construct()
     {
         $this->followers = new ArrayCollection();
@@ -437,6 +440,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
             }
         }
 
+        return $this;
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->banned;
+    }
+
+    public function setBanned(bool $banned): static
+    {
+        $this->banned = $banned;
         return $this;
     }
 }

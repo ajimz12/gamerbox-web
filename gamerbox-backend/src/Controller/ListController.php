@@ -170,8 +170,12 @@ class ListController extends AbstractController
         }
 
         $list = $entityManager->getRepository(ListEntity::class)->find($id);
-        if (!$list || $list->getCreator() !== $user) {
-            return new JsonResponse(['error' => 'Lista no encontrada o sin permisos'], Response::HTTP_NOT_FOUND);
+        if (!$list) {
+            return new JsonResponse(['error' => 'Lista no encontrada'], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($list->getCreator() !== $user && !in_array('ROLE_ADMIN', $user->getRoles())) {
+            return new JsonResponse(['error' => 'No tienes permisos para eliminar esta lista'], Response::HTTP_FORBIDDEN);
         }
 
         $entityManager->remove($list);

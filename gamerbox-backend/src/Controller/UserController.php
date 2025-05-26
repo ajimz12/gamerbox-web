@@ -181,6 +181,9 @@ class UserController extends AbstractController
             return [
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
+                'email' => $user->getEmail(),       
+                'isBanned' => $user->isBanned(),     
+                'roles' => $user->getRoles(),    
                 'profilePicture' => $user->getProfilePicture()
                     ? '/uploads/profile_pictures/' . $user->getProfilePicture()
                     : null

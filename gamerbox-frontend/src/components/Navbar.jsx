@@ -78,9 +78,9 @@ const Navbar = () => {
               {isAuth && user?.roles?.includes('ROLE_ADMIN') && (
                 <Link
                   to="/dashboard"
-                  className="px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
+                  className="px-4 py-2 bg-green-800 hover:bg-green-900 rounded-md transition-colors"
                 >
-                  Dashboard
+                  Panel Administrador
                 </Link>
               )}
               {isAuth ? (
@@ -171,10 +171,10 @@ const Navbar = () => {
             {isAuth && user?.roles?.includes('ROLE_ADMIN') && (
               <Link
                 to="/dashboard"
-                className="block px-4 py-2 hover:bg-[#5C6BC0] rounded-md transition-colors"
+                className="block px-4 py-2 bg-green-800 hover:bg-green-900 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Dashboard
+                Panel Administrador
               </Link>
             )}
             {isAuth ? (

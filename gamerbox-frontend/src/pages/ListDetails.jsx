@@ -47,12 +47,13 @@ const ListDetails = () => {
   if (!list) return null;
 
   const isCreator = user && list.creator.id === parseInt(user.id);
+  const isAdmin = user && user.roles.includes('ROLE_ADMIN');
 
   const handleDelete = async () => {
     try {
       await deleteList(id);
       toast.success("Lista eliminada con éxito");
-      navigate(`/user/${user.username}`);
+      navigate(`/lists`);
     } catch (error) {
       toast.error("Error al eliminar la lista");
     }
@@ -80,15 +81,17 @@ const ListDetails = () => {
                 </div>
                 <p className="text-[#808080] text-lg">{list.description}</p>
               </div>
-              {isCreator && (
+              {(isCreator || isAdmin) && (
                 <div className="flex space-x-2">
-                  <Link
-                    to={`/lists/${id}/edit`}
-                    className="flex items-center space-x-2 bg-[#3D5AFE] text-white px-4 py-2 rounded-lg hover:bg-[#536DFE] transition-colors"
-                  >
-                    <FaEdit />
-                    <span>Editar Lista</span>
-                  </Link>
+                  {isCreator && (
+                    <Link
+                      to={`/lists/${id}/edit`}
+                      className="flex items-center space-x-2 bg-[#3D5AFE] text-white px-4 py-2 rounded-lg hover:bg-[#536DFE] transition-colors"
+                    >
+                      <FaEdit />
+                      <span>Editar Lista</span>
+                    </Link>
+                  )}
                   <button
                     onClick={() => setShowDeleteModal(true)}
                     className="flex items-center space-x-2 bg-red-900 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-red-800 transition-colors"

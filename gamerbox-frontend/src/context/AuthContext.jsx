@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { isAuthenticated, logout } from '../services/api/auth';
+import { toast } from 'react-toastify';
 
 const AuthContext = createContext(null);
 
@@ -10,17 +11,42 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const checkAuth = () => {
-            const auth = isAuthenticated();
-            setIsAuth(auth);
-            if (auth) {
-                setUser(JSON.parse(localStorage.getItem('user')));
+            try {
+                const userStr = localStorage.getItem('user');
+                const token = localStorage.getItem('token');
+                
+                if (!userStr || !token) {
+                    setIsAuth(false);
+                    setUser(null);
+                    setLoading(false);
+                    return;
+                }
+
+                const userData = JSON.parse(userStr);
+                if (userData.banned) {
+                    handleLogout();
+                    toast.error('Tu cuenta ha sido suspendida.');
+                    return;
+                }
+
+                setIsAuth(true);
+                setUser(userData);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error checking auth:', error);
+                handleLogout();
+                setLoading(false);
             }
-            setLoading(false);
         };
         checkAuth();
     }, []);
 
     const login = (userData) => {
+        if (userData.user.banned) {
+            toast.error('Tu cuenta ha sido suspendida.');
+            handleLogout();
+            return;
+        }
         localStorage.setItem('user', JSON.stringify(userData.user));
         localStorage.setItem('token', userData.token);
         setUser(userData.user);

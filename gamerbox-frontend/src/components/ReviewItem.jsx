@@ -176,6 +176,14 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
               </button>
             </>
           )}
+          {user?.roles?.includes("ROLE_ADMIN") && user.id !== review.author.id && (
+            <button
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="p-1.5 sm:p-2 text-[#E0E0E0] hover:text-red-500 cursor-pointer transition-colors"
+            >
+              <FaTrash />
+            </button>
+          )}
           <Link
             to={`/reviews/${review.id}`}
             className="p-1.5 sm:p-2 text-[#E0E0E0] hover:text-[#3D5AFE] cursor-pointer transition-colors"

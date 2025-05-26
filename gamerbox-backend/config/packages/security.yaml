@@ -32,6 +32,8 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            user_checker: App\Security\UserChecker
+
 
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }

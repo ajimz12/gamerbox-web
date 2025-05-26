@@ -1,7 +1,6 @@
 // Configuración base de la API
 export const API_URL = import.meta.env.VITE_API_URL;
 
-// Función helper para manejar headers
 export const getAuthHeaders = (token = localStorage.getItem('token')) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -12,11 +11,10 @@ export const getAuthHeaders = (token = localStorage.getItem('token')) => {
   return headers;
 };
 
-// Función helper para manejar respuestas
 export const handleResponse = async (response) => {
+  const data = await response.json();
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || 'Error en la petición');
+    throw new Error(data.message || 'Error en la solicitud');
   }
-  return response.json();
+  return data;
 };

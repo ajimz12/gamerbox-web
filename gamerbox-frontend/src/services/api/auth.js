@@ -9,6 +9,11 @@ export const login = async (email, password) => {
     });
 
     const data = await handleResponse(response);
+    
+    if (!response.ok) {
+      throw new Error(data.message || 'Error desconocido');
+    }
+    
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     return data;
@@ -19,9 +24,17 @@ export const login = async (email, password) => {
 };
 
 export const isAuthenticated = () => {
-  const token = localStorage.getItem('token');
-  const user = localStorage.getItem('user');
-  return !!(token && user);
+  try {
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    if (!token || !userStr) return false;
+    
+    const user = JSON.parse(userStr);
+    return !user.isBanned;
+  } catch (error) {
+    console.error('Error comprobando autenticacion:', error);
+    return false;
+  }
 };
 
 export const logout = async () => {

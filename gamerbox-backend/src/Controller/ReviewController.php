@@ -270,7 +270,7 @@ class ReviewController extends AbstractController
             return new JsonResponse(['error' => 'Usuario no autenticado'], Response::HTTP_UNAUTHORIZED);
         }
 
-        if ($review->getAuthor() !== $user) {
+        if ($review->getAuthor() !== $user && !in_array('ROLE_ADMIN', $user->getRoles())) {
             return new JsonResponse(['error' => 'No tienes permiso para eliminar esta reseña'], Response::HTTP_FORBIDDEN);
         }
 

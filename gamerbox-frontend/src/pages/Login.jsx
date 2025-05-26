@@ -29,7 +29,9 @@ const Login = () => {
       navigate(`/user/${data.user.username}`);
     } catch (error) {
       setError(
-        "Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo."
+        error.message === 'Tu cuenta ha sido suspendida'
+          ? 'Tu cuenta ha sido suspendida'
+          : 'Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.'
       );
     } finally {
       setIsLoading(false);

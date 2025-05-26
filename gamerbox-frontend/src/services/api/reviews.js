@@ -41,33 +41,65 @@ export const getUserReviews = async (username) => {
 };
 
 export const deleteReview = async (reviewId) => {
-  const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No se encontró el token de autenticación");
+    }
 
-  return handleResponse(response);
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
+      method: "DELETE",
+      headers: {
+        ...getAuthHeaders(),
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Error al eliminar la reseña");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar la reseña", error);
+    throw error;
+  }
 };
 
 export const updateReview = async (
   reviewId,
   { rating, text, playedBefore, playedAt }
 ) => {
-  const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
-    method: "PUT",
-    headers: {
-      ...getAuthHeaders(),
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      rating,
-      text,
-      playedBefore,
-      playedAt: playedAt || null,
-    }),
-  });
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No se encontró el token de autenticación");
+    }
 
-  return handleResponse(response);
+    const response = await fetch(`${API_URL}/api/reviews/${reviewId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        rating,
+        text,
+        playedBefore,
+        playedAt: playedAt || null,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al actualizar la reseña");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al actualizar la reseña", error);
+    throw error;
+  }
 };
 
 export const likeReview = async (reviewId) => {
