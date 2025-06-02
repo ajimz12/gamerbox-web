@@ -38,7 +38,6 @@ const ReviewDetail = () => {
   };
 
   const handleReviewDeleted = () => {
-    // Redirigir a la página del juego después de eliminar
     if (review && review.gameId) {
       window.location.href = `/games/${review.gameId}`;
     } else {

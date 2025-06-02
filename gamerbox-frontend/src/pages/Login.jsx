@@ -25,13 +25,18 @@ const Login = () => {
 
     try {
       const data = await login(email, password);
-      authLogin(data);
-      navigate(`/user/${data.user.username}`);
+      if (data && data.token) {
+        authLogin(data);
+        navigate(`/user/${data.user.username}`);
+      } else {
+        setError('Error en la respuesta del servidor');
+      }
     } catch (error) {
+      console.error('Error de login:', error);
       setError(
         error.message === 'Tu cuenta ha sido suspendida'
           ? 'Tu cuenta ha sido suspendida'
-          : 'Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.'
+          : error.message || 'Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.'
       );
     } finally {
       setIsLoading(false);

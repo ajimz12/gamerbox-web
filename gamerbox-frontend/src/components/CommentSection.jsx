@@ -3,12 +3,15 @@ import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { FaTrash } from "react-icons/fa";
 import { deleteComment, getReviewComments, createComment } from "../services/api/comments";
+import ConfirmationModal from "./ConfirmationModal";
 
 const CommentSection = ({ reviewId }) => {
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchComments();
@@ -48,13 +51,20 @@ const CommentSection = ({ reviewId }) => {
     }
   };
 
-  const handleDelete = async (commentId) => {
+  const handleDelete = async () => {
+    if (!commentToDelete) return;
+    
+    setIsDeleting(true);
     try {
-      await deleteComment(commentId);
-      setComments(comments.filter((comment) => comment.id !== commentId));
+      await deleteComment(commentToDelete);
+      setComments(comments.filter((comment) => comment.id !== commentToDelete));
       toast.success("Comentario eliminado con éxito");
     } catch (error) {
+      console.error("Error al eliminar:", error);
       toast.error("Error al eliminar el comentario");
+    } finally {
+      setIsDeleting(false);
+      setCommentToDelete(null);
     }
   };
 
@@ -71,7 +81,7 @@ const CommentSection = ({ reviewId }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="mt-3 px-4 py-2 bg-[#3D5AFE] text-[#E0E0E0] rounded-lg hover:bg-[#536DFE] transition-colors disabled:opacity-50"
+            className="mt-3 px-4 py-2 bg-[#3D5AFE] text-[#E0E0E0] cursor-pointer rounded-lg hover:bg-[#536DFE] transition-colors disabled:opacity-50"
           >
             {isLoading ? "Publicando..." : "Publicar comentario"}
           </button>
@@ -106,8 +116,8 @@ const CommentSection = ({ reviewId }) => {
               </div>
               {user && user.id === comment.author.id && (
                 <button
-                  onClick={() => handleDelete(comment.id)}
-                  className="text-red-500 hover:text-red-600 p-2 rounded-full hover:bg-[#2A2A2A] transition-colors"
+                  onClick={() => setCommentToDelete(comment.id)}
+                  className="text-red-500 hover:text-red-600 p-2 cursor-pointer rounded-full hover:bg-[#2A2A2A] transition-colors"
                   title="Eliminar comentario"
                 >
                   <FaTrash size={16} />
@@ -121,6 +131,15 @@ const CommentSection = ({ reviewId }) => {
           </div>
         ))}
       </div>
+
+      <ConfirmationModal
+        isOpen={commentToDelete !== null}
+        onClose={() => setCommentToDelete(null)}
+        onConfirm={handleDelete}
+        title="¿Estás seguro de que quieres eliminar este comentario?"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
     </div>
   );
 };

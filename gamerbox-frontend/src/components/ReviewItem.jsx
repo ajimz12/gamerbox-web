@@ -4,7 +4,7 @@ import { FaStar, FaEdit, FaTrash, FaHeart, FaComment } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { useAuth } from "../context/AuthContext";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmationModal from "./ConfirmationModal";
 import { deleteReview, updateReview, likeReview } from "../services/api/reviews";
@@ -25,6 +25,7 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
   const [likes, setLikes] = useState(review.likes);
   const [hasLiked, setHasLiked] = useState(review.hasLiked);
   const [commentsCount, setCommentsCount] = useState(review.commentsCount || 0);
+  const [isLiking, setIsLiking] = useState(false);
 
   useEffect(() => {
     const fetchCommentsCount = async () => {
@@ -122,11 +123,7 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
   };
 
   const handleLike = async () => {
-    try {
-      const response = await likeReview(review.id);
-      setLikes(response.likes);
-      setHasLiked(response.hasLiked);
-    } catch (error) {
+    if (!user) {
       toast.error('Inicia sesion para dar likes', {
         position: "top-right",
         autoClose: 3000,
@@ -136,6 +133,26 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
         draggable: true,
         theme: "dark"
       });
+      return;
+    }
+    
+    setIsLiking(true);
+    try {
+      const response = await likeReview(review.id);
+      setLikes(response.likes);
+      setHasLiked(response.hasLiked);
+    } catch (error) {
+      toast.error('Error al dar like', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark"
+      });
+    } finally {
+      setIsLiking(false);
     }
   };
 
@@ -337,13 +354,18 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
         <div className="flex items-center space-x-4">
           <button
             onClick={handleLike}
+            disabled={isLiking}
             className={`flex items-center cursor-pointer space-x-2 px-2 sm:px-3 py-1 rounded-full transition-colors text-sm sm:text-base ${
               hasLiked
                 ? "text-red-500 hover:text-red-600"
                 : "text-gray-400 hover:text-red-500"
-            }`}
+            } ${isLiking ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            <FaHeart className={`${hasLiked ? "fill-current" : "stroke-current"} w-4 h-4 sm:w-5 sm:h-5`} />
+            {isLiking ? (
+              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <FaHeart className={`${hasLiked ? "fill-current" : "stroke-current"} w-4 h-4 sm:w-5 sm:h-5`} />
+            )}
             <span>{likes}</span>
           </button>
 
@@ -371,19 +393,6 @@ const ReviewItem = ({ review, onReviewUpdated, onReviewDeleted }) => {
         confirmText="Eliminar"
         cancelText="Cancelar"
         confirmButtonClass="bg-red-600 hover:bg-red-700"
-      />
-
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
       />
     </div>
   );

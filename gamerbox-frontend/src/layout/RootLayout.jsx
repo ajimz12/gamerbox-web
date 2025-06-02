@@ -1,7 +1,8 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
-import { FaArrowUp } from "react-icons/fa"; 
+import { FaArrowUp, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import ScrollToTop from "../components/ScrollToTop";
 
 const RootLayout = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -30,6 +31,7 @@ const RootLayout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#121212]">
+      <ScrollToTop />
       <header className="sticky top-0 z-50">
         <Navbar />
       </header>
@@ -38,22 +40,77 @@ const RootLayout = () => {
         <Outlet />
       </main>
 
-      <footer className="bg-[#1E1E1E] font-chakra text-lg text-[#E0E0E0] py-6">
+      <footer className="bg-[#1E1E1E] font-chakra text-[#E0E0E0] py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <p>
-                © 2025 GamerBox. Todos los derechos reservados.
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center md:text-left">
+            <div className="flex flex-col items-center md:items-start">
+              <h2 className="text-xl font-bold text-white mb-4">GamerBox</h2>
+              <p className="text-sm text-gray-400 max-w-xs">
+                Tu portal definitivo de videojuegos. Conecta con miles de gamers.
               </p>
             </div>
-            <div className="flex space-x-4">
-              <a href="#" className="hover:text-[#5C6BC0] cursor-pointer">
-                Términos
-              </a>
-              <a href="#" className="hover:text-[#5C6BC0] cursor-pointer">
-                Privacidad
-              </a>
+
+            <div className="flex flex-col items-center md:items-start">
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Navegación
+              </h3>
+              <ul className="space-y-3 text-sm">
+                <li>
+                  <Link to="/games" className="hover:text-[#5C6BC0]">
+                    Juegos
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/users" className="hover:text-[#5C6BC0]">
+                    Miembros
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/reviews" className="hover:text-[#5C6BC0]">
+                    Reseñas
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/lists" className="hover:text-[#5C6BC0]">
+                    Listas
+                  </Link>
+                </li>
+              </ul>
             </div>
+
+            <div className="flex flex-col items-center md:items-start">
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Síguenos
+              </h3>
+              <div className="flex space-x-6">
+                <a
+                  href="#"
+                  className="hover:text-[#5C6BC0] text-xl"
+                  aria-label="Twitter"
+                >
+                  <FaTwitter />
+                </a>
+                <a
+                  href="#"
+                  className="hover:text-[#5C6BC0] text-xl"
+                  aria-label="Instagram"
+                >
+                  <FaInstagram />
+                </a>
+                <a
+                  href="#"
+                  className="hover:text-[#5C6BC0] text-xl"
+                  aria-label="YouTube"
+                >
+                  <FaYoutube />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="mt-12 border-t border-gray-700 pt-6 text-sm text-center text-gray-500">
+            © 2025 GamerBox. Todos los derechos reservados.
           </div>
         </div>
       </footer>

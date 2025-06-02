@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { register } from "../services/api/auth";
 import { useAuth } from "../context/AuthContext";
 import { FiUser, FiMail, FiLock, FiLogIn } from 'react-icons/fi'; 
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -42,10 +44,35 @@ const Register = () => {
 
     try {
       await register(formData);
-      navigate("/login?registered=true"); 
+      
+      toast.success("¡Cuenta creada con éxito!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+        onClose: () => {
+          navigate("/login?registered=true");
+        }
+      });
+      
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
-        setError(error.response.data.message);
+      console.error('Error de registro:', error);
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          setError(errorData.errors[0]);
+        } else if (errorData.message) {
+          if (errorData.message.includes('email')) {
+            setError("Este correo electrónico ya está registrado.");
+          } else {
+            setError(errorData.message);
+          }
+        } else {
+          setError("Error al registrar el usuario. Por favor, inténtalo de nuevo.");
+        }
       } else {
         setError("Error al registrar el usuario. Por favor, inténtalo de nuevo.");
       }

@@ -135,8 +135,10 @@ export const getAllReviews = async (orderBy = "date") => {
 };
 
 export const getAllReviews2 = async () => {
-  const response = await fetch(`${API_URL}/api/reviews/`, {
-    headers: getAuthHeaders(),
+  const response = await fetch(`${API_URL}/api/reviews`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   return handleResponse(response);
 };

@@ -14,7 +14,9 @@ export const getAuthHeaders = (token = localStorage.getItem('token')) => {
 export const handleResponse = async (response) => {
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.message || 'Error en la solicitud');
+    const error = new Error(data.message || 'Error en la solicitud');
+    error.response = { data };
+    throw error;
   }
   return data;
 };

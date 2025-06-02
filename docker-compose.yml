@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    volumes:
+      - ./gamerbox-backend/public:/var/www/public
+      - ./gamerbox-backend/public/uploads:/var/www/public/uploads
+    depends_on:
+      - backend
+      - frontend
+
+  frontend:
+    build:
+      context: ./gamerbox-frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./gamerbox-frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8081
+
+  backend:
+    build:
+      context: ./gamerbox-backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./gamerbox-backend:/var/www
+      - ./gamerbox-backend/public/uploads:/var/www/public/uploads
+    environment:
+      - APP_ENV=prod
+      - DATABASE_URL=mysql://root:@db:3306/gamerbox?serverVersion=8.0.32&charset=utf8mb4
+      - JWT_SECRET_KEY=/var/www/config/jwt/private.pem
+      - JWT_PUBLIC_KEY=/var/www/config/jwt/public.pem
+      - JWT_PASSPHRASE=gamerbox
+      - APP_SECRET=gamerbox_secret_key
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=gamerbox
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+
+volumes:
+  db_data:

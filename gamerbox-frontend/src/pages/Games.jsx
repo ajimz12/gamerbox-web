@@ -83,6 +83,7 @@ const Games = () => {
         setGames(data.results);
         setFilteredGames(data.results);
         setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
+        window.scrollTo(0, 0);
       } catch (error) {
         setError("Error al cargar los juegos");
         console.error("Error fetching games:", error);
@@ -131,6 +132,7 @@ const Games = () => {
         }
 
         setFilteredGames(results);
+        window.scrollTo(0, 0);
       } catch (error) {
         console.error("Error searching games:", error);
         setError("Error al buscar juegos");

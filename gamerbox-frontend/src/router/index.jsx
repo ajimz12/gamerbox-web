@@ -5,7 +5,7 @@ import ErrorPage from "../pages/ErrorPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Register from "../pages/Register";
 import EditProfile from "../pages/EditProfile";
-import RootLayout from "../layout/rootlayout";
+import RootLayout from "../layout/RootLayout";
 import UserProfile from "../pages/UserProfile";
 import Users from "../pages/Users";
 import Followers from "../pages/Followers";

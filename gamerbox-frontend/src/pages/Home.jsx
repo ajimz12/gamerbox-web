@@ -96,6 +96,8 @@ const Home = () => {
     );
   }
 
+  
+  
   return (
     <div className="flex flex-col items-center bg-[#121212]">
       {/* Banner */}
@@ -123,7 +125,7 @@ const Home = () => {
       </div>
 
       {/* Estadísticas */}
-      <div className="w-full max-w-2xl font-chakra mx-auto -mt-16 px-4 mb-16">
+      <div className="w-full max-w-2xl font-chakra mx-auto -mt-16 px-4 mb-16 relative z-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Link to="/reviews" className="block">
             <div className="bg-[#1E1E1E] shadow-xl p-4 rounded-full text-center transform hover:scale-105 transition-all duration-300 w-32 h-32 flex flex-col items-center justify-center mx-auto cursor-pointer">

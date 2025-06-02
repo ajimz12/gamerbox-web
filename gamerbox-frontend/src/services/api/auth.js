@@ -4,19 +4,35 @@ export const login = async (email, password) => {
   try {
     const response = await fetch(`${API_URL}/api/login`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await handleResponse(response);
+    const data = await response.json();
+    console.log('Respuesta del servidor:', data);
     
     if (!response.ok) {
+      if (data.message === 'Invalid credentials.') {
+        throw new Error('Credenciales inválidas. Por favor, verifica tu correo y contraseña.');
+      }
       throw new Error(data.message || 'Error desconocido');
     }
     
+    if (!data.token) {
+      console.error('Datos recibidos sin token:', data);
+      throw new Error('No se recibió el token de autenticación');
+    }
+
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
-    return data;
+    
+    return {
+      token: data.token,
+      user: data.user
+    };
   } catch (error) {
     console.error('Error en login:', error);
     throw error;
