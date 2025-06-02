@@ -147,7 +147,7 @@ const ReviewForm = ({ gameId, onReviewSubmitted, reviews }) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full sm:w-auto px-6 py-3 bg-[#3D5AFE] text-[#E0E0E0] font-medium rounded-lg hover:bg-[#536DFE] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full sm:w-auto px-6 py-3 bg-[#3D5AFE] text-[#E0E0E0] font-medium cursor-pointer rounded-lg hover:bg-[#536DFE] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Publicando..." : "Publicar"}
         </button>

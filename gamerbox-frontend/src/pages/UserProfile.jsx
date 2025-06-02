@@ -28,6 +28,7 @@ const UserProfile = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
   const [showUnfollowModal, setShowUnfollowModal] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
@@ -181,6 +182,7 @@ const UserProfile = () => {
 
   const processFollow = async () => {
     try {
+      setIsFollowLoading(true);
       const result = await followUser(user.id);
       setIsFollowing(result.isFollowing);
       setUser((prevUser) => ({
@@ -209,6 +211,8 @@ const UserProfile = () => {
     } catch (error) {
       toast.error("Error al actualizar el seguimiento");
       setShowUnfollowModal(false);
+    } finally {
+      setIsFollowLoading(false);
     }
   };
 
@@ -297,13 +301,36 @@ const UserProfile = () => {
                       currentUser && (
                         <button
                           onClick={handleFollow}
-                          className={`px-6 py-2 rounded-full cursor-pointer font-medium w-full sm:w-auto max-w-xs ${
+                          disabled={isFollowLoading}
+                          className={`px-6 py-2 rounded-full cursor-pointer font-medium w-full sm:w-auto max-w-xs flex items-center justify-center ${
                             isFollowing
                               ? "bg-[#2C2C2C] text-[#E0E0E0] hover:bg-[#1E1E1E]"
                               : "bg-[#3D5AFE] text-[#E0E0E0] hover:bg-[#5C6BC0]"
-                          } transition-colors`}
+                          } transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
-                          {isFollowing ? "Dejar de seguir" : "Seguir"}
+                          {isFollowLoading ? (
+                            <svg
+                              className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                          ) : null}
+                          {isFollowLoading ? "" : (isFollowing ? "Dejar de seguir" : "Seguir")}
                         </button>
                       )
                     )}

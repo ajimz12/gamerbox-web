@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { searchGames } from "../services/rawgService";
 import { getListDetails, updateList, removeGameFromList, addGameToList } from "../services/api/lists";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const EditList = () => {
   const { id } = useParams();
@@ -14,11 +15,13 @@ const EditList = () => {
   const [selectedGames, setSelectedGames] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchListDetails = async () => {
       try {
+        setIsInitialLoading(true);
         const data = await getListDetails(id);
         setTitle(data.title);
         setDescription(data.description);
@@ -34,6 +37,8 @@ const EditList = () => {
       } catch (error) {
         toast.error("Error al cargar la lista");
         navigate("/");
+      } finally {
+        setIsInitialLoading(false);
       }
     };
 
@@ -86,24 +91,13 @@ const EditList = () => {
         title,
         description,
         isPublic,
-        games: selectedGames,
+        games: selectedGames.map(game => ({
+          id: game.id,
+          name: game.name,
+          background_image: game.background_image,
+          slug: game.slug
+        }))
       });
-
-      const currentList = await getListDetails(id);
-      const currentGames = new Set(currentList.games.map((game) => game.rawgId));
-      const newGames = new Set(selectedGames.map((game) => game.id.toString()));
-
-      const gamesToRemove = [...currentGames].filter((gameId) => !newGames.has(gameId));
-      const gamesToAdd = [...newGames].filter((gameId) => !currentGames.has(gameId));
-
-      for (const gameId of gamesToRemove) {
-        await removeGameFromList(id, gameId);
-      }
-
-      for (const gameId of gamesToAdd) {
-        const gameData = selectedGames.find((g) => g.id.toString() === gameId);
-        await addGameToList(id, gameId, gameData);
-      }
 
       toast.success("Lista actualizada exitosamente");
       navigate(`/lists/${id}`);
@@ -114,6 +108,14 @@ const EditList = () => {
       setIsSaving(false);
     }
   };
+
+  if (isInitialLoading) {
+    return (
+      <div className="min-h-screen font-chakra bg-[#121212] flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen font-chakra bg-[#121212] py-8 px-4">

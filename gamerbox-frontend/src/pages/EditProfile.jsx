@@ -74,16 +74,21 @@ const EditProfile = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [superFavoriteGames, setSuperFavoriteGames] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isAddingGame, setIsAddingGame] = useState(false);
+  const [isLoadingSuperFavorites, setIsLoadingSuperFavorites] = useState(true);
 
   useEffect(() => {
     const fetchSuperFavorites = async () => {
       try {
+        setIsLoadingSuperFavorites(true);
         const games = await getSuperFavoriteGames(user.username);
         setSuperFavoriteGames(Array.isArray(games) ? games : []);
       } catch (error) {
         console.error("Error al cargar juegos superfavoritos:", error);
         setSuperFavoriteGames([]);
         toast.error("Error al cargar los juegos superfavoritos");
+      } finally {
+        setIsLoadingSuperFavorites(false);
       }
     };
 
@@ -118,14 +123,18 @@ const EditProfile = () => {
       return;
     }
 
+    setSearchResults([]);
+    setSearchTerm("");
+    setIsAddingGame(true);
+
     try {
       await addSuperFavoriteGame(game.id);
       setSuperFavoriteGames([...superFavoriteGames, game]);
-      setSearchResults([]);
-      setSearchTerm("");
       toast.success("Juego añadido a superfavoritos");
     } catch (error) {
       toast.error(error.message || "Error al añadir el juego a superfavoritos");
+    } finally {
+      setIsAddingGame(false);
     }
   };
 
@@ -206,23 +215,48 @@ const EditProfile = () => {
 
             {/* Lista de juegos superfavoritos */}
             <div className="space-y-2">
-              {superFavoriteGames.map((game) => (
-                <div
-                  key={`superfav-${game.rawgId}`}
-                  className="flex items-center justify-between bg-[#252525] p-2 rounded-lg"
-                >
-                  <div className="flex items-center space-x-2">
-                    <span className="text-[#E0E0E0]">{game.name}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSuperFavorite(game.rawgId)}
-                    className="text-red-500 hover:text-red-600"
+              {isLoadingSuperFavorites ? (
+                <div className="flex justify-center items-center py-4">
+                  <svg
+                    className="animate-spin h-6 w-6 text-[#3D5AFE]"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
                   >
-                    <FaTimes />
-                  </button>
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
                 </div>
-              ))}
+              ) : (
+                superFavoriteGames.map((game) => (
+                  <div
+                    key={`superfav-${game.rawgId || game.id}`}
+                    className="flex items-center justify-between bg-[#252525] p-2 rounded-lg"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span className="text-[#E0E0E0]">{game.name}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSuperFavorite(game.rawgId || game.id)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Buscador de juegos */}
@@ -264,6 +298,30 @@ const EditProfile = () => {
                           className="w-10 h-10 object-cover rounded"
                         />
                         <span className="text-[#E0E0E0]">{game.name}</span>
+                        {isAddingGame && (
+                          <div className="ml-auto">
+                            <svg
+                              className="animate-spin h-5 w-5 text-[#3D5AFE]"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

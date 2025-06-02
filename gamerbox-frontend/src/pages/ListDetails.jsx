@@ -47,7 +47,7 @@ const ListDetails = () => {
   if (!list) return null;
 
   const isCreator = user && list.creator.id === parseInt(user.id);
-  const isAdmin = user && user.roles.includes('ROLE_ADMIN');
+  const isAdmin = user && user.roles && user.roles.includes('ROLE_ADMIN');
 
   const handleDelete = async () => {
     try {
