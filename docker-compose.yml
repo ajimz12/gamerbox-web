@@ -22,7 +22,7 @@ services:
       - ./gamerbox-frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:8081
+      - VITE_API_URL=http://98.84.169.140:8081
 
   backend:
     build:

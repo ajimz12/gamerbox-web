@@ -1,6 +1,9 @@
 nelmio_cors:
   defaults:
-    allow_origin: ["http://localhost:5173"]
+    allow_origin: 
+      - "http://localhost:5173"
+      - "http://98.84.169.140:8081"
+      - "http://98.84.169.140"
     allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     allow_headers: ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"]
     expose_headers: ["Authorization"]
