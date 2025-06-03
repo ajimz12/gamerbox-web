@@ -1,9 +1,11 @@
-FROM node:18-alpine
+FROM node:20-alpine
+
+# Soluciona problemas con esbuild
+RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
 COPY package*.json ./
-
 RUN npm install
 
 COPY . .
