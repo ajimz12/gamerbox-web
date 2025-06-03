@@ -6,10 +6,13 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
-      - "8081:80"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./gamerbox-backend/public:/var/www/public
       - ./gamerbox-backend/public/uploads:/var/www/public/uploads
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     networks:
       - app-network
     depends_on:
@@ -27,6 +30,14 @@ services:
     volumes:
       - ./gamerbox-frontend:/app
       - /app/node_modules
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
     networks:
       - app-network
 
@@ -49,6 +60,7 @@ services:
     networks:
       - app-network
     command: bash -c "composer install && php -S 0.0.0.0:8000 -t public"
+    restart: always
 
   db:
     image: mysql:8.0
@@ -70,6 +82,31 @@ services:
       - PMA_USER=root
     depends_on:
       - db
+    networks:
+      - app-network
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - nginx
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email tu-email@ejemplo.com -d tu-dominio.com -d www.tu-dominio.com --agree-tos --no-eff-email
+
+  duckdns:
+    image: linuxserver/duckdns
+    container_name: duckdns
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Madrid
+      - SUBDOMAINS=tu-subdominio
+      - TOKEN=tu-token
+      - LOG_FILE=false
+    volumes:
+      - ./duckdns:/config
+    restart: unless-stopped
     networks:
       - app-network
 

@@ -6,9 +6,15 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+
+# Instalar dependencias con flags de optimización
+RUN npm install --production --no-optional
 
 COPY . .
+
+# Configurar variables de entorno para optimizar Node.js
+ENV NODE_OPTIONS="--max-old-space-size=512"
+ENV VITE_OPTIMIZE_DEP=true
 
 EXPOSE 5173
 
