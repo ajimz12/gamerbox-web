@@ -1,33 +1,22 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libicu-dev \
-    libzip-dev \
-    && docker-php-ext-install \
-    pdo_mysql \
-    intl \
-    zip
+ git unzip libpq-dev && docker-php-ext-install pdo pdo_mysql
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www
+WORKDIR /app
 
 COPY . .
 
-ENV APP_ENV=prod
-ENV APP_DEBUG=0
+RUN composer install --no-scripts --no-interaction --no-dev --optimize-autoloader
 
-# IMPORTANTE: NO ejecutar scripts para evitar cache:clear fallando en build
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer update
 
-RUN mkdir -p /var/www/public/uploads/profile_pictures \
-    && chown -R www-data:www-data /var/www/public/uploads \
-    && mkdir -p /var/www/config/jwt \
-    && chown -R www-data:www-data /var/www/config/jwt \
-    && chmod -R 644 /var/www/config/jwt/*.pem
+RUN mkdir -p public/uploads/profile_pictures && \
+    chmod -R 775 public/uploads && \
+    chown -R www-data:www-data public/uploads
 
-EXPOSE 9000
+EXPOSE 8000
 
-CMD ["php-fpm"]
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"] 

@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   nginx:
@@ -10,6 +10,8 @@ services:
     volumes:
       - ./gamerbox-backend/public:/var/www/public
       - ./gamerbox-backend/public/uploads:/var/www/public/uploads
+    networks:
+      - app-network
     depends_on:
       - backend
       - frontend
@@ -18,16 +20,22 @@ services:
     build:
       context: ./gamerbox-frontend
       dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
     volumes:
       - ./gamerbox-frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://${AWS_PUBLIC_IP}:8081
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - app-network
 
   backend:
     build:
       context: ./gamerbox-backend
       dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     volumes:
       - ./gamerbox-backend:/var/www
       - ./gamerbox-backend/public/uploads:/var/www/public/uploads
@@ -38,6 +46,9 @@ services:
       - JWT_PUBLIC_KEY=/var/www/config/jwt/public.pem
       - JWT_PASSPHRASE=gamerbox
       - APP_SECRET=gamerbox_secret_key
+    networks:
+      - app-network
+    command: bash -c "composer install && php -S 0.0.0.0:8000 -t public"
 
   db:
     image: mysql:8.0
@@ -47,6 +58,8 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -55,6 +68,14 @@ services:
     environment:
       - PMA_HOST=db
       - PMA_USER=root
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   db_data:
