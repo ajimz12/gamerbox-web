@@ -138,7 +138,6 @@ RAWG_API_KEY=tu_api_key_de_rawg
 - La API está configurada para aceptar peticiones CORS desde `http://localhost:5173` (ajusta en producción)
 - Para producción, cambia las claves y contraseñas por valores seguros
 
-## Licencia
-Este proyecto es de código abierto bajo la licencia MIT.
+
 
 
