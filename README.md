@@ -4,6 +4,37 @@ GamerBox es una aplicación web tipo red social que utiliza la API de RAWG para 
 ## Descripción
 Una plataforma moderna que permite a los jugadores seguir, reseñar y compartir sus experiencias gaming, utilizando la extensa base de datos de videojuegos de RAWG.
 
+## Características principales
+- Registro y autenticación de usuarios (JWT)
+- Creación y edición de listas personalizadas de juegos
+- Valoración y reseñas de videojuegos
+- Seguimiento entre usuarios (followers/following)
+- Juegos favoritos y superfavoritos en el perfil
+- Panel de administración para usuarios con rol admin
+- Integración con la API de RAWG para información de juegos
+- Interfaz moderna y responsiva (React + Tailwind CSS)
+- Backend robusto con Symfony y Doctrine ORM
+
+## Estructura del proyecto
+
+```
+gamerbox-web/
+│
+├── gamerbox-frontend/   # Frontend React (Vite)
+│   ├── src/
+│   ├── public/
+│   └── ...
+│
+├── gamerbox-backend/    # Backend Symfony (PHP)
+│   ├── src/
+│   ├── public/
+│   └── ...
+│
+├── nginx/               # Configuración de Nginx para producción
+├── docker-compose.yml   # Orquestación de servicios
+└── init.sql             # Script de inicialización de la base de datos
+```
+
 ## Credenciales y Puertos
 
 ### Puertos utilizados
@@ -11,7 +42,6 @@ Una plataforma moderna que permite a los jugadores seguir, reseñar y compartir 
 - Backend API: 9000 (interno) / 8081 (exterior)
 - Base de datos MySQL: 3306
 - PHPMyAdmin: 8080
-
 
 ### Credenciales por defecto
 - Base de datos:
@@ -62,19 +92,45 @@ composer update
 
 5. Iniciar los servicios con Docker:
 ```bash
-docker-compose build
 docker-compose up -d
 ```
-
-
 
 ### Acceso a la aplicación
 - Acceso Web Local: http://localhost:8081
 - PHPMyAdmin: http://localhost:8080
 
-### Acceso a la aplicación de forma externa (AWS)
-- http://98.83.240.160/
+## Variables de entorno
 
+Asegúrate de configurar las variables de entorno en los archivos `.env` de frontend y backend:
+
+**Frontend (`gamerbox-frontend/.env`):**
+```
+VITE_API_URL=http://localhost:8081
+```
+
+**Backend (`gamerbox-backend/.env`):**
+```
+CORS_ALLOW_ORIGIN=http://localhost:5173
+DATABASE_URL=mysql://root:@db:3306/gamerbox
+RAWG_API_KEY=tu_api_key_de_rawg
+```
+
+## Despliegue en producción con DuckDNS
+
+1. **Registra tu subdominio en [DuckDNS](https://www.duckdns.org/).**
+2. **Configura tu router/servidor para actualizar la IP pública en DuckDNS.**
+3. **Edita la configuración de Nginx** (`nginx/default.conf` o similar):
+   ```
+   server_name tu-subdominio.duckdns.org;
+   ```
+4. **Actualiza las variables de entorno** en frontend y backend para usar el dominio DuckDNS.
+5. **(Opcional) Configura HTTPS** usando Let's Encrypt y Certbot.
+6. **Reinicia los servicios:**
+   ```bash
+   docker-compose down
+   docker-compose up -d
+   ```
+7. **Accede a la app en:** `http://tu-subdominio.duckdns.org`
 
 ## Datos de prueba
 
@@ -87,11 +143,14 @@ docker-compose up -d
 - Contraseña: admin
 - Usuario administrador
 
-
-
-### Notas importantes
+## Notas importantes
 - La aplicación utiliza JWT para la autenticación
 - Las imágenes de perfil se almacenan en `/var/www/public/uploads/profile_pictures`
 - El token JWT expira después de 24 horas
+- La API está configurada para aceptar peticiones CORS desde `http://localhost:5173` (ajusta en producción)
+- Para producción, cambia las claves y contraseñas por valores seguros
+
+## Licencia
+Este proyecto es de código abierto bajo la licencia MIT.
 
 
