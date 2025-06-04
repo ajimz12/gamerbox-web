@@ -116,22 +116,9 @@ DATABASE_URL=mysql://root:@db:3306/gamerbox
 RAWG_API_KEY=tu_api_key_de_rawg
 ```
 
-## Despliegue en producción con DuckDNS
+## Despliegue en producción con AWS
 
-1. **Registra tu subdominio en [DuckDNS](https://www.duckdns.org/).**
-2. **Configura tu router/servidor para actualizar la IP pública en DuckDNS.**
-3. **Edita la configuración de Nginx** (`nginx/default.conf` o similar):
-   ```
-   server_name tu-subdominio.duckdns.org;
-   ```
-4. **Actualiza las variables de entorno** en frontend y backend para usar el dominio DuckDNS.
-5. **(Opcional) Configura HTTPS** usando Let's Encrypt y Certbot.
-6. **Reinicia los servicios:**
-   ```bash
-   docker-compose down
-   docker-compose up -d
-   ```
-7. **Accede a la app en:** `http://tu-subdominio.duckdns.org`
+ **Accede a la app en:** `http://98.83.240.160/`
 
 ## Datos de prueba
 
