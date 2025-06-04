@@ -62,6 +62,7 @@ composer update
 
 5. Iniciar los servicios con Docker:
 ```bash
+docker-compose build
 docker-compose up -d
 ```
 
