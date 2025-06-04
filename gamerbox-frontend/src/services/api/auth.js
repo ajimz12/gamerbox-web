@@ -12,7 +12,6 @@ export const login = async (email, password) => {
     });
 
     const data = await response.json();
-    console.log('Respuesta del servidor:', data);
     
     if (!response.ok) {
       if (data.message === 'Invalid credentials.') {

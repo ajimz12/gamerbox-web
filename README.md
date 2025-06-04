@@ -43,9 +43,9 @@ git clone https://github.com/ajimz12/gamerbox-web.git
 cd gamerbox-web
 ```
 
-2. Iniciar los servicios con Docker:
+2. Generar las claves JWT:
 ```bash
-docker-compose up -d
+cd gamerbox-backend && mkdir -p config/jwt && openssl genrsa -out config/jwt/private.pem -aes256 -passout pass:gamerbox 4096 && openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem -passin pass:gamerbox
 ```
 
 3. Instalar dependencias del frontend:
@@ -54,23 +54,21 @@ cd gamerbox-frontend
 npm install
 ```
 
-4. Instalar dependencias del backend:
+4. Actualizar/Instalar dependencias del backend:
 ```bash
 cd ../gamerbox-backend
-composer install
+composer update
 ```
 
-5. Generar las claves JWT:
+5. Iniciar los servicios con Docker:
 ```bash
-cd gamerbox-backend && mkdir -p config/jwt && openssl genrsa -out config/jwt/private.pem -aes256 -passout pass:gamerbox 4096 && openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem -passin pass:gamerbox
+docker-compose up -d
 ```
 
-```bash
-chmod 644 gamerbox-backend/config/jwt/private.pem gamerbox-backend/config/jwt/public.pem
-```
+
 
 ### Acceso a la aplicación
-- Frontend: http://localhost:8081
+- Acceso Web Local: http://localhost:8081
 - PHPMyAdmin: http://localhost:8080
 
 ## Datos de prueba
