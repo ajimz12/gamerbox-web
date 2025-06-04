@@ -72,6 +72,10 @@ docker-compose up -d
 - Acceso Web Local: http://localhost:8081
 - PHPMyAdmin: http://localhost:8080
 
+### Acceso a la aplicación de forma externa (AWS)
+- http://98.83.240.160/
+
+
 ## Datos de prueba
 
 ### Usuarios de prueba
@@ -89,6 +93,5 @@ docker-compose up -d
 - La aplicación utiliza JWT para la autenticación
 - Las imágenes de perfil se almacenan en `/var/www/public/uploads/profile_pictures`
 - El token JWT expira después de 24 horas
-- La API está configurada para aceptar peticiones CORS desde `http://localhost:5173`
 
 
